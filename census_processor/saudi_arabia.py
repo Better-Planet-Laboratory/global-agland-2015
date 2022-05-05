@@ -35,7 +35,7 @@ def subnational_processor_saudi_arabia(subnational_dir):
 
     subnation_data['CROPLAND'] = cropland_sum
 
-    # Rename state names to match GADM=
+    # Rename state names to match GADM
     subnation_data = subnation_data.replace({'Ar Riyad': 'AR RIYAD',
                                              'Al Madinah Al Munawwarah': 'AL MADINAH',
                                              'Al Qaseem': 'AL QUASSIM',

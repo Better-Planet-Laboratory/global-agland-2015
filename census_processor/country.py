@@ -30,12 +30,16 @@ class Country:
     KHA_TO_KHA = 1
     KHA_TO_DONUM = 10000
     KHA_TO_KM2 = 10
+    KHA_TO_M2 = 10000000
+    KHA_TO_MHA = 0.001
 
     UNIT_LOOKUP = {'Arc': KHA_TO_ARC,
                    'Ha': KHA_TO_HA,
                    'Kha': KHA_TO_KHA,
                    'Donum': KHA_TO_DONUM,
-                   'Km2': KHA_TO_KM2}
+                   'Km2': KHA_TO_KM2,
+                   'M2': KHA_TO_M2,
+                   'Mha': KHA_TO_MHA}
 
     # For class name -> FAO Convention
     COUNTRY_NAME = {'Country': 'Country',
@@ -84,7 +88,12 @@ class Country:
                     'Slovenia': 'Slovenia',
                     'Spain': 'Spain',
                     'Sweden': 'Sweden',
-                    'UK': 'United Kingdom of Great Britain and Northern Ireland'
+                    'UK': 'United Kingdom of Great Britain and Northern Ireland',
+                    'Mongolia': 'Mongolia',
+                    'Pakistan': 'Pakistan',
+                    'Turkey': 'Turkey',
+                    'Ukraine': 'Ukraine',
+                    'Uganda': 'Uganda'
                     }
 
     @staticmethod
@@ -181,6 +190,9 @@ class Country:
 
         Returns: (pd) processed dataframe
         """
+        assert(self.__class__.__name__ in list(Country.COUNTRY_NAME.keys())), \
+            "{} does not exist in Country class key, add a class name -> FAOSTAT name entry to dict".\
+                format(self.__class__.__name__)
         return FAOSTAT(FAOSTAT_dir).get_by_country(Country.COUNTRY_NAME[self.__class__.__name__])
 
     def get_FAOSTAT_mean(self, cropland_attributes=['Arable land', 'Land under permanent crops'],
