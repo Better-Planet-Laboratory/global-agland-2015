@@ -1,4 +1,4 @@
-from country import *
+from census_processor.country import *
 from utils.tools.geo import polygon_union
 
 

@@ -1,0 +1,66 @@
+path_dir:
+  FAOSTAT: 'FAOSTAT_data/FAOSTAT_data_11-14-2020.csv'
+  FAOSTAT_profile: 'FAOSTAT_data/FAOcountryProfileUTF8_withregions.csv'
+
+  outputs:
+    bias_factors_table: 'outputs/bias_factors.csv'  # null
+    census_states_count_table: 'outputs/census_states_count.csv'  # null
+
+GDD_filter:
+  # STATE sample with GDD included region / total region < accept_ratio
+  # will be filtered from dataset
+  accept_ratio: 0.95
+
+bias_correct:
+  Argentina: True
+  Australia: True
+  Austria: True
+  Belgium: True
+  Brazil: True
+  Bulgaria: True
+  Canada: True
+  China: True
+  Croatia: True
+  Cyprus: True
+  Czechia: True
+  Denmark: True
+  Estonia: True
+  Ethiopia: False
+  Finland: True
+  France: True
+  Germany: True
+  Greece: False
+  Hungary: True
+  India: True
+  Indonesia: False
+  Ireland: True
+  Italy: True
+  Kazakhstan: False
+  Latvia: True
+  Lithuania: True
+  Luxembourg: True
+  Malta: True
+  Mexico: True
+  Mongolia: False
+  Mozambique: True
+  Namibia: False
+  Netherlands: True
+  Pakistan: True
+  Poland: True
+  Portugal: True
+  Romania: True
+  Russia: True
+  SaudiArabia: False
+  Slovakia: True
+  Slovenia: True
+  SouthAfrica: False
+  Spain: True
+  Sweden: True
+  Tanzania: False
+  Turkey: True
+  Uganda: False
+  UK: True
+  Ukraine: True
+  USA: True
+
+

@@ -258,12 +258,12 @@ class Country:
         if cropland_subnational_sum == 0:
             # Zero division
             if abs(cropland_FAO_sum) <= 0.003:
-                print('Zero division encountered. |cropland_FAO_sum| {} <= 0.003. Set bias_factor 1'.
-                      format(abs(cropland_FAO_sum)))
+                print('Zero division encountered in {}. |cropland_FAO_sum| {} <= 0.003. Set bias_factor 1'.
+                      format(self.__class__.__name__, abs(cropland_FAO_sum)))
                 scaling_factor_cropland = 1
             else:
-                print('Zero division encountered. |cropland_FAO_sum| {} > 0.003. Set bias_factor np.nan'.
-                      format(abs(cropland_FAO_sum)))
+                print('Zero division encountered in {}. |cropland_FAO_sum| {} > 0.003. Set bias_factor np.nan'.
+                      format(self.__class__.__name__, abs(cropland_FAO_sum)))
                 scaling_factor_cropland = np.nan
         else:
             scaling_factor_cropland = cropland_FAO_sum / (
@@ -272,12 +272,12 @@ class Country:
         if pasture_subnational_sum == 0:
             # Zero division
             if abs(pasture_FAO_sum) <= 0.003:
-                print('Zero division encountered. |pasture_FAO_sum| {} <= 0.003. Set bias_factor 1'.
-                      format(abs(pasture_FAO_sum)))
+                print('Zero division encountered in {}. |pasture_FAO_sum| {} <= 0.003. Set bias_factor 1'.
+                      format(self.__class__.__name__, abs(pasture_FAO_sum)))
                 scaling_factor_pasture = 1
             else:
-                print('Zero division encountered. |pasture_FAO_sum| {} > 0.003. Set bias_factor np.nan'.
-                      format(abs(pasture_FAO_sum)))
+                print('Zero division encountered in {}. |pasture_FAO_sum| {} > 0.003. Set bias_factor np.nan'.
+                      format(self.__class__.__name__, abs(pasture_FAO_sum)))
                 scaling_factor_pasture = np.nan
         else:
             scaling_factor_pasture = pasture_FAO_sum / (

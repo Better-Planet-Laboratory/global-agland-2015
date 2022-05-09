@@ -1,4 +1,4 @@
-from country import *
+from census_processor.country import *
 
 
 def subnational_processor_luxembourg(subnational_dir):
@@ -61,17 +61,3 @@ class Luxembourg(Country):
         spatial_map = spatial_map.rename(columns={'COUNTRY': 'STATE'}, inplace=False)
 
         return spatial_map
-
-
-root = '../'
-belgium = Luxembourg(root + 'shapefile/EU/Luxembourg/gadm40_LUX_0.shp',
-                     [root + 'subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx'],
-                     root + 'FAOSTAT_data/FAOSTAT_data_11-14-2020.csv')
-
-print('FAO mean: {}'.format(belgium.get_FAOSTAT_mean()))
-print('bias correction: {}'.format(belgium.get_bias_factor()))
-print('=============================================')
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print('{}'.format(belgium.merge_census_to_spatial()))
-print('{}'.format(belgium.get_subnational_cropland_sum()))
-print('{}'.format(belgium.get_subnational_pasture_sum()))

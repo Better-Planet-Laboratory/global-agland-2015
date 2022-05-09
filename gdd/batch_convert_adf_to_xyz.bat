@@ -1,0 +1,1 @@
+gdal_translate -of XYZ w001001.adf gdd.xyz.txt

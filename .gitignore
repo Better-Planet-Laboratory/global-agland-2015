@@ -143,3 +143,6 @@ FAOSTAT_data/
 # ipy
 .ipynb_checkpoints
 *.ipynb
+
+# output dir
+outputs/

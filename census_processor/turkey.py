@@ -1,4 +1,4 @@
-from country import *
+from census_processor.country import *
 
 
 def subnational_processor_turkey(subnational_dir):

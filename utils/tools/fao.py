@@ -19,6 +19,8 @@ class FAOSTAT:
         else:
             raise ValueError("Input arg must be either str or pd.DataFrame")
 
+        self.country_set = set(self.data['Area'])
+
     def __len__(self):
         return len(self.data.index)
 
@@ -52,12 +54,3 @@ class FAOSTAT:
 
         return cropland_nation_total, pasture_nation_total
 
-#
-#
-#
-# FAOSTAT_DIR = '../../FAOSTAT_data/FAOSTAT_data_11-14-2020.csv'
-# FAOSTAT_PROFILE_DIR = 'FAOSTAT_data/FAOcountryProfileUTF8_withregions.csv'
-#
-# FAOSTAT_full = pd.read_csv(FAOSTAT_DIR)
-# FAOSTAT = FAOSTAT_full.loc[(FAOSTAT_full['Area'] == 'Canada')]  # .csv
-# print(FAOSTAT_mean(FAOSTAT_full))
