@@ -4,6 +4,7 @@ import sys, os
 
 sys.path.append(os.path.abspath(os.path.join('..', 'utils')))
 from utils.io import *
+from utils.constants import UNIT_LOOKUP
 from utils.tools.fao import *
 
 
@@ -23,23 +24,6 @@ def subnational_processor_country(subnational_dir):
 class Country:
     # Class Level CONSTANTS --hidden from users
     #                       --maintained by developers
-
-    # Units Convention
-    KHA_TO_ARC = 2471.0538
-    KHA_TO_HA = 1000
-    KHA_TO_KHA = 1
-    KHA_TO_DONUM = 10000
-    KHA_TO_KM2 = 10
-    KHA_TO_M2 = 10000000
-    KHA_TO_MHA = 0.001
-
-    UNIT_LOOKUP = {'Arc': KHA_TO_ARC,
-                   'Ha': KHA_TO_HA,
-                   'Kha': KHA_TO_KHA,
-                   'Donum': KHA_TO_DONUM,
-                   'Km2': KHA_TO_KM2,
-                   'M2': KHA_TO_M2,
-                   'Mha': KHA_TO_MHA}
 
     # For class name -> FAO Convention
     COUNTRY_NAME = {'Country': 'Country',
@@ -129,7 +113,7 @@ class Country:
     @staticmethod
     def convert_to_kha(data_array, unit):
         """ Convert data_array from input unit to kHA """
-        return data_array / Country.UNIT_LOOKUP[unit]
+        return data_array / UNIT_LOOKUP[unit]
 
     def __init__(self, shapefile_dir, subnational_dir, FAOSTAT_dir, units='Kha'):
         """
@@ -142,7 +126,7 @@ class Country:
             FAOSTAT_dir (str): global FAOSTAT dir
             units (str): units used in the subnational file (Default: Kha)
         """
-        assert units in Country.UNIT_LOOKUP, \
+        assert units in UNIT_LOOKUP, \
             "Unit: [" + units + "] is not found in the dict. Consider adding it to the class or check your input"
 
         self.FAOSTAT = self.get_FAOSTAT(FAOSTAT_dir)
@@ -190,8 +174,8 @@ class Country:
 
         Returns: (pd) processed dataframe
         """
-        assert(self.__class__.__name__ in list(Country.COUNTRY_NAME.keys())), \
-            "{} does not exist in Country class key, add a class name -> FAOSTAT name entry to dict".\
+        assert (self.__class__.__name__ in list(Country.COUNTRY_NAME.keys())), \
+            "{} does not exist in Country class key, add a class name -> FAOSTAT name entry to dict". \
                 format(self.__class__.__name__)
         return FAOSTAT(FAOSTAT_dir).get_by_country(Country.COUNTRY_NAME[self.__class__.__name__])
 
@@ -267,7 +251,7 @@ class Country:
                 scaling_factor_cropland = np.nan
         else:
             scaling_factor_cropland = cropland_FAO_sum / (
-                    cropland_subnational_sum / Country.UNIT_LOOKUP[self.units])
+                    cropland_subnational_sum / UNIT_LOOKUP[self.units])
 
         if pasture_subnational_sum == 0:
             # Zero division
@@ -281,7 +265,7 @@ class Country:
                 scaling_factor_pasture = np.nan
         else:
             scaling_factor_pasture = pasture_FAO_sum / (
-                    pasture_subnational_sum / Country.UNIT_LOOKUP[self.units])
+                    pasture_subnational_sum / UNIT_LOOKUP[self.units])
 
         return scaling_factor_cropland, scaling_factor_pasture
 

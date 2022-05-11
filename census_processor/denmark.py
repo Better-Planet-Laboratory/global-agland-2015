@@ -44,7 +44,7 @@ class Denmark(Country):
             FAOSTAT_dir (str): global FAOSTAT dir
             units (str): units used in the subnational file (Default: Ha)
         """
-        assert units in Country.UNIT_LOOKUP, \
+        assert units in UNIT_LOOKUP, \
             "Unit: [" + units + "] is not found in the dict. Consider adding it to the class or check your input"
 
         self.FAOSTAT = self.get_FAOSTAT(FAOSTAT_dir)

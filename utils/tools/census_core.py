@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import os
 from utils.tools.gdd_core import *
@@ -5,6 +6,7 @@ from utils.tools.geo import get_border
 import rasterio
 from rasterio.mask import mask
 import warnings
+from utils.constants import *
 
 
 def count_census_states(subnational_census):
@@ -134,7 +136,7 @@ def apply_GDD_filter(census, gdd_config, accept_ratio, gdd_crop_criteria, *args)
 
     Returns: (pd) processed census table (new copy)
     """
-    assert(0 < accept_ratio <= 1), "accept_ratio must be in (0, 1]"
+    assert (0 < accept_ratio <= 1), "accept_ratio must be in (0, 1]"
 
     # Check if GDD filter map exists
     if not os.path.exists(gdd_config['path_dir']['GDD_filter_map']):
@@ -178,5 +180,115 @@ def apply_GDD_filter(census, gdd_config, accept_ratio, gdd_crop_criteria, *args)
     census_copy = census.copy()
     census_copy = census_copy.drop(index_list)
     census_copy = census_copy.reset_index()
+
+    return census_copy
+
+
+def add_land_cover_percentage(census, land_cover_dir, land_cover_code):
+    """
+    Based on input land cover GeoTIFF file (normally a MCD12** product), add percentage
+    of each key types in land_cover_code to the input census. Return a new processed
+    census without modifying the original input
+
+    Args:
+        census (pd): census table
+        land_cover_dir (str): path dir to GeoTIFF file (normally a MCD12** product)
+        land_cover_code (dict): class types(int) -> (str)
+
+    Returns: (pd) processed census table (new copy)
+    """
+    # Load land_cover_map
+    land_cover_map = rasterio.open(land_cover_dir)
+
+    # Placeholder for percentage data
+    nodata = 255  # change this if conflict with land_cover_code keys
+    remove_index_list = []
+    land_cover_percentage = {i: [] for i in land_cover_code.keys()}
+    for i in range(len(census)):
+
+        nan_flag = False
+        out_image, _ = mask(land_cover_map, get_border(i, census), crop=True, nodata=nodata)
+        out_image = out_image[0]
+
+        total_pixels = np.count_nonzero(out_image != nodata)
+
+        if total_pixels == 0:
+            print("{} not found on GDD map. "
+                  "This is likely caused by extremely small geometry "
+                  "that does not fit on land_cover_map resolution (removed)".
+                  format(census.iloc[i]['STATE']))
+            remove_index_list.append(i)
+            nan_flag = True
+
+        for key in land_cover_percentage.keys():
+            if nan_flag:
+                land_cover_percentage[key].append(np.nan)
+            else:
+                land_cover_percentage[key].append(
+                    np.count_nonzero(out_image == key) / total_pixels)
+
+    # Add land_cover_percentage and remove invalid entries
+    census_copy = census.copy()
+    for i in land_cover_percentage.keys():
+        census_copy[i] = land_cover_percentage[i]
+    census_copy = census_copy.drop(remove_index_list)
+    census_copy = census_copy.reset_index(drop=True)
+
+    return census_copy
+
+
+def add_state_area(census, global_area_dir, input_unit='M2'):
+    """
+    Use input global_area_map GeoTIFF to assign total area of each state in census
+    in Kha (to match the cropland and pasture census data units from cascaded sources). A
+    conversion of unit from input_unit to Kha is operated in the function. Return
+    a new processed census without modifying the original input
+
+    Note:
+        Options for input_unit include:
+            'Arc', 'Ha', 'Kha', 'Donum', 'Km2', 'M2', 'Mha'
+
+    Args:
+        census (pd): census table
+        global_area_dir (str): path dir to GeoTIFF file
+        input_unit (str): unit used in global_area_map (Default: 'M2')
+
+    Returns:
+
+    """
+    # Load global_area_map
+    global_area_map = rasterio.open(global_area_dir)
+    assert (global_area_map.dtypes[0] in [rasterio.dtypes.float32, rasterio.dtypes.float64]), \
+        "Input global area map must be either float32 or float64"
+    assert(input_unit in UNIT_LOOKUP.keys()), "Unrecognized input unit type: {}".format(input_unit)
+
+    # Placeholder for total area data
+    nodata = -1
+    remove_index_list = []
+    state_area = []
+    for i in range(len(census)):
+
+        out_image, _ = mask(global_area_map, get_border(i, census), crop=True, nodata=nodata)
+        out_image = out_image[0]
+
+        area = np.sum(out_image[out_image != nodata])
+
+        if area == 0:
+            print("{} not found on global_area_map. "
+                  "This is likely caused by extremely small geometry "
+                  "that does not fit on global_area_map resolution (removed)".
+                  format(census.iloc[i]['STATE']))
+            remove_index_list.append(i)
+
+        state_area.append(area)
+
+    # Add state_area and remove invalid entries
+    census_copy = census.copy()
+    state_area = [i for i in state_area if i != 0]  # remove 0 area in area list
+    census_copy = census_copy.drop(remove_index_list)  # remove 0 area in census
+    census_copy = census_copy.reset_index(drop=True)
+
+    # Unit Conversion to KHa
+    census_copy['AREA'] = [i / UNIT_LOOKUP[input_unit] for i in state_area]
 
     return census_copy
