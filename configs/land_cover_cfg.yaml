@@ -4,7 +4,7 @@ path_dir:
   pred_input_map: 'land_cover/pred_input_map.pkl'
 
 # Unit used in global_area_map
-area_unit: 'M2'
+area_unit: 'Km2'
 
 code:
   # Class dict definition

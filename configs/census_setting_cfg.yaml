@@ -3,8 +3,10 @@ path_dir:
   FAOSTAT_profile: 'FAOSTAT_data/FAOcountryProfileUTF8_withregions.csv'
 
   outputs:
+    # Set null to prevent producing outputs
     bias_factors_table: 'outputs/bias_factors.csv'  # null
     census_states_count_table: 'outputs/census_states_count.csv'  # null
+    processed_census_table: 'outputs/processed_census.pkl'
 
 GDD_filter:
   # STATE sample with GDD included region / total region < accept_ratio

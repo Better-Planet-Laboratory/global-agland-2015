@@ -176,53 +176,6 @@ WORLD_CENSUS = World(SHAPEFILE_CFG['path_dir']['World'],
                      CENSUS_SETTING_CFG['path_dir']['FAOSTAT'],
                      CENSUS_SETTING_CFG['path_dir']['FAOSTAT_profile'])
 
-# Use args to set flag for generating intermediate results
-# args are for user pref. settings, census settings.yaml is for config in the pipeline
-# if None, then dont output intermediate results, if input a dir then output
-
-
-# Save intermediate outputs
-# bias_factors_table - bias correction factors for each census sample
-# census_states_count_table - number of states count for each country in census
-bias_factors_table_dir, \
-census_states_count_table_dir = CENSUS_SETTING_CFG['path_dir']['outputs']['bias_factors_table'], \
-                                CENSUS_SETTING_CFG['path_dir']['outputs']['census_states_count_table']
-if bias_factors_table_dir is not None:
-    write_bias_factors_table_to_csv(get_bias_factors_table(SUBNATIONAL_CENSUS),
-                                    bias_factors_table_dir)
-if census_states_count_table_dir is not None:
-    write_census_states_count_table(count_census_states(SUBNATIONAL_CENSUS),
-                                    census_states_count_table_dir)
-
-# Merge WORLD with SUBNATIONAL
-merged_census = merge_subnation_to_world(WORLD_CENSUS, SUBNATIONAL_CENSUS, CENSUS_SETTING_CFG['bias_correct'])
-print(len(merged_census))
-
-# Apply 2 filters
-# 1. nan_filter: nan in either CROPLAND or PASTURE
-# 2. GDD_filter: GDD exclude: above 50d north with < 1000
-#                GDD include / (GDD exclude + GDD include) < accept_ratio
-merged_census = apply_nan_filter(merged_census)
-merged_census = apply_GDD_filter(merged_census, GDD_CFG, CENSUS_SETTING_CFG['GDD_filter']['accept_ratio'],
-                                 gdd_crop_criteria)
-
-print(len(merged_census))
-
-
-# Add land_cover percentage features to census table
-merged_census = add_land_cover_percentage(merged_census, LAND_COVER_CFG['path_dir']['land_cover_map'],
-                                          LAND_COVER_CFG['code']['MCD12Q1'])
-
-print(len(merged_census))
-
-# Add total area in kHa for each sample
-merged_census = add_state_area(merged_census, LAND_COVER_CFG['path_dir']['global_area_map'],
-                                          LAND_COVER_CFG['area_unit'])
-
-print(len(merged_census))
-print(merged_census)
-
-# Data Pre-processing
-# 2. Use land_cover map to add LAND_COVER percentages to each sample
-# 3. Compute total area (in KHa, need to do a conversion here) for each sample
-# 4. Add Attributes CROPLAND_PERCENTAGE, PASTURE_PERCENTAGE, OTHER_PERCENTAGE
+if __name__ == '__main__':
+    pipeline(WORLD_CENSUS, SUBNATIONAL_CENSUS, CENSUS_SETTING_CFG,
+             GDD_CFG, LAND_COVER_CFG)
