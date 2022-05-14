@@ -12,9 +12,9 @@ def gdd_crop_criteria(gdd_map, lat, lon):
     - Above 50 deg in y axis, with GDD < 1000 not included
 
     Args:
-        gdd_map (2d array): GDD map
-        lat (1d array): latitude grid for GDD map
-        lon (1d array): longitude grid for GDD map
+        gdd_map (np.array): 2D GDD map
+        lat (np.array): latitude grid for GDD map 1D
+        lon (np.array): longitude grid for GDD map 1D
 
     Returns: (tuple array) (x_idx array, y_idx array)
     """

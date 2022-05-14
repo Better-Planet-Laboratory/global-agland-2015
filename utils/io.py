@@ -38,7 +38,7 @@ def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4
 
     Args:
         dst_filename (str): output tif file dir
-        data_array (array): 2D array to be saved
+        data_array (np.array): 2D array to be saved
         x_min (float): x min in geo transform
         y_max (float): y max in geo transform
         pixel_size (float):  pixel size in geo transform

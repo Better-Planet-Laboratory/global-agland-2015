@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from ..io import save_array_as_tif
+from .visualizer import plot_gdd_map
 
 
 def generate_GDD_filter(xyz_file_dir, xyz_shape, grid_size, output_dir,
@@ -97,13 +98,40 @@ class GDD:
             criteria (func): criteria function
             *args: arguments for criteria function
 
-        Returns: (MaskIndex, array)
+        Returns: (MaskIndex, np.array)
         """
         mask_index = MaskIndex(criteria(self.gdd_map, self.lat, self.lon, *args))
         gdd_map_mask = np.ones((self.lat.size, self.lon.size), dtype=bool)
         gdd_map_mask[mask_index.index_tuple] = False
 
         return mask_index, gdd_map_mask
+
+    def set_gdd_map(self, gdd_map, grid_size):
+        """
+        Replace current gdd_map by the new input, update lat and lon based on
+        input grid_size
+
+        Args:
+            gdd_map (np.array): 2D np array
+            grid_size (float): grid size
+        """
+        assert (gdd_map.ndim == 2), "Input gdd array must be 2D"
+
+        self.gdd_map = gdd_map
+        self.lat = np.arange(-90, 90, grid_size)
+        self.lon = np.arange(-180, 180, grid_size)
+
+    def plot(self, output_dir=None, nodata=-32768, cmap='viridis'):
+        """
+        Plot GDD map and save as png if output_dir is specified
+
+        Args:
+            gdd_array (np.array): 2D np array
+            output_dir (str): output dir (Default: None)
+            nodata (int): no data indicator (Default: -32768)
+            cmap (str or dict): matplotlib cmap
+        """
+        plot_gdd_map(self.gdd_map, output_dir, nodata, cmap)
 
 
 class MaskIndex:
@@ -157,7 +185,7 @@ class MaskIndex:
             width (int): width of mask map
             height (int): height of mask map
 
-        Returns: (array) boolean mask matrix
+        Returns: (np.array) boolean mask matrix
         """
         assert (np.max(self.index_tuple[0]) < height), "height too small"
         assert (np.max(self.index_tuple[1]) < width), "width too small"
