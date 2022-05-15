@@ -1,23 +1,22 @@
 from osgeo import gdal
 import numpy as np
 import argparse
-import pickle
+from utils.io import save_pkl
 
 
-def save_pkl(obj, directory):
-    with open(directory + '.pkl', 'wb+') as f:
-        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
-
-
-def get_count_table(matrix, total_categories=17, invalid_index=255):
+def get_count_table(matrix, categories, invalid_index=255):
     """
-    Assume the class labels start from 1 to total_categories
-    :param matrix:
-    :param total_categories:
-    :param invalid_index:
-    :return:
+    Class labels start from 1, return an array of histogram
+
+    Args:
+        matrix (np.array): input matrix
+        categories (list): list of categories in matrix
+        invalid_index (int): invalid value
+
+    Returns: (np.array) histogram
     """
-    result_array = np.zeros((1, total_categories))
+    num_categories = len(categories)
+    result_array = np.zeros((1, num_categories))
     for _, item in enumerate(matrix.flatten()):
         if item != invalid_index:
             result_array[0, int(item) - 1] += 1
@@ -25,10 +24,19 @@ def get_count_table(matrix, total_categories=17, invalid_index=255):
     return result_array
 
 
-def get_global_box_land_cover_input(world_class_dir, N=10, total_categories=17, invalid_index=255):
+def get_global_box_land_cover_input(world_class_dir, N, categories, invalid_index):
     """
-    Pack input for models to evaluate upon
+    Pack inputs for deployment
+
+    Args:
+        world_class_dir (str): dir to land cover
+        N (int): side length
+        categories (list): list of categories in matrix
+        invalid_index (int): invalid value
+
+    Returns: (dict) histogram
     """
+    num_categories = len(categories)
     ds = gdal.Open(world_class_dir)
     world_land_cover = np.array(ds.ReadAsArray())
     h, w = world_land_cover.shape
@@ -38,7 +46,7 @@ def get_global_box_land_cover_input(world_class_dir, N=10, total_categories=17, 
     # Note: when h or w is not divisible by N, fill last row or colum by the remainder
     num_box = ((h // N) + 1) * ((w // N) + 1)
     counter = 0
-    processed_input_collection = np.zeros((num_box, total_categories))
+    processed_input_collection = np.zeros((num_box, num_categories))
 
     for i in np.arange(0, h, N):
         for j in np.arange(0, w, N):
@@ -47,7 +55,7 @@ def get_global_box_land_cover_input(world_class_dir, N=10, total_categories=17, 
 
             # Including spatial info as features
             processed_input = (get_count_table(partitioned_map,
-                                               total_categories,
+                                               categories,
                                                invalid_index)[0, :] / total_pixels).reshape(1, -1)
             processed_input_collection[counter, :] = processed_input
             counter += 1
@@ -73,9 +81,11 @@ def main():
     args = parser.parse_args()
     print(args)
 
+    # Use MCD12Q1 product for deployment
+    # Class 1, 2, 3 ... 17
     results = get_global_box_land_cover_input(args.land_cover_dir,
                                               N=args.side_length,
-                                              total_categories=17,
+                                              categories=[i for i in range(1, 18)],
                                               invalid_index=args.invalid_index)
 
     save_pkl(results, args.output_dir)
