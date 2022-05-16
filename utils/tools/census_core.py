@@ -222,7 +222,7 @@ def apply_GDD_filter(census, gdd_config, accept_ratio, gdd_crop_criteria, *args)
     return census_copy
 
 
-def add_land_cover_percentage(census, land_cover_dir, land_cover_code):
+def add_land_cover_percentage(census, land_cover_dir, land_cover_code, land_cover_null):
     """
     Based on input land cover GeoTIFF file (normally a MCD12** product), add percentage
     of each key types in land_cover_code to the input census. Return a new processed
@@ -232,6 +232,7 @@ def add_land_cover_percentage(census, land_cover_dir, land_cover_code):
         census (pd): census table
         land_cover_dir (str): path dir to GeoTIFF file (normally a MCD12** product)
         land_cover_code (dict): class types(int) -> (str)
+        land_cover_null (int): null value representation in land cover GeoTIFF
 
     Returns: (pd) processed census table (new copy)
     """
@@ -250,7 +251,8 @@ def add_land_cover_percentage(census, land_cover_dir, land_cover_code):
         out_image, _ = mask(land_cover_map, get_border(i, census), crop=True, nodata=nodata)
         out_image = out_image[0]
 
-        total_pixels = np.count_nonzero(out_image != nodata)
+        # Only include pixels inside geometry and not null values in land cover map
+        total_pixels = np.count_nonzero((out_image != nodata) & (out_image != land_cover_null))
 
         if total_pixels == 0:
             print("{} not found on GDD map. "
@@ -421,7 +423,8 @@ def pipeline(world_census, subnational_census, census_setting_cfg, gdd_cfg, land
 
     # Add land_cover percentage features to census table
     merged_census = add_land_cover_percentage(merged_census, land_cover_cfg['path_dir']['land_cover_map'],
-                                              land_cover_cfg['code']['MCD12Q1'])
+                                              land_cover_cfg['code']['MCD12Q1'],
+                                              land_cover_cfg['null_value'])
     print('Add land_cover percentage to census. Total samples: {}'.format(len(merged_census)))
 
     # Add state area in kHa for each sample

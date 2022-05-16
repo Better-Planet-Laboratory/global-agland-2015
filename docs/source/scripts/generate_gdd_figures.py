@@ -5,7 +5,8 @@ from gdd.gdd_criteria import gdd_crop_criteria
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--gdd_xyz_dir", type=str, default='../../../gdd/gdd.xyz.txt', help="path dir to gdd xyz file")
+    parser.add_argument("--gdd_xyz_dir", type=str, default='../../../gdd/gdd.xyz.txt',
+                        help="path dir to gdd xyz file")
     parser.add_argument("--gdd_raw_output_dir", type=str, default='../_static/img/gdd/gdd_raw.png',
                         help="path dir to gdd raw output")
     parser.add_argument("--gdd_mask_output_dir", type=str, default='../_static/img/gdd/gdd_mask.png',

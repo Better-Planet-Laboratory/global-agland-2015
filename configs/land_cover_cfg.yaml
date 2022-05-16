@@ -6,6 +6,9 @@ path_dir:
 # Unit used in global_area_map
 area_unit: 'Km2'
 
+# Set in google earth engine script
+null_value: -9999
+
 code:
   # Class dict definition
   # https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf
