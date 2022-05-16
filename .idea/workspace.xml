@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configs/land_cover_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/land_cover_cfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/scripts/generate_gdd_figures.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/scripts/generate_gdd_figures.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/land_cover/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/land_cover/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/tools/census_core.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tools/census_core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/tools/visualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tools/visualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/subnational_stats/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/subnational_stats/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
