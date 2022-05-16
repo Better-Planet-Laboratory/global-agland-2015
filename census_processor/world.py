@@ -1,5 +1,6 @@
 import geopandas as gpd
 from utils.tools.fao import *
+from utils.tools.visualizer import plot_FAO_census
 
 
 class World:
@@ -279,3 +280,25 @@ class World:
             self.assign_census_table(census_table_copy)
 
         return census_table_copy
+
+    def plot_cropland(self, output_dir=None):
+        """
+        Plot FAO census map for CROPLAND
+
+        Args:
+            output_dir (str): output dir (Default: None)
+        """
+        plot_FAO_census(self.census_table, 'CROPLAND',
+                        cmap='Accent', num_bins=8, label='CROPLAND (kHa)',
+                        output_dir=output_dir)
+
+    def plot_pasture(self, output_dir=None):
+        """
+        Plot FAO census map for PASTURE
+
+        Args:
+            output_dir (str): output dir (Default: None)
+        """
+        plot_FAO_census(self.census_table, 'PASTURE',
+                        cmap='Dark2', num_bins=8, label='PASTURE (kHa)',
+                        output_dir=output_dir)

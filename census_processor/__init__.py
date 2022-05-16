@@ -1,6 +1,6 @@
 import os
 
-__all__ = [i[:-len('.py')] for i in os.listdir('census_processor/') if i.endswith('.py') and (not i.startswith('_'))]
+# __all__ = [i[:-len('.py')] for i in os.listdir('census_processor/') if i.endswith('.py') and (not i.startswith('_'))]
 
 from census_processor.argentina import Argentina
 from census_processor.australia import Australia
