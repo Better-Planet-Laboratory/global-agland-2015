@@ -1,56 +1,7 @@
 ## Subnational Census Data
-
-<style>
-    .heatMap {
-        width: 70%;
-        text-align: center;
-    }
-    .heatMap th {
-        background: white;
-        word-wrap: break-word;
-        text-align: center;
-    }
-    .heatMap 
-    tr:nth-child(n):not(:nth-child(1)):not(:nth-child(2)):not(:nth-child(10)):not(:nth-child(15)):not(:nth-child(32)):not(:nth-child(33)):not(:nth-child(35)):not(:nth-child(38)):not(:nth-child(42)):not(:nth-child(43)):not(:nth-child(52)):not(:nth-child(55))
-    { background: #d9ead3; }
-
-    .heatMap 
-    tr:nth-child(1), 
-    tr:nth-child(2), 
-    tr:nth-child(10), 
-    tr:nth-child(15), 
-    tr:nth-child(32), 
-    tr:nth-child(33), 
-    tr:nth-child(35), 
-    tr:nth-child(38), 
-    tr:nth-child(42), 
-    tr:nth-child(43), 
-    tr:nth-child(52),
-    tr:nth-child(55) 
-     { background: #FFCCCB; }
-
-    .basic-styling td,
-    .basic-styling th {
-        border: 1px solid #D3D3D3;
-        padding: 0.3rem;
-    }
-</style>
+Scroll right to view complete table :point_right:
 
 
-<table>
-<tr style="background-color:#FFCCCB">
-    <td>Not Included</td>
-  </tr>
-  <tr style="background-color:#d9ead3">
-    <td>Included</td>
-  </tr>
-</table>
-
-
-
-
-<div class="ox-hugo-table basic-styling">
-<div class="heatMap">
 
 | Country                          | Number of subnational units | Year      | Institution                                                                                    | Source                                                      | Source Link                                                                               | Data Link                                                                                                                                                                                                                                                                                                                                   | Cropland                                                              | Cropland term                                                                                           | Cropland quality | Pasture                   | Pasture term                                                                                                                                                                                                     | Pasture quality                                                                                                            | Units             | Notes                                                                                                                                                                                                                                                                                    |
 |----------------------------------|-----------------------------|-----------|------------------------------------------------------------------------------------------------|-------------------------------------------------------------|-------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|------------------|---------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -116,7 +67,4 @@
 | Ukraine                          |                          24 | 2015      | State Statistics Service of Ukraine                                                            | Agriculture of Ukraine                                      | https://ukrstat.ua/en                                                                     | http://www.ukrstat.gov.ua/druk/publicat/kat_e/publ4_e.htm                                                                                                                                                                                                                                                                                   | Yes (table 9.22 & 9.23)                                               | arable land                                                                                             |                3 | Yes                       | agricultural land - arable land                                                                                                                                                                                  | agricultural land - arable land                                                                                            | thousand hectares | Cropland = Arable land is not perfect because it excludes perennial crops; Pasture = Agricultural land - Arable land is not perfect because it includes hayfields. But there is no data available at regional level that can resolve this.                                               |
 | United Kingdom                   |                          42 | 2016      | Eurostat                                                                                       | Main farm land use by NUTS 2 regions                        | https://ec.europa.eu/eurostat/web/main/home                                               | https://ec.europa.eu/eurostat/databrowser/view/EF_LUS_MAIN__custom_2595437/default/table?lang=en                                                                                                                                                                                                                                            | Yes (EF_LUS_MAIN)                                                     | arable land + permanent crops                                                                           |                1 | Yes (EF_LUS_MAIN)         | permanent grassland                                                                                                                                                                                              | permanent grassland                                                                                                        | hectares          | -                                                                                                                                                                                                                                                                                        |
 | United States of America         |                          52 | 2017      | National Agricultural Statistics Service; United States Department of Agriculture              | 2017 Census of Agriculture                                  | https://quickstats.nass.usda.gov/                                                         | https://quickstats.nass.usda.gov/results/672B19BC-9CA0-31C9-87EA-CF2003B77557                                                                                                                                                                                                                                                               | Yes                                                                   | cropland                                                                                                |                1 | Yes                       | grassland pasture and range                                                                                                                                                                                      | grassland pasture and range                                                                                                | acres             | -                                                                                                                                                                                                                                                                                        |
-
-</div>
-</div>
 
