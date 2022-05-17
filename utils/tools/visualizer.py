@@ -21,10 +21,10 @@ CROPLAND_CMAP10 = colors.ListedColormap([
 ])
 
 PASTURE_CMAP10 = colors.ListedColormap([
-    '#C9FEC9', '#A1FFA1', '#78FF78',
-    '#57FF57', '#06FF06', '#00D400',
-    '#00A300', '#007200', '#005100',
-    '#002000'
+    '#E2FEE2', '#B9FEB9', '#78FF78',
+    '#06FF06', '#00D400', '#00A300',
+    '#007200', '#005100', '#003900',
+    '#001800'
 ])
 
 LAND_COVER_CMAP17 = colors.ListedColormap([

@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/census_processor/world.py" beforeDir="false" afterPath="$PROJECT_DIR$/census_processor/world.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/source/_static/img/FAOSTAT/cropland_FAO.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/FAOSTAT/cropland_FAO.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/source/_static/img/FAOSTAT/pasture_FAO.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/FAOSTAT/pasture_FAO.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/tools/visualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tools/visualizer.py" afterDir="false" />
