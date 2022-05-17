@@ -13,6 +13,27 @@ font = {'family': 'monospace',
 
 matplotlib.rc('font', **font)
 
+CROPLAND_CMAP10 = colors.ListedColormap([
+    '#FEDFC9', '#FFCBA9', '#FFAE78',
+    '#FF9147', '#FF7416', '#EC5F00',
+    '#BB4B00', '#923B00', '#7A3100',
+    '#491D00'
+])
+
+PASTURE_CMAP10 = colors.ListedColormap([
+    '#C9FEC9', '#A1FFA1', '#78FF78',
+    '#57FF57', '#06FF06', '#00D400',
+    '#00A300', '#007200', '#005100',
+    '#002000'
+])
+
+LAND_COVER_CMAP17 = colors.ListedColormap([
+    '#193300', '#00994C', '#CCCC00', '#CC6600', '#CCFFE5',
+    '#4C0099', '#0000CC', '#CC0000', '#FF9933', '#99FFFF',
+    '#003333', '#660033', '#000033', '#6666FF', '#FFFFCC',
+    '#E5FFCC', '#E5CCFF'
+])
+
 
 def plot_gdd_map(gdd_array, output_dir=None, nodata=-32768, cmap='viridis'):
     """
@@ -116,17 +137,13 @@ def plot_land_cover_map(land_cover_array, class_lookup, output_dir=None, nodata=
     # Remove null values
     land_cover_array[land_cover_array == nodata] = np.nan
 
-    # Default colormap
-    cmap = colors.ListedColormap(['#193300', '#00994C', '#CCCC00', '#CC6600', '#CCFFE5',
-                                  '#4C0099', '#0000CC', '#CC0000', '#FF9933', '#99FFFF',
-                                  '#003333', '#660033', '#000033', '#6666FF', '#FFFFCC',
-                                  '#E5FFCC', '#E5CCFF'])
+    # Use land cover default colormap
     boundaries = [min(class_index_list) - 0.5] + [i + 0.5 for i in class_index_list]
-    norm = colors.BoundaryNorm(boundaries, cmap.N, clip=True)
+    norm = colors.BoundaryNorm(boundaries, LAND_COVER_CMAP17.N, clip=True)
 
     # Plot
     fig, ax = plt.subplots(figsize=(18, 18))
-    im = ax.imshow(land_cover_array, cmap=cmap, norm=norm)
+    im = ax.imshow(land_cover_array, cmap=LAND_COVER_CMAP17, norm=norm)
     plt.axis('off')
 
     axins = inset_axes(ax,
