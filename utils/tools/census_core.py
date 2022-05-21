@@ -98,6 +98,17 @@ def write_census_table_to_pkl(census, file_name):
     print('File {} generated'.format(file_name))
 
 
+def load_census_table_pkl(census_path):
+    """
+    Load census table pkl file as pd.DataFrame
+
+    Args:
+        census_path (str): census table path dir
+    """
+    assert (census_path.endswith('.pkl')), "file_name has to be .pkl"
+    return load_pkl(census_path[:-len('.pkl')])
+
+
 def merge_subnation_to_world(world_census, subnational_census, bias_correct):
     """
     world_census contains global record from FAOSTAT, and subnational_census contains

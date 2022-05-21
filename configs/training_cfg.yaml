@@ -1,0 +1,15 @@
+path_dir:
+  census_table_input: 'outputs/processed_census.pkl'
+  save_model: 'models/saved_models/'  # path to save model params
+  load_model: 'models/saved_models/GBM_model_python_1653066700170_7'  # model weights to be loaded (Default: null)
+  pred_vs_ground_truth_fig: 'docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig.png'  # null
+
+model:
+  gradient_boosting_tree:
+    ntrees: 200
+    max_depth: 10
+    nfolds: 10
+    distribution: 'multinomial'
+
+# Land cover feature indices to be removed from training
+feature_remove: [17]  # []

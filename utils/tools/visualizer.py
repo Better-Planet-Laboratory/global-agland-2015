@@ -6,6 +6,7 @@ import matplotlib.colors as colors
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import cv2
 from geopandas import GeoDataFrame
+from ..metrics import *
 
 font = {'family': 'monospace',
         'weight': 'normal',
@@ -205,6 +206,64 @@ def plot_FAO_census(world_census_table, attribute, cmap, num_bins, label, output
                                           'pad': 0,
                                           'shrink': 0.3})
     ax.set_axis_off()
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+        print('File {} generated'.format(output_dir))
+
+    plt.show()
+    plt.close()
+
+
+def plot_agland_pred_vs_ground_truth(ground_truth, pred, output_dir=None):
+    """
+    Plot pred (x) vs. ground_truth (y) with a 1:1 line as reference for CROPLAND,
+    PASTURE and OTHER. Function assumes both inputs are nx3 np.array with above
+    order in place
+
+    Args:
+        ground_truth (np.array): n-by-3 array with columns CROPLAND, PASTURE, OTHER
+        pred (np.array): n-by-3 array with columns CROPLAND, PASTURE, OTHER
+        output_dir (str): output dir (Default: None)
+    """
+
+    def plot_helper(gt, pred, ax, x, m, b, title):
+        """ Helper plotter """
+        ax.scatter(pred, gt, marker='x')
+        ax.plot(x, m * x + b, c='r')
+        ax.plot(x, x, 'k-')
+        ax.set_xlabel('Prediction')
+        ax.set_ylabel('Ground Truth')
+        ax.set_title(title)
+        ax.set_xlim([0, 1])
+        ax.set_ylim([0, 1])
+
+    assert (ground_truth.ndim == pred.ndim == 2), "Input arrays must be 2D"
+    assert (ground_truth.shape[1] == pred.shape[1] == 3), \
+        "Input arrays must follow CROPLAND, PASTURE, OTHER order in columns"
+
+    # Load agland data
+    gt_cropland, gt_pasture, gt_other = ground_truth[:, 0], ground_truth[:, 1], ground_truth[:, 2]
+    pred_cropland, pred_pasture, pred_other = pred[:, 0], pred[:, 1], pred[:, 2]
+
+    # Get RMSE results
+    x_range = np.linspace(0, 1, 50)
+    m_cropland, b_cropland = np.polyfit(pred_cropland, gt_cropland, 1)
+    m_pasture, b_pasture = np.polyfit(pred_pasture, gt_pasture, 1)
+    m_other, b_other = np.polyfit(pred_other, gt_other, 1)
+
+    rmse_cropland = rmse((m_cropland * x_range + b_cropland), x_range)
+    rmse_pasture = rmse((m_pasture * x_range + b_pasture), x_range)
+    rmse_other = rmse((m_other * x_range + b_other), x_range)
+
+    # Plot results in 3 subplots
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 10))
+    plot_helper(gt_cropland, pred_cropland, ax[0], x_range, m_cropland, b_cropland,
+                'Cropland | RMSE:{}'.format(round(rmse_cropland, 4)))
+    plot_helper(gt_pasture, pred_pasture, ax[1], x_range, m_pasture, b_pasture,
+                'Pasture | RMSE:{}'.format(round(rmse_pasture, 4)))
+    plot_helper(gt_other, pred_other, ax[2], x_range, m_other, b_other,
+                'Other | RMSE:{}'.format(round(rmse_other, 4)))
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
