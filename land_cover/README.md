@@ -20,7 +20,7 @@ The output GeoTIFF file shall look like the figure above (in km^2).
 
 ![predict_input](../docs/source/_static/img/land_cover/predict_input_figure.jpg)
 
-Our model is trained on census samples but uses 20 x 20 block matrices as inputs for deployment. A histogram operator on a 20 x 20 kernel is implemented in [generate_land_cover_counts.py](https://github.com/KaiTaiTong/global-agland-2015/blob/f3fcbb7ffe302655f0d8b64a96153f00c96d843a/land_cover/generate_land_cover_counts.py), with stride 20 to convolve over MCD12Q1 product, outputing a deploy-ready pkl file. 
+Our model is trained on census samples but uses 20 x 20 block matrices as inputs for deployment. A histogram operator on a 20 x 20 kernel is implemented in [generate_land_cover_counts.py](https://github.com/KaiTaiTong/global-agland-2015/blob/cb3e591008ccdfae4c79156d5effd799b89ae509/land_cover/generate_land_cover_counts.py#L139), with stride 20 to convolve over MCD12Q1 product, outputing a deploy-ready pkl file. Note that the script needs to be run on a Nvidia GPU using CUDA, which is ~350 times faster than CPU implementation. 
 
 To run locally, do:
 ```
