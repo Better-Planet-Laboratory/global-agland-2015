@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dataset.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/tools/census_core.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tools/census_core.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/tools/visualizer.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tools/visualizer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/training_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/training_cfg.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/land_cover/generate_land_cover_counts.py" beforeDir="false" afterPath="$PROJECT_DIR$/land_cover/generate_land_cover_counts.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +42,7 @@
       <recent name="D:\Documents\LUGE_Work\global-agland-2015\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.train">
+  <component name="RunManager" selected="Python.generate_land_cover_counts">
     <configuration name="census" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="global-agland-2015" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -108,7 +106,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="generate_land_cover_figures" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="generate_land_cover_counts" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="global-agland-2015" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -116,11 +114,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/docs/source/scripts" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/land_cover" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/docs/source/scripts/generate_land_cover_figures.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/land_cover/generate_land_cover_counts.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -152,11 +150,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.generate_land_cover_counts" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.generate_FAO_figures" />
         <item itemvalue="Python.census" />
         <item itemvalue="Python.generate_global_map_figures" />
-        <item itemvalue="Python.generate_land_cover_figures" />
       </list>
     </recent_temporary>
   </component>
@@ -181,16 +179,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/utils/dataset.py</url>
-          <line>5</line>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

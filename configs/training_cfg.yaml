@@ -12,4 +12,4 @@ model:
     distribution: 'multinomial'
 
 # Land cover feature indices to be removed from training
-feature_remove: [17]  # []
+feature_remove: []  # []
