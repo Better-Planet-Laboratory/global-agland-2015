@@ -56,7 +56,7 @@ class GradientBoostingTree:
         if census_data.type == Dataset.TRAIN_TYPE:
             pred_results = pred_results.iloc[::3]
 
-        return pred_results
+        return pred_results.iloc[:, 1:]
 
     def evaluate(self, census_data, output_dir=None):
         """

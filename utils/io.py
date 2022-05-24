@@ -23,7 +23,8 @@ def load_pkl(directory):
         return pickle.load(f)
 
 
-def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4326, no_data_value=255):
+def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4326,
+                      no_data_value=255, dtype=gdal.GDT_UInt16):
     """
     TIF file contains projection transform info along with the image data
     x_min (along horizontal) indicates smallest column geo value on the left
@@ -44,6 +45,7 @@ def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4
         pixel_size (float):  pixel size in geo transform
         epsg (int): epsg in geo transform
         no_data_value (int or float): replacement for nan (Default: 255)
+        dtype (gdal dtype): data type
     """
     x_pixels, y_pixels = data_array.shape
 
@@ -53,7 +55,7 @@ def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4
 
     dataset = driver.Create(
         dst_filename,
-        y_pixels, x_pixels, 1, gdal.GDT_UInt16, )
+        y_pixels, x_pixels, 1, dtype, )
 
     dataset.SetGeoTransform((
         x_min, pixel_size, 0,

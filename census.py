@@ -1,8 +1,6 @@
 import os
 from utils import io
-from utils.tools.census_core import *
-from utils.tools.gdd_core import *
-from gdd.gdd_criteria import gdd_crop_criteria
+from utils.process.census_process import *
 from census_processor import Argentina, Australia, Austria, Belgium, Brazil, \
     Bulgaria, Canada, China, Croatia, Cyprus, Czechia, \
     Denmark, Estonia, Ethiopia, Finland, France, Germany, \

@@ -163,7 +163,8 @@ class Dataset:
             h2o_census_data['CATEGORY'] = h2o_census_data['CATEGORY'].asfactor()
 
         elif self.type == Dataset.DEPLOY_TYPE:
-            h2o_census_data = h2o.H2OFrame(self.census_table)
+            pd_census_data = self.census_table.rename(columns=self.land_cover_code, inplace=False)
+            h2o_census_data = h2o.H2OFrame(pd_census_data)
 
         else:
             raise ValueError('Unknown Dataset types')

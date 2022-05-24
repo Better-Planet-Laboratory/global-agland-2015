@@ -2,8 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/utils/process/train_process.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/land_cover/sbatch_gen_files.sh" beforeDir="false" afterPath="$PROJECT_DIR$/land_cover/sbatch_gen_files.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/census.py" beforeDir="false" afterPath="$PROJECT_DIR$/census.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/training_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/training_cfg.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/gbt.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/gbt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/io.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/io.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/tools/census_core.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/tools/census_core.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/tools/train_process.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,10 +46,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Documents\LUGE_Work\global-agland-2015\utils\process" />
       <recent name="D:\Documents\LUGE_Work\global-agland-2015\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.generate_land_cover_counts">
+  <component name="RunManager" selected="Python.train">
     <configuration name="census" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="global-agland-2015" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -149,10 +158,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.generate_land_cover_counts" />
         <item itemvalue="Python.train" />
-        <item itemvalue="Python.generate_FAO_figures" />
         <item itemvalue="Python.census" />
+        <item itemvalue="Python.generate_land_cover_counts" />
+        <item itemvalue="Python.generate_FAO_figures" />
         <item itemvalue="Python.generate_global_map_figures" />
       </list>
     </recent_temporary>

@@ -1,3 +1,0 @@
-
-
-# Load census table
