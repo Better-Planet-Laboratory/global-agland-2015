@@ -1,0 +1,17 @@
+# feature_remove [] - GBM_model_python_1653066700170_8
+# feature_remove [17] - GBM_model_python_1653066700170_7
+
+path_dir:
+  model: 'models/saved_models/GBM_model_python_1653066700170_8'  # model weights to be loaded (Default: null)
+  agland_map_output: 'outputs/agland_map_output.tif'
+  census_table_input: 'outputs/processed_census.pkl'
+
+# Land cover feature indices to be removed
+# Note: this must match model
+feature_remove: []  # []
+
+# Back correction
+post_process:
+  correction:
+    itr: 1
+    method: 'scale'

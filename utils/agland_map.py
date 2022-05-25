@@ -62,6 +62,11 @@ class AglandMap:
         else:
             self._prob_correct()
 
+        self.x_min = -180
+        self.y_max = 90
+        self.pixel_size = abs(self.x_min) * 2 / self.width
+        self.affine = rasterio.Affine(self.pixel_size, 0, self.x_min, 0, -self.pixel_size, self.y_max)
+
     def _prob_correct(self, method='scale'):
         """
         Correct agland map data by forcing each sample to be in probability distribution. Method
