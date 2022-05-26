@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/agland_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/agland_map.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/census_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/census_setting_cfg.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +44,7 @@
       <recent name="D:\Documents\LUGE_Work\global-agland-2015\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.generate_output_figures">
+  <component name="RunManager" selected="Python.deploy">
     <configuration name="census" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="global-agland-2015" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -152,10 +152,10 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.generate_output_figures" />
         <item itemvalue="Python.deploy" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.census" />
+        <item itemvalue="Python.generate_output_figures" />
         <item itemvalue="Python.generate_land_cover_counts" />
       </list>
     </recent_temporary>

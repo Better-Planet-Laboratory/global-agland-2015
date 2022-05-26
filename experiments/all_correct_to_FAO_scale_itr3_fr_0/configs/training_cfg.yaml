@@ -1,0 +1,19 @@
+path_dir:
+  inputs:
+    census_table_input: 'outputs/processed_census.pkl'
+    load_model: null  # model weights to be loaded (Default: null)
+
+  outputs:
+    save_model: 'models/saved_models/'  # path to save model params
+    pred_vs_ground_truth_fig: 'docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig.png'  # null
+
+model:
+  gradient_boosting_tree:
+    ntrees: 200
+    max_depth: 10
+    nfolds: 10
+    distribution: 'multinomial'
+
+# Land cover feature indices to be removed from training
+# Note: this must match load_model if specified
+feature_remove: []  # []
