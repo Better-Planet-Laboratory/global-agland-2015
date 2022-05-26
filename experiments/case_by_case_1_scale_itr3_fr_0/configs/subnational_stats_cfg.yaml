@@ -1,0 +1,103 @@
+path_dir:
+  Argentina: ['subnational_stats/Argentina/CNA2018_resultados_preliminares.xls']
+  Australia: ['subnational_stats/Australia/46270do002_201617.csv']
+  Austria: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Belgium: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Brazil: ['subnational_stats/Brazil/Tabela 6881.xlsx']
+  Bulgaria: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Canada: ['subnational_stats/Canada/32100406.csv']
+  China: ['subnational_stats/China/cropland.xlsx', 'subnational_stats/China/pasture.xlsx']
+  Croatia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Cyprus: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Czechia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Denmark: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Estonia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Ethiopia: ['subnational_stats/Ethiopia/Ethiopia.xlsx']
+  Finland: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  France: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Germany: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Greece: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Hungary: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  India: ['subnational_stats/India/india_subnational.xlsx']
+  Indonesia: ['subnational_stats/Indonesia/Indonesia.xlsx']
+  Ireland: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Italy: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Kazakhstan: ['subnational_stats/Kazakhstan/Kazakhstan.xlsx']
+  Latvia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Lithuania: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Luxembourg: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Malta: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Mexico: ['subnational_stats/Mexico/Tabulado_VIII_CAGyF_2.xls']
+  Mongolia: ['subnational_stats/Mongolia/Mongolia.csv']
+  Mozambique: ['subnational_stats/Mozambique/tabula-Censo Agro 2013 Pecuario 2009 2013 2010 Resultados Definitivos -2_modified.csv']
+  Namibia: ['subnational_stats/Namibia/Namibia.csv']
+  Netherlands: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Pakistan: ['subnational_stats/Pakistan/Pakistan.xlsx']
+  Poland: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Portugal: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Romania: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Russia: ['subnational_stats/Russia/Russia_translated.csv']
+  SaudiArabia: ['subnational_stats/Saudi_Arabia/extracted.xlsx']
+  Slovakia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Slovenia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  SouthAfrica: ['subnational_stats/South_Africa/tabula-Report-11-02-012017.csv']
+  Spain: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Sweden: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Tanzania: ['subnational_stats/Tanzania/tabula-Large Scale Farms Report_modified.csv']
+  Turkey: ['subnational_stats/Turkey/table.csv']
+  Uganda: ['subnational_stats/Uganda/Uganda.csv']
+  UK: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
+  Ukraine: ['subnational_stats/Ukraine/tabula-Agriculture 2015.csv']
+  USA: ['subnational_stats/USA/cropland.csv', 'subnational_stats/USA/pasture.xls']
+
+unit:
+  Argentina: 'Ha'
+  Australia: 'Ha'
+  Austria: 'Ha'
+  Belgium: 'Ha'
+  Brazil: 'Ha'
+  Bulgaria: 'Ha'
+  Canada: 'Arc'
+  China: 'Kha'
+  Croatia: 'Ha'
+  Cyprus: 'Ha'
+  Czechia: 'Ha'
+  Denmark: 'Ha'
+  Estonia: 'Ha'
+  Ethiopia: 'Ha'
+  Finland: 'Ha'
+  France: 'Ha'
+  Germany: 'Ha'
+  Greece: 'Ha'
+  Hungary: 'Ha'
+  India: 'Kha'
+  Indonesia: 'M2'
+  Ireland: 'Ha'
+  Italy: 'Ha'
+  Kazakhstan: 'Kha'
+  Latvia: 'Ha'
+  Lithuania: 'Ha'
+  Luxembourg: 'Ha'
+  Malta: 'Ha'
+  Mexico: 'Ha'
+  Mongolia: 'Ha'
+  Mozambique: 'Ha'
+  Namibia: 'Ha'
+  Netherlands: 'Ha'
+  Pakistan: 'Mha'
+  Poland: 'Ha'
+  Portugal: 'Ha'
+  Romania: 'Ha'
+  Russia: 'Kha'
+  SaudiArabia: 'Donum'
+  Slovakia: 'Ha'
+  Slovenia: 'Ha'
+  SouthAfrica: 'Ha'
+  Spain: 'Ha'
+  Sweden: 'Ha'
+  Tanzania: 'Ha'
+  Turkey: 'Ha'
+  Uganda: 'Ha'
+  UK: 'Ha'
+  Ukraine: 'Kha'
+  USA: 'Arc'

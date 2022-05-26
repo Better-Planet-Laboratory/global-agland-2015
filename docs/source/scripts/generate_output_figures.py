@@ -1,13 +1,14 @@
 import argparse
 from utils.agland_map import *
 from utils.process.post_process import *
+import os
 
 LAND_COVER_CFG = load_yaml_config('../../../configs/land_cover_cfg.yaml')
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--itr", type=int, default=0,
+    parser.add_argument("--itr", type=int, default=1,
                         help="iteration of back correction to be used")
     parser.add_argument("--output_dir", type=str, default='../_static/img/model_outputs/',
                         help="path dir to outputs")
@@ -35,13 +36,18 @@ def main():
     agland_map = load_tif_as_AglandMap(agland_map_dir, force_load=True)
 
     # Find prediction vs. ground truth before cropping out any region
-    ground_truth_collection, pred_collection = agland_map.extract_state_level_data(input_dataset)
-    np.savetxt(output_pred_vs_ground_truth_data_dir,
-               np.hstack((ground_truth_collection, pred_collection)),
-               delimiter=',')
+    if not os.path.exists(output_pred_vs_ground_truth_data_dir):
+        ground_truth_collection, pred_collection = agland_map.extract_state_level_data(input_dataset)
+        np.savetxt(output_pred_vs_ground_truth_data_dir,
+                   np.hstack((ground_truth_collection, pred_collection)),
+                   delimiter=',')
+    else:
+        load_results = np.loadtxt(output_pred_vs_ground_truth_data_dir, delimiter=',')
+        ground_truth_collection = load_results[:, 0:3]
+        pred_collection = load_results[:, 3:]
 
     # Apply water body mask and gdd filter mask on top of agland map
-    mask = make_nonagricultural_mask(args.water_body_mask_dir,
+    mask = make_nonagricultural_mask(args.water_body_dir,
                                      args.gdd_filter_map_dir,
                                      shape=(agland_map.height, agland_map.width))
     agland_map.apply_mask(mask)

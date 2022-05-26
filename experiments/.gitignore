@@ -1,0 +1,4 @@
+# Output results and trained models
+*.tif
+*.pkl
+*.hdf
