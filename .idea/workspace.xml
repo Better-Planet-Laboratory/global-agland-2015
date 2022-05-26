@@ -3,22 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configs/training_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/training_cfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_cropland.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_cropland.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_other.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_other.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_pasture.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_pasture.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_1_cropland.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_1_other.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_1_pasture.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_data_0.csv" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_data_0.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_data_1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig_0.png" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig_0.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig_1.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/saved_models/GBM_model_python_1653066700170_7" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/saved_models/GBM_model_python_1653066700170_8" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/agland_map.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/agland_map.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,16 +181,5 @@
         </entry>
       </map>
     </option>
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py</url>
-          <line>61</line>
-          <option name="timeStamp" value="3" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

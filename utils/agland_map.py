@@ -222,7 +222,7 @@ class AglandMap:
         if (np.isnan(pred_collection)).any():
             nan_removal_index = list(np.unique(np.where(np.isnan(pred_collection))[0]))
             print('Remove small regions with no data: {}'.
-                  format(list(input_dataset.census_table.iloc[nan_removal_index])))
+                  format(list(input_dataset.census_table.iloc[nan_removal_index]['STATE'])))
             pred_collection = np.delete(pred_collection, nan_removal_index, 0)
             ground_truth_collection = np.delete(ground_truth_collection, nan_removal_index, 0)
 
