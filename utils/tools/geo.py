@@ -3,6 +3,8 @@ from shapely.ops import unary_union
 from shapely.errors import ShapelyDeprecationWarning
 from shapely.geometry import mapping
 import warnings
+import rasterio
+from rasterio.mask import mask
 
 
 def polygon_union(polygon_list):
@@ -35,3 +37,34 @@ def get_border(index, shapefile):
     Returns: (list) list of independent geometry
     """
     return [mapping(shapefile.iloc[index].geometry)]
+
+
+def crop_intermediate_state(array, affine, input_dataset, index, crop=False):
+    """
+    Crop index of input_dataset state on array with affine, return a
+    cropped matrix with nodata to be -1
+
+    Args:
+        array (np.array): 2D map
+        affine (affine.Affine): transform
+        input_dataset (Dataset): input census dataset to be matched to
+        index (int): index in census table
+        crop (bool): crop (Default: False)
+
+    Returns: (np.array)
+    """
+    # Load numpy array as rasterio.Dataset from memory directly
+    with rasterio.io.MemoryFile() as memfile:
+        with memfile.open(driver='GTiff',
+                          height=array.shape[0],
+                          width=array.shape[1],
+                          count=1,
+                          dtype=array.dtype,
+                          transform=affine) as dataset:
+            dataset.write(array, 1)
+
+        with memfile.open() as dataset:
+            out, _ = mask(dataset, get_border(index, input_dataset.census_table),
+                          crop=crop, nodata=-1)
+
+    return out[0]

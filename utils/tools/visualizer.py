@@ -28,6 +28,13 @@ PASTURE_CMAP10 = colors.ListedColormap([
     '#001800'
 ])
 
+OTHER_CMAP10 = colors.ListedColormap([
+    '#c4c4c4', '#a0a0a0', '#8e8e8e',
+    '#7c7c7c', '#6b6b6b', '#595959',
+    '#474747', '#353535', '#232323',
+    '#000000'
+])
+
 LAND_COVER_CMAP17 = colors.ListedColormap([
     '#193300', '#00994C', '#CCCC00', '#CC6600', '#CCFFE5',
     '#4C0099', '#0000CC', '#CC0000', '#FF9933', '#99FFFF',
@@ -168,6 +175,48 @@ def plot_land_cover_map(land_cover_array, class_lookup, output_dir=None, nodata=
     plt.close()
 
 
+def plot_agland_map_slice(array, type, output_dir=None):
+    """ """
+
+    assert (type in ['cropland', 'pasture', 'other']), "Unknown type input matrix"
+    # Default settings for agland map (cropland, pasture, other)
+    max_val = 1
+    min_val = 0
+    num_bins = 10
+    bins = [i for i in np.arange(min_val, max_val, (max_val-min_val)/num_bins)] + [max_val]
+    norm = colors.BoundaryNorm(bins, num_bins, clip=True)
+
+    if type == 'cropland':
+        cmap = CROPLAND_CMAP10
+    elif type == 'pasture':
+        cmap = PASTURE_CMAP10
+    elif type == 'other':
+        cmap = OTHER_CMAP10
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(18, 18))
+    im = ax.imshow(array, cmap=cmap, norm=norm)
+    plt.axis('off')
+
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_transform=ax.transAxes,
+                       borderpad=0
+                       )
+    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
+    cbar.ax.tick_params(labelsize=10.5)
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+        print('File {} generated'.format(output_dir))
+
+    plt.show()
+    plt.close()
+
+
 def plot_FAO_census(world_census_table, attribute, cmap, num_bins, label, output_dir=None):
     """
     Plot FAO census map from world census table. Input attribute indicates whether to
@@ -176,7 +225,7 @@ def plot_FAO_census(world_census_table, attribute, cmap, num_bins, label, output
 
     Args:
         world_census_table (pd): pd world census table with geometry
-        attribute (str): CROPLAND or PASTURE
+        attribute (str): 'CROPLAND' or 'PASTURE'
         cmap (str): matplolib cmap
         num_bins (int): number of bins
         label (str): label for colorbar

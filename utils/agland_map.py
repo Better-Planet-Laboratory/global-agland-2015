@@ -2,6 +2,10 @@ import numpy as np
 from scipy.special import softmax
 from osgeo import gdal, osr
 import rasterio
+from utils.tools.visualizer import *
+from utils.dataset import *
+from utils.tools.geo import crop_intermediate_state
+from tqdm import tqdm
 
 
 def load_tif_as_AglandMap(input_dir, force_load=False):
@@ -37,6 +41,11 @@ class AglandMap:
         """
         Constructor that takes cropland, pasture and other probability map that makes
         an agland map
+
+        Note:
+            Sometimes input cropland, pasture and other do not sum to 1 due to numerical
+            error. Current suggestion is to turn force_load on when loading, but make
+            sure the error is small enough to be neglected
 
         Args:
             cropland_array (np.array): 2D matrix for cropland probability
@@ -152,6 +161,73 @@ class AglandMap:
         # Correct the updated values to probability distribution
         self._prob_correct(correction_method)
 
+    def apply_mask(self, mask):
+        """
+        Apply a boolean mask on top of agland map for all 3 channels, removed values are represented
+        as np.nan
+
+        Args:
+            mask (np.array): boolean mask
+        """
+        assert (mask.ndim == 2), "Input mask must be 2D"
+        assert ((mask.shape[0] == self.height) and (mask.shape[1] == self.width)), \
+            "Mask must have same size as data"
+
+        mask = mask.astype(np.float32)
+        mask[np.where(mask == 0)] = np.nan
+        self.data[:, :, AglandMap.CROPLAND_IDX] *= mask
+        self.data[:, :, AglandMap.PASTURE_IDX] *= mask
+        self.data[:, :, AglandMap.OTHER_IDX] *= mask
+
+    def extract_state_level_data(self, input_dataset):
+        """
+        Extract state level results for cropland, pasture and other into a n-by-3 array. States are
+        defined with geometry in input_dataset
+
+        Args:
+            input_dataset (Dataset): input census dataset
+
+        Returns (tuple of np.array): (n-by-3 array ground truth, n-by-3 array extracted)
+        """
+        num_samples = len(input_dataset.census_table)
+        ground_truth_collection = np.zeros((num_samples, 3))
+        pred_collection = np.zeros((num_samples, 3))
+
+        for i in tqdm(range(num_samples)):
+            out_cropland = crop_intermediate_state(self.get_cropland(), self.affine, input_dataset, i, crop=True)
+            out_pasture = crop_intermediate_state(self.get_pasture(), self.affine, input_dataset, i, crop=True)
+            out_other = crop_intermediate_state(self.get_other(), self.affine, input_dataset, i, crop=True)
+
+            ground_truth_cropland = input_dataset.census_table.iloc[i]['CROPLAND_PER']
+            ground_truth_pasture = input_dataset.census_table.iloc[i]['PASTURE_PER']
+            ground_truth_other = input_dataset.census_table.iloc[i]['OTHER_PER']
+
+            mean_pred_cropland = np.nanmean(out_cropland[np.where(out_cropland != -1)])
+            mean_pred_pasture = np.nanmean(out_pasture[np.where(out_pasture != -1)])
+            mean_pred_other = np.nanmean(out_other[np.where(out_other != -1)])
+
+            ground_truth_collection[i, :] = np.asarray([ground_truth_cropland,
+                                                        ground_truth_pasture,
+                                                        ground_truth_other]).reshape(1, -1)
+
+            pred_collection[i, :] = np.asarray([mean_pred_cropland,
+                                                mean_pred_pasture,
+                                                mean_pred_other]).reshape(1, -1)
+
+        # It is possible (due to different resolution of two inputs) that
+        # cropped state level regions are not seen in the agland map, which will yield empty
+        # slice when computing mean values. For these samples, the area of the regions are
+        # usually too small. Therefore, we remove all of such samples to avoid misleading info
+        # during analysis
+        if (np.isnan(pred_collection)).any():
+            nan_removal_index = list(np.unique(np.where(np.isnan(pred_collection))[0]))
+            print('Remove small regions with no data: {}'.
+                  format(list(input_dataset.census_table.iloc[nan_removal_index])))
+            pred_collection = np.delete(pred_collection, nan_removal_index, 0)
+            ground_truth_collection = np.delete(ground_truth_collection, nan_removal_index, 0)
+
+        return ground_truth_collection, pred_collection
+
     def save_as_tif(self, output_dir):
         """
         Save AglandMap obj as a GeoTIFF file, with RasterBand cropland, pasture and other. Projection
@@ -184,3 +260,14 @@ class AglandMap:
         dataset.SetProjection(srs.ExportToWkt())
         dataset.FlushCache()  # Write to disk
         print('{} saved'.format(output_dir))
+
+    def plot(self, output_dir=None):
+        """
+        Plot cropland, pasture and other map with default visualizer
+
+        Args:
+            output_dir (str): output dir (Default: None)
+        """
+        plot_agland_map_slice(self.get_cropland(), 'cropland', output_dir + 'cropland.png')
+        plot_agland_map_slice(self.get_pasture(), 'pasture', output_dir + 'pasture.png')
+        plot_agland_map_slice(self.get_other(), 'other', output_dir + 'other.png')

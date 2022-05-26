@@ -1,3 +1,4 @@
 # Land Cover data
 *.tif
 *.pkl
+*.hdf

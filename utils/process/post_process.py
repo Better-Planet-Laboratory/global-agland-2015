@@ -2,42 +2,36 @@ import rasterio.io
 
 from ..dataset import *
 from ..agland_map import *
-from rasterio.mask import mask
 from tqdm import tqdm
-from utils.tools.geo import get_border
 from utils.io import *
 from models import gbt
 from utils.tools.census_core import load_census_table_pkl
+from utils.tools.geo import crop_intermediate_state
 
 
-def crop_intermediate_state(array, affine, input_dataset, index):
+def make_nonagricultural_mask(water_body_mask_dir, gdd_filter_map_dir, shape):
     """
-    Crop index of input_dataset state on array with affine, return a
-    cropped matrix with nodata to be -1
+    Generate a non-agricultural boolean mask by merging water_body_mask and gdd_filter_map,
+    both mask shall indicate 0 as non-agricultural regions and 1 otherwise
 
     Args:
-        array (np.array): 2D map
-        affine (affine.Affine): transform
-        input_dataset (Dataset): input census dataset to be matched to
-        index (int): index in census table
+        water_body_mask_dir (str): path directory to water body mask tif file
+        gdd_filter_map_dir (str): path directory to gdd filter map tif file
+        shape (tuple): (height, width) of the output mask shape
 
-    Returns: (np.array)
+    Returns: (np.array) 2D boolean mask matrix
     """
-    # Load numpy array as rasterio.Dataset from memory directly
-    with rasterio.io.MemoryFile() as memfile:
-        with memfile.open(driver='GTiff',
-                          height=array.shape[0],
-                          width=array.shape[1],
-                          count=1,
-                          dtype=array.dtype,
-                          transform=affine) as dataset:
-            dataset.write(array, 1)
+    # Load maps
+    water_body_mask_map = rasterio.open(water_body_mask_dir).read(1)
+    gdd_filter_map = rasterio.open(gdd_filter_map_dir).read(1)
 
-        with memfile.open() as dataset:
-            out, _ = mask(dataset, get_border(index, input_dataset.census_table),
-                          crop=False, nodata=-1)
+    # Resize two maps to match the input shape
+    # Use nearest neighbors as interpolation method
+    water_body_mask_map_scaled = cv2.resize(water_body_mask_map, dsize=(shape[1], shape[0]),
+                                            interpolation=cv2.INTER_NEAREST)
+    gdd_filter_map_scaled = cv2.resize(gdd_filter_map, dsize=(shape[1], shape[0]), interpolation=cv2.INTER_NEAREST)
 
-    return out[0]
+    return np.multiply(water_body_mask_map_scaled, gdd_filter_map_scaled)
 
 
 def apply_back_correction_to_agland_map(input_dataset, agland_map, correction_method='scale'):
