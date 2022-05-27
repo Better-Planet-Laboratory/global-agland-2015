@@ -37,7 +37,7 @@ Direct performance of model could be illustrated by prediction vs. ground truth 
 
 | all_correct_to_FAO_scale_itr3_fr_0  | all_correct_to_subnation_scale_itr3_fr_0  | case_by_case_1_scale_itr3_fr_0  |
 |---|---|---|
-|  ![raw_perf1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) |   | ![raw_perf3](../docs/source/_static/img/model_outputs/case_by_case_1_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) |
+| ![raw_perf1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) | ![raw_perf2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) | ![raw_perf3](../docs/source/_static/img/model_outputs/case_by_case_1_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) |
 
 
 ## Deployment and Back Correction 
@@ -57,10 +57,10 @@ Since we are doing grid level prediction during deployment (20-by-20 kernel) and
 #### Order (top-down): Cropland, Pasture, Other, Performance
 | iter 0  | iter 1 | iter 2 | iter 3 |
 |---|---|---|---|
-|   |   |   |   |
-|   |   |   |   |
-|   |   |   |   |
-|   |   |   |   |
+| ![cropland_map_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_0_cropland.png)  | ![cropland_map_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_1_cropland.png)  | ![cropland_map_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_2_cropland.png) | ![cropland_map_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_3_cropland.png) |
+| ![pasture_map_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_0_pasture.png)  | ![pasture_map_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_1_pasture.png)  | ![pasture_map_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_2_pasture.png) | ![pasture_map_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_3_pasture.png) |
+| ![other_map_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_0_other.png)  | ![other_map_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_1_other.png)  | ![other_map_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_2_other.png) | ![other_map_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_3_other.png) |
+| ![perf_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig_0.png)  | ![perf_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig_1.png)  | ![perf_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig_2.png)  | ![perf_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig_3.png) |
 
 
 ### *case_by_case_1_scale_itr3_fr_0*
