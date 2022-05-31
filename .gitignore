@@ -137,3 +137,6 @@ shapefile/
 
 # output dir
 outputs/
+
+# MacOS
+.DS_Store
