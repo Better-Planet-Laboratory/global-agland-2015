@@ -183,7 +183,7 @@ def plot_agland_map_slice(array, type, output_dir=None):
     max_val = 1
     min_val = 0
     num_bins = 10
-    bins = [i for i in np.arange(min_val, max_val, (max_val-min_val)/num_bins)] + [max_val]
+    bins = [i for i in np.arange(min_val, max_val, (max_val - min_val) / num_bins)] + [max_val]
     norm = colors.BoundaryNorm(bins, num_bins, clip=True)
 
     if type == 'cropland':
@@ -317,6 +317,194 @@ def plot_agland_pred_vs_ground_truth(ground_truth, pred, output_dir=None):
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
         print('File {} generated'.format(output_dir))
+
+    plt.show()
+    plt.close()
+
+
+def plot_geowiki_cropland(geowiki_cropland_by_index, output_dir=None):
+    """
+    Scatter plots of geowiki cropland data. Input geowiki_cropland_by_index
+    is a 2D array with 3 columns, respectively index_x, index_y, cropland (100%)
+
+    Args:
+        geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
+        output_dir (str): output dir (Default: None)
+    """
+    fig, ax = plt.subplots(figsize=(18, 8))
+    max_val = 1
+    min_val = 0
+    num_bins = 10
+    bins = [i for i in np.arange(min_val, max_val, (max_val - min_val) / num_bins)] + [max_val]
+    norm = colors.BoundaryNorm(bins, num_bins, clip=True)
+    im = plt.scatter(geowiki_cropland_by_index[:, 1], geowiki_cropland_by_index[:, 0],
+                     c=geowiki_cropland_by_index[:, 2] / 100, cmap=CROPLAND_CMAP10, norm=norm, s=1)
+    plt.axis('off')
+
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_transform=ax.transAxes,
+                       borderpad=0
+                       )
+    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
+    cbar.ax.tick_params(labelsize=11.5)
+    ax.invert_yaxis()
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+
+    plt.show()
+    plt.close()
+
+
+def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred_results, output_dir=None):
+    """
+    Scatter plot of (geowiki-geowiki_cropland_by_index) cropland map, with nan removed.
+    pred_results is the prediction results (in [0, 1]) that corresponds to
+    geowiki_cropland_by_index indices
+
+    Args:
+        geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
+        pred_results (np.array): 1D array of prediction results correspond to
+                                 geowiki_cropland_by_index indices
+        output_dir (str): output dir (Default: None)
+    """
+    assert (pred_results.ndim == 1), "Prediction results array must be 1D"
+    assert (pred_results.shape[0] == geowiki_cropland_by_index.shape[0]), \
+        "Prediction results array must be same size as geowiki cropland data"
+    assert ((np.nanmax(pred_results) <= 1) and (np.nanmin(pred_results) >= 0)), \
+        "Prediction results array must be in [0, 1]"
+
+    # Get nan indices in pred_results
+    nan_index = np.isnan(pred_results)
+
+    # Difference map between Geowiki and pred
+    # Note: to make the plot consistent with ones without having any nan,
+    #       we need to temporarily assign 0 to geowiki reference, instead of
+    #       removing the nan samples
+    geowiki_cropland_by_index[nan_index] = 0
+    pred_results[nan_index] = 0
+    diff = geowiki_cropland_by_index[:, 2] / 100 - pred_results
+
+    fig, ax = plt.subplots(figsize=(18, 8))
+    im = plt.scatter(geowiki_cropland_by_index[:, 1], geowiki_cropland_by_index[:, 0],
+                     c=diff, cmap='bwr', vmin=-1, vmax=1, s=1)
+    plt.axis('off')
+
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_transform=ax.transAxes,
+                       borderpad=0
+                       )
+    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
+    cbar.ax.tick_params(labelsize=11.5)
+    ax.invert_yaxis()
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+
+    plt.show()
+    plt.close()
+
+
+def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred_results, output_dir=None):
+    """
+    Histogram plot of (geowiki-pred_results), with nan removed in pred_results
+
+    Args:
+        geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
+        pred_results (np.array): 1D array of prediction results correspond to
+                                 geowiki_cropland_by_index indices
+        output_dir (str): output dir (Default: None)
+    """
+    # Get nan indices in pred_results
+    nan_index = np.isnan(pred_results)
+
+    # Compute difference map between Geowiki and pred
+    diff = geowiki_cropland_by_index[~nan_index, 2] / 100 - pred_results[~nan_index]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plt.text(-0.85, 15000, r'$\mu={}$'.format(np.round(np.mean(diff), 4)))
+    plt.text(-0.85, 13000, r'$\sigma={}$'.format(np.round(np.std(diff), 4)))
+    plt.xlim(-1, 1)
+    plt.hist(diff)
+    plt.xlabel('Geowiki - Prediction')
+    plt.ylabel('Frequency (#)')
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+
+    plt.show()
+    plt.close()
+
+
+def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
+    """
+    Plot of difference between maryland cropland and prediction cropland
+
+    Args:
+        maryland_map (np.array): 2D array map of maryland cropland (reprojected to match agland)
+        pred_map (np.array): 2D array map of predicted cropland
+        output_dir (str): output dir (Default: None)
+    """
+    assert (maryland_map.shape == pred_map.shape), "Input maps must have same shape"
+
+    # Compute difference
+    diff = maryland_map / 100 - pred_map
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(18, 8))
+    im = plt.imshow(diff, cmap='bwr', vmin=-1, vmax=1)
+    plt.axis('off')
+
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_transform=ax.transAxes,
+                       borderpad=0
+                       )
+    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
+    cbar.ax.tick_params(labelsize=11.5)
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+
+    plt.show()
+    plt.close()
+
+
+def plot_histogram_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
+    """
+    Histogram plot of (maryland_map-pred_map)
+
+    Args:
+        maryland_map (np.array): 2D array map of maryland cropland (reprojected to match agland)
+        pred_map (np.array): 2D array map of predicted cropland
+        output_dir (str): output dir (Default: None)
+    """
+    assert (maryland_map.shape == pred_map.shape), "Input maps must have same shape"
+
+    # Compute difference
+    diff = maryland_map / 100 - pred_map
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    plt.text(-0.85, 1800000, r'$\mu={}$'.format(np.round(np.nanmean(diff), 4)))
+    plt.text(-0.85, 1550000, r'$\sigma={}$'.format(np.round(np.nanstd(diff), 4)))
+    plt.xlim(-1, 1)
+    plt.hist(diff.flatten())
+    plt.xlabel('Maryland - Prediction')
+    plt.ylabel('Frequency (#)')
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
 
     plt.show()
     plt.close()
