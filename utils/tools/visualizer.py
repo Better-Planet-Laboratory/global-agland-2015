@@ -21,11 +21,25 @@ CROPLAND_CMAP10 = colors.ListedColormap([
     '#491D00'
 ])
 
+CROPLAND_CMAP10_OUTLIER2 = colors.ListedColormap([
+    '#D4D4D4', '#5D5D5D', '#FEDFC9',
+    '#FFCBA9', '#FFAE78', '#FF9147',
+    '#FF7416', '#EC5F00', '#BB4B00',
+    '#923B00', '#7A3100', '#491D00'
+])
+
 PASTURE_CMAP10 = colors.ListedColormap([
     '#E2FEE2', '#B9FEB9', '#78FF78',
     '#06FF06', '#00D400', '#00A300',
     '#007200', '#005100', '#003900',
     '#001800'
+])
+
+PASTURE_CMAP10_OUTLIER2 = colors.ListedColormap([
+    '#D4D4D4', '#5D5D5D', '#E2FEE2',
+    '#B9FEB9', '#78FF78', '#06FF06',
+    '#00D400', '#00A300', '#007200',
+    '#005100', '#003900', '#001800'
 ])
 
 OTHER_CMAP10 = colors.ListedColormap([
@@ -258,6 +272,92 @@ def plot_FAO_census(world_census_table, attribute, cmap, num_bins, label, output
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
+        print('File {} generated'.format(output_dir))
+
+    plt.show()
+    plt.close()
+
+
+def plot_merged_census(census_table, marker, output_dir=None):
+    """
+    Plot merged census map generated from pipeline. Input census_table must have
+    CROPLAND and PASTURE attributes, with 2 marker values indicating states filtered
+    by the 2 filers, namely nan_filter and gdd_filter
+
+    Args:
+        census_table (pd): pd census table with geometry
+        marker (dict): (str) -> (int) indicators for filtered samples
+        output_dir (str): output dir (Default: None)
+    """
+    # Flip marker
+    marker_flipped = {v: k for k, v in marker.items()}
+
+    # Convert pd DataFrame to GeoDataFrame
+    geo_census = GeoDataFrame(census_table)
+
+    # Get min and max of values
+    cropland_max_val = max(geo_census['CROPLAND'].to_list())
+    cropland_min_val = sorted(set(geo_census['CROPLAND'].to_list()))[len(marker)]
+    num_bins = 10
+    cropland_bins = [i for i in np.arange(cropland_min_val, cropland_max_val, (cropland_max_val - cropland_min_val) /
+                                          (num_bins - 1))] + [cropland_max_val]
+    nan_cropland_bins = sorted(list(marker.values())) + cropland_bins
+    nan_cropland_bins = [int(i) for i in nan_cropland_bins]  # only in FAO (values are in kHa, not %)
+
+    # Plot
+    ax = geo_census.plot(column='CROPLAND',
+                         edgecolor='black',
+                         legend=True,
+                         figsize=(20, 20),
+                         cmap=CROPLAND_CMAP10_OUTLIER2,
+                         norm=colors.BoundaryNorm(nan_cropland_bins, len(nan_cropland_bins)),
+                         legend_kwds={'label': 'CROPLAND (kHa)',
+                                      'orientation': 'vertical',
+                                      'pad': 0,
+                                      'shrink': 0.3,
+                                      'ticks': nan_cropland_bins})
+    ax.set_axis_off()
+
+    # Trick from stackoverflow to edit legend tick labels
+    colourbar = ax.get_figure().get_axes()[1]
+    colourbar.set_yticklabels(
+        [marker_flipped[i] for i in nan_cropland_bins[0:len(marker)]] + nan_cropland_bins[len(marker):])
+
+    if output_dir is not None:
+        plt.savefig(output_dir + '/cropland_census_input.png', format='png', bbox_inches='tight')
+        print('File {} generated'.format(output_dir))
+
+    plt.show()
+    plt.close()
+
+    # Get min and max of values
+    pasture_max_val = max(geo_census['PASTURE'].to_list())
+    pasture_min_val = sorted(set(geo_census['PASTURE'].to_list()))[len(marker)]
+    num_bins = 10
+    pasture_bins = [i for i in np.arange(pasture_min_val, pasture_max_val, (pasture_max_val - pasture_min_val) /
+                                         (num_bins - 1))] + [pasture_max_val]
+    nan_pasture_bins = sorted(list(marker.values())) + pasture_bins
+    nan_pasture_bins = [int(i) for i in nan_pasture_bins]  # only in FAO (values are in kHa, not %)
+
+    # Plot
+    ax = geo_census.plot(column='PASTURE',
+                         edgecolor='black',
+                         legend=True,
+                         figsize=(20, 20),
+                         cmap=PASTURE_CMAP10_OUTLIER2,
+                         norm=colors.BoundaryNorm(nan_pasture_bins, len(nan_pasture_bins)),
+                         legend_kwds={'label': 'PASTURE (kHa)',
+                                      'orientation': 'vertical',
+                                      'pad': 0,
+                                      'shrink': 0.3,
+                                      'ticks': nan_pasture_bins})
+    ax.set_axis_off()
+
+    colourbar = ax.get_figure().get_axes()[1]
+    colourbar.set_yticklabels(
+        [marker_flipped[i] for i in nan_pasture_bins[0:len(marker)]] + nan_pasture_bins[len(marker):])
+    if output_dir is not None:
+        plt.savefig(output_dir + '/pasture_census_input.png', format='png', bbox_inches='tight')
         print('File {} generated'.format(output_dir))
 
     plt.show()

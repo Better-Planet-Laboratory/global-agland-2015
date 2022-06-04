@@ -230,9 +230,7 @@ class World:
         Args:
             census_table (pd): dataframe must contain attributes
                                ['STATE', 'CROPLAND', 'PASTURE', 'GID_0', 'REGIONS', 'geometry']
-                               with no duplicated entries
         """
-        assert (not World.has_duplicates(census_table)), 'Duplicated STATE found'
         assert (set(census_table.columns.values) ==
                 {'CROPLAND', 'GID_0', 'PASTURE', 'REGIONS', 'STATE', 'geometry'}), 'Attributes mismatch'
         self.census_table = census_table
