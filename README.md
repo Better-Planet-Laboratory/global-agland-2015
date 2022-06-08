@@ -34,7 +34,7 @@ A visualization of the census inputs is also provided below.
 ![merged_census_input_pasture](./docs/source/_static/img/census/pasture_census_input.png)
 
 ### Train
-All training related configs could be found under ```/configs/training_cfg.yaml```. Note that one could also enable feature selection by specifying features to be removed. Removing a feature in land cover type does not simply remove it, instead a factor of $1/(1-[removed\_class\_sum])$ is applied to the remaining features to maintain the property of probability distribution. All implementation details could be found [here](./utils/process/train_process.py). We use a gradient boosting tree with cross-validation as our model, and to start training, run:
+All training related configs could be found under ```/configs/training_cfg.yaml```. Note that one could also enable feature selection by specifying features to be removed. Removing a feature in land cover type does not simply remove it, instead a factor of 1/(1-[removed_class_sum]) is applied to the remaining features to maintain the property of probability distribution. All implementation details could be found [here](./utils/process/train_process.py). We use a gradient boosting tree with cross-validation as our model, and to start training, run:
 ```
 python train.py
 ```
