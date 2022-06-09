@@ -3,10 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/all_correct_to_FAO_scale_itr3_fr_0/configs/deploy_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/all_correct_to_FAO_scale_itr3_fr_0/configs/deploy_setting_cfg.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/all_correct_to_subnation_scale_itr3_fr_0/configs/deploy_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/all_correct_to_subnation_scale_itr3_fr_0/configs/deploy_setting_cfg.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

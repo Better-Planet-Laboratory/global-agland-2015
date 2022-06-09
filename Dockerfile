@@ -9,18 +9,6 @@ RUN curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py --force-reinstall && \
     rm get-pip.py
 
-# RUN apt-get update && \
-#     DEBIAN_FRONTEND=noninteractive \
-#     apt-get -y install default-jre-headless && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/*
-
-# RUN DEBIAN_FRONTEND=noninteractive \
-#     apt-get -y install default-jre-headless
-#     #  && \
-#     # apt-get clean && \
-#     # rm -rf /var/lib/apt/lists/*
-
 RUN apt-get install -y \
     build-essential \
     python-all-dev \
@@ -38,8 +26,6 @@ RUN apt-get install -y \
     libsm6 \
     libxext6 \
     default-jre-headless
-    # openjdk-17-jdk \
-    # openjdk-17-jre
 
 RUN curl https://download.osgeo.org/proj/proj-8.2.1.tar.gz | tar -xz &&\
     cd proj-8.2.1 &&\
@@ -56,9 +42,6 @@ RUN ./configure --with-python --with-pg --with-geos &&\
     make && \
     make install && \
     ldconfig
-
-# RUN export CPLUS_INCLUDE_PATH=/usr/include/gdal
-# RUN export C_INCLUDE_PATH=/usr/include/gdal
 
 WORKDIR /global-agland-2015/
 RUN python -m pip install --upgrade pip
