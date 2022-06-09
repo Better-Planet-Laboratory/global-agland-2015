@@ -19,5 +19,5 @@ We use [FAOSTAT data for Land Use](https://www.fao.org/faostat/en/#data/RL) as o
 * YEARS:
   * ```2013``` - ```2017```
 
-The output csv could also be found [here](https://github.com/KaiTaiTong/global-agland-2015/blob/6f59478ad30f365967cb52f48662b6370dfe1028/FAOSTAT_data/FAOSTAT_data_11-14-2020.csv). The raw FAOSTAT census data maps for both cropland and pasture are shown in the figures above for illustration. 
+The output csv could also be found under [FAOSTAT_data](./FAOSTAT_data_11-14-2020.csv). The raw FAOSTAT census data maps for both cropland and pasture are shown in the figures above for illustration. We also include another csv [FAOcountryProfile](./FAOcountryProfileUTF8_withregions.csv) for code and name matching in the pipeline.
 
