@@ -1,19 +1,5 @@
 FROM ubuntu:18.04
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN mkdir -p /usr/share/man/man1 /usr/share/man/man2
-
-RUN apt-get update && \
-apt-get install -y --no-install-recommends \
-        openjdk-11-jre
-
-# Prints installed java version, just for checking
-RUN java --version
-
-
-
-
 RUN apt-get update && apt-get upgrade -y && apt-get clean
 RUN apt-get install -y curl python3.7 python3.7-dev python3.7-distutils
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1
@@ -22,6 +8,18 @@ RUN update-alternatives --set python /usr/bin/python3.7
 RUN curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
     python get-pip.py --force-reinstall && \
     rm get-pip.py
+
+# RUN apt-get update && \
+#     DEBIAN_FRONTEND=noninteractive \
+#     apt-get -y install default-jre-headless && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/*
+
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get -y install default-jre-headless
+    #  && \
+    # apt-get clean && \
+    # rm -rf /var/lib/apt/lists/*
 
 RUN apt-get install -y \
     build-essential \

@@ -2,7 +2,7 @@
 This project is a continuation and update in methodology of the work from [Ramankutty et al. (2008)](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2007GB002952), where we combine subnational level census data and FAOSTAT to develop a global spatial dataset of croplands and pastures on a graticule of 5 arcminutes (~10 $km^2$ at the equator) for supporting a huge variety of research topics, from land use, food security to climate change and biodiversity loss. This repo includes a full set of replicable code for reproduction, modification and testing.
 
 ### Data Sources and Processing
-- [FAOSTAT](FAOSTAT_DATA/README.md)
+- [FAOSTAT](FAOSTAT_data/README.md)
 - [Subnational Census](subnational_stats/README.md)
 - [GDD](gdd/README.md)
 - [Land Cover](land_cover/README.md)
