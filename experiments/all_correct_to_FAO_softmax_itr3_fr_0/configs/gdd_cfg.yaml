@@ -1,0 +1,19 @@
+path_dir:
+  GDD_xyz: 'gdd/gdd.xyz.txt'
+  GDD_filter_map: 'gdd/gdd_filter_map_360x720.tif'
+  GDD_mask_index: 'gdd/gdd_mask_index.csv'
+
+setting:
+  GDD_xyz:
+    shape: [360, 720]
+    grid_size: 0.5
+
+  GDD_filter_map:
+    x_min: -180
+    y_max: 90
+    grid_size: 0.5
+    epsg: 4326
+
+  GDD_mask_index:
+    grid_size: 0.08333333333333333
+    shape: [2160, 4320]

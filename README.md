@@ -42,7 +42,7 @@ python train.py
 ```
 
 ### Deployment
-During deployment, we use 20 x 20 block matrices as inputs for our model (detailed process is explained under [Prediction Input and Aggregation](./land_cover/README.md#prediction-input-and-aggregation)). Deployment configs could be modified under ```/configs/deploy_setting_cfg.yaml```, but needs to be consistent with the settings used for trained model, and the post processing implementation is [here](./utils/process/post_process.py). To run deployment to get the final agland map, run:
+During deployment, we use 20 x 20 block matrices as inputs for our model (detailed process is explained under [Prediction Input and Aggregation](./land_cover/README.md#prediction-input-and-aggregation)). Deployment configs could be modified under ```/configs/deploy_setting_cfg.yaml```, but needs to be consistent with the settings used for trained model (e.g. ```[path_dir][model]``` and ```[feature_remove]```). Make sure correct model and correct path of the model are loaded. Post processing implementation could be found [here](./utils/process/post_process.py). To run deployment to get the final agland map, run:
 ```
 python deploy.py
 ```
