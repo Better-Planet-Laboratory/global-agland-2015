@@ -13,7 +13,10 @@ This project is a continuation and update in methodology of the work from [Raman
 
 ### Requirements
 - Option 1 - PIP
-  - pip install [requirements.txt](requirements.txt) 
+  - Windows users might want to consider using pre-built wheel binary from [Christoph Gohlke](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
+    - pip install package_downloaded.whl
+  - Ubuntu users can run the following requirements directly
+    - pip install [requirements.txt](requirements.txt) 
 - Option 2 - Docker
   - [Dockerfile](Dockerfile)
 

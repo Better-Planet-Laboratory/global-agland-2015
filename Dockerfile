@@ -15,11 +15,11 @@ RUN curl -s https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
 #     apt-get clean && \
 #     rm -rf /var/lib/apt/lists/*
 
-RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get -y install default-jre-headless
-    #  && \
-    # apt-get clean && \
-    # rm -rf /var/lib/apt/lists/*
+# RUN DEBIAN_FRONTEND=noninteractive \
+#     apt-get -y install default-jre-headless
+#     #  && \
+#     # apt-get clean && \
+#     # rm -rf /var/lib/apt/lists/*
 
 RUN apt-get install -y \
     build-essential \
@@ -36,7 +36,8 @@ RUN apt-get install -y \
     pkg-config \
     ffmpeg \
     libsm6 \
-    libxext6 
+    libxext6 \
+    default-jre-headless
     # openjdk-17-jdk \
     # openjdk-17-jre
 
