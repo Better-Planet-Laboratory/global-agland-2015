@@ -47,6 +47,13 @@ During deployment, we use 20 x 20 block matrices as inputs for our model (detail
 python deploy.py
 ```
 
+### Output Figures
+All visualization scripts are placed under ```/docs/source/scripts/```. Make sure the project path ```${workspaceFolder}``` is added to the PYTHONPATH, then run:
+```
+cd docs/source/scripts/
+python SCRIPT_TO_RUN [FLAG] [ARG]
+```
+
 ### Citation
 ```
 ```

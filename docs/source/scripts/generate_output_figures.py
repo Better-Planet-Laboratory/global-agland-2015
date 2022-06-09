@@ -8,7 +8,7 @@ LAND_COVER_CFG = load_yaml_config('../../../configs/land_cover_cfg.yaml')
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--itr", type=int, default=0,
+    parser.add_argument("--itr", type=int, default=2,
                         help="iteration of back correction to be used")
     parser.add_argument("--output_dir", type=str, default='../_static/img/model_outputs/',
                         help="path dir to outputs")
