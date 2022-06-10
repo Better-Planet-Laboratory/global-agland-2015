@@ -5,10 +5,9 @@ import os
 
 LAND_COVER_CFG = load_yaml_config('../../../configs/land_cover_cfg.yaml')
 
-
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--itr", type=int, default=2,
+    parser.add_argument("--itr", type=int, default=1,
                         help="iteration of back correction to be used")
     parser.add_argument("--output_dir", type=str, default='../_static/img/model_outputs/',
                         help="path dir to outputs")
@@ -21,7 +20,7 @@ def main():
     args = parser.parse_args()
     print(args)
 
-    # Set default path directory=
+    # Set default path directory
     agland_map_dir = '../../../outputs/agland_map_output_{}.tif'.format(args.itr)
     output_map_dir = args.output_dir + 'output_{}_'.format(args.itr)
     output_pred_vs_ground_truth_fig_dir = args.output_dir + 'pred_vs_ground_truth_fig_{}.png'.format(args.itr)

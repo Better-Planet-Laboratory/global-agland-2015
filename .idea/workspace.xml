@@ -3,7 +3,17 @@
   <component name="ChangeListManager">
     <list default="true" id="1662b386-6456-498b-9aa9-d56d7e69c55c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/configs/deploy_setting_cfg.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_cropland.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_other.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/output_0_pasture.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_data_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/source/_static/img/model_outputs/pred_vs_ground_truth_fig_0.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py" beforeDir="false" afterPath="$PROJECT_DIR$/docs/source/scripts/generate_output_figures.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/experiments/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/saved_models/GBM_model_python_1654759557429_1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/saved_models/all_correct_to_FAO_softmax_itr3_fr_0/GBM_model_python_1654759557429_1" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,7 +54,7 @@
       <recent name="D:\Documents\LUGE_Work\global-agland-2015\utils" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.generate_output_figures">
+  <component name="RunManager" selected="Python.deploy">
     <configuration name="deploy" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="global-agland-2015" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -152,8 +162,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.generate_output_figures" />
         <item itemvalue="Python.deploy" />
+        <item itemvalue="Python.generate_output_figures" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.generate_gdd_figures" />
         <item itemvalue="Python.generate_census_figures" />

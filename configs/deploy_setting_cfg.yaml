@@ -11,4 +11,4 @@ feature_remove: []  # []
 post_process:
   correction:
     itr: 3
-    method: 'softmax'
+    method: 'scale'

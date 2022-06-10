@@ -13,7 +13,7 @@ There are four main components in the pipeline that could be varied to deliver d
     * Part of post processing that is done at the end of deployment to back correct the output agland map to match input dataset on each state level. This back correction method forces each pixel in the posterior agland map to follow a probability distribution 
   * Options
     * scale 
-    * softmax
+    * ~~softmax~~ (Do not use - current implementation will run softmax over the whole agland map multiple times, resulting in averaging out the whole matrix)
 * Iteration
   * Definition
     * Number of iterations of back correction process. More iterations will lead to a convergence to the input dataset (if set to be 0, no back correction will be applied)
