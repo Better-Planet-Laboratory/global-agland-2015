@@ -18,3 +18,18 @@ pip uninstall numpy
 pip uninstall GDAL
 ```
 
+#### 3. Delete .cache
+This is important! Many who tried this method but failed to make it work were because they skipped this step. If .cache is not deleted, pip will re-use the cached version of the wheel, which will cause the problem. To delete .cache, run:
+```
+cd /
+find ~/.cache -delete
+```
+
+#### 4. Re-install numpy and GDAL
+You must reinstall numpy before GDAL for this to work. Follow:
+```
+pip install numpy
+pip install GDAL==3.4.1
+```
+Now repeat Section 1 to confirm the fix. 
+
