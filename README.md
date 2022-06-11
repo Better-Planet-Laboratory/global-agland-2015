@@ -20,6 +20,7 @@ This project is a continuation and update in methodology of the work from [Raman
 - Option 2 - Docker
   - [Dockerfile](Dockerfile)
     - if you encounter issues while importing "gdal_array", I have included a [fix](./docs/source/readmes/gdal_array_fix.md)
+    - for MacOS users, make sure Docker has at least 32GB RAM (Default: 2GB) 
 
 ### Merged Census Input
 We merge subnational census data and FAOSTAT to generate the input dataset for our machine learning model. During the merging process, 2 filters are applied, namely NaN filter and GDD filter. The definition of each is shown below. 
