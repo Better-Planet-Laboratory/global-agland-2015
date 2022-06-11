@@ -19,6 +19,7 @@ RUN apt-get install -y \
     sqlite3 \
     cmake \
     libtiff-dev \
+    libhdf4-dev \
     libsqlite3-dev \
     libcurl4-openssl-dev \
     pkg-config \
