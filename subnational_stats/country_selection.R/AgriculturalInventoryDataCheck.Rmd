@@ -1,0 +1,117 @@
+---
+title: "Agricultural Inventory Data Check"
+author: "Julie Fortin"
+date: "02/05/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+```{r load packages, include=FALSE}
+
+library(here)
+library(dplyr)
+
+```
+
+## Summary
+
+This project seeks to make global maps of cropland and pasture. One of the key components is a set of agricultural inventory data, i.e. data from agricultural censuses, surveys or statistical yearbooks at the subnational level. It is not practical to search for inventory data for every single country; instead, we have streamlined our search in a few simple steps.
+
+### 1. National statistics from FAOSTAT
+
+We downloaded national statistics for cropland and pasture area from [FAOSTAT](https://www.fao.org/faostat) for the years 2013-2017. For each country, we took the mean across these years to get a value for 2015 that was less sensitive to annual variation.
+
+For cropland, we included "arable land" and "land under permanent crops".
+For pasture, we included "land under permanent meadows and pastures".
+
+These data represented a national baselayer which we filled in with subnational statistics.
+
+``` {r national mean, message=FALSE}
+
+data <- read.csv(here("Bitbucket/global-cropland-pasture-data-2015/FAOSTAT_data/FAOSTAT_data_11-14-2020.csv"))
+
+meandata <- data %>%
+  select(Area, Item, Year, Value) %>%
+  group_by(Area, Item) %>%
+  # Take the mean of values from 2013-2017
+  summarize(Mean2015 = mean(Value)) %>% 
+  group_by(Area) %>%
+  # Create separate columns for cropland and pasture
+  summarize(Cropland = sum(Mean2015[which(Item %in% c("Arable land", "Land under permanent crops"))]),
+            Pasture = sum(Mean2015[which(Item == "Land under perm. meadows and pastures")]))
+
+```
+
+### 2. Countries with highest cropland and pasture area
+
+We identified the top 15 countries with the highest cropland and pasture area for 2015 based on the means we just calculated from FAOTSTAT data.
+
+``` {r top 15 cropland pasture}
+
+top15cropland <- meandata %>%
+  arrange(desc(Cropland)) %>%
+  slice_head(n = 15)
+
+top15pasture <- meandata %>%
+  arrange(desc(Pasture)) %>%
+  slice_head(n = 15)
+
+top15countries <- union(top15cropland$Area, top15pasture$Area)
+top15countries
+
+```
+
+### 3. EU countries
+
+EU countries are easy to add in a single step because of a consolidated database available through [Eurostat](https://ec.europa.eu/eurostat).
+
+``` {r EU cropland pasture}
+
+EUcountries <- c("Belgium", "Bulgaria", "Czechia", "Denmark", "Germany", "Estonia", "Ireland", "Greece", "Spain", "France", "Croatia", "Italy", "Cyprus", "Latvia", "Lithuania", "Luxembourg", "Hungary", "Malta", "Netherlands", "Austria", "Poland", "Portugal", "Romania", "Slovenia", "Slovakia", "Finland", "Sweden",  "United Kingdom of Great Britain and Northern Ireland") # this is the list of countries included in our Eurostat cropland pasture dataset 
+EUcountries
+
+```
+
+### 4. African countries
+
+African countries were underrepresented in steps 2-3. We identified the top 10 countries with the highest cropland and pasture area for 2015 in Africa based on the FAOTSTAT means.
+
+``` {r Africa cropland pasture}
+
+allafricancountries <- c("Algeria", "Angola", "Benin", "Botswana", "Burkina Faso", "Burundi", "Cabo Verde", "Cameroon", "Central African Republic", "Chad", "Comoros", "Democratic Republic of the Congo", "Congo", "Côte d'Ivoire", "Djibouti", "Egypt", "Equatorial Guinea", "Eritrea", "Eswatini", "Ethiopia", "Gabon", "Gambia", "Ghana", "Guinea", "Guinea-Bissau", "Kenya", "Lesotho", "Liberia", "Libya", "Madagascar", "Malawi", "Mali", "Mauritania", "Mauritius", "Morocco", "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda", "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone", "Somalia", "South Africa", "South Sudan", "Sudan", "United Republic of Tanzania", "Togo", "Tunisia", "Uganda", "Zambia", "Zimbabwe")
+
+africancropland <- meandata %>%
+  filter(Area %in% allafricancountries) %>%
+  arrange(desc(Cropland)) %>%
+  slice_head(n = 10)
+
+africanpasture <- meandata %>%
+  filter(Area %in% allafricancountries) %>%
+  arrange(desc(Pasture)) %>%
+  slice_head(n = 10)
+
+africancountries <- union(africancropland$Area, africanpasture$Area)
+africancountries
+
+```
+
+### Final set
+
+The final set of countries (duplicates removed) that we included in our search for subnational agricultural inventory data is:
+
+``` {r final set}
+
+allcountries <- unique(c(top15countries, EUcountries, africancountries))
+sort(allcountries)
+
+print(paste("The proportion of global cropland covered by these countries is", round(sum(meandata %>% filter(Area %in% allcountries) %>% pull(Cropland))/sum(meandata$Cropland), 3)*100, "%"))
+
+print(paste("The proportion of global pasture covered by these countries is", round(sum(meandata %>% filter(Area %in% allcountries) %>% pull(Pasture))/sum(meandata$Pasture), 3)*100, "%"))
+
+```
+

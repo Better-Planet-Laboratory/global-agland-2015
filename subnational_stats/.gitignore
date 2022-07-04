@@ -8,3 +8,4 @@
 *.txt
 *.dta
 *.R
+!country_selection.R
