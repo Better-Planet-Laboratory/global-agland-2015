@@ -1,22 +1,22 @@
 ## Experiment Setup
 
 There are four main components in the pipeline that could be varied to deliver different products:
-* Bias correction
+* FAO calibration
   * Definition
-    * A correction factor to be applied to each state level in input dataset prior training, during fusion between FAOSTAT data and subnational level census data
+    * A calibration factor to be applied to each state level in input dataset prior training, during fusion between FAOSTAT data and subnational level census data
   * Options
-    * All correct to FAOSTAT 
-    * All correct to subnational level
+    * All calibrate to FAOSTAT 
+    * All calibrate to subnational level
     * case-by-case
-* Back correction 
+* Bias correction 
   * Definition
-    * Part of post processing that is done at the end of deployment to back correct the output agland map to match input dataset on each state level. This back correction method forces each pixel in the posterior agland map to follow a probability distribution 
+    * Part of post processing that is done at the end of deployment to bias correct the output agland map to match input dataset on each state level. This bias correction method forces each pixel in the posterior agland map to follow a probability distribution 
   * Options
     * scale 
     * ~~softmax~~ (Do not use - current implementation will run softmax over the whole agland map multiple times, resulting in averaging out the whole matrix)
 * Iteration
   * Definition
-    * Number of iterations of back correction process. More iterations will lead to a convergence to the input dataset (if set to be 0, no back correction will be applied)
+    * Number of iterations of bias correction process. More iterations will lead to a convergence to the input dataset (if set to be 0, no bias correction will be applied)
   * Options
     * $itr \in \Z^+$
 * Land cover features to be removed
@@ -40,8 +40,8 @@ Direct performance of model could be illustrated by prediction vs. ground truth 
 | ![raw_perf1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) | ![raw_perf2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) | ![raw_perf3](../docs/source/_static/img/model_outputs/case_by_case_1_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) |
 
 
-## Deployment and Back Correction 
-Since we are doing grid level prediction during deployment (20-by-20 kernel) and evaluation of output agland map on state level, the linkage between the two levels is unknown and unpresented to the model. Back correction is an important step in the post-process that builds the missing bridge. We can see as iteration number increases, the output agland map converges to the input data. 
+## Deployment and Bias Correction 
+Since we are doing grid level prediction during deployment (20-by-20 kernel) and evaluation of output agland map on state level, the linkage between the two levels is unknown and unpresented to the model. Bias correction is an important step in the post-process that builds the missing bridge. We can see as iteration number increases, the output agland map converges to the input data. 
 
 ### *all_correct_to_FAO_scale_itr3_fr_0*
 #### Order (top-down): Cropland, Pasture, Other, Performance

@@ -4,7 +4,7 @@ path_dir:
 
   outputs:
     # Set null to prevent producing outputs
-    bias_factors_table: 'outputs/bias_factors.csv'  # null
+    calibration_factors_table: 'outputs/calibration_factors.csv'  # null
     census_states_count_table: 'outputs/census_states_count.csv'  # null
     processed_census_table: 'outputs/processed_census.pkl'
 
@@ -13,7 +13,7 @@ GDD_filter:
   # will be filtered from dataset
   accept_ratio: 0.95
 
-bias_correct:
+calibrate:
   Argentina: True
   Australia: True
   Austria: True

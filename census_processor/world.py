@@ -239,11 +239,11 @@ class World:
         """
         Replace country level entry (FAOSTAT) in the World object census_table attribute table
         by the stats level entries from subnational_census. Input census_settings
-        contains info on bias correction bool
+        contains info on FAO calibration bool
 
         Args:
             subnational_census (dict): country name to be replaced (str) -> census class obj (Country)
-            census_settings (dict): country name (str) -> bias correction (bool)
+            census_settings (dict): country name (str) -> calibration (bool)
             inplace (bool): if replace World census_table directly (Default: False)
 
         Returns: (pd) processed census_table dataframe
@@ -260,7 +260,7 @@ class World:
 
                 current_GID = census_table_copy.iloc[index]['GID_0']
                 current_REGIONS = census_table_copy.iloc[index]['REGIONS']
-                sub_table = census.merge_census_to_spatial(bias_correct=census_settings[country], convert_to_kha=True)
+                sub_table = census.merge_census_to_spatial(calibrate=census_settings[country], convert_to_kha=True)
                 sub_table['GID_0'] = current_GID
                 sub_table['REGIONS'] = current_REGIONS
                 sub_table = sub_table[['STATE', 'CROPLAND', 'PASTURE', 'GID_0', 'REGIONS', 'geometry']]

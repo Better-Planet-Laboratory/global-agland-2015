@@ -34,9 +34,9 @@ def make_nonagricultural_mask(water_body_mask_dir, gdd_filter_map_dir, shape):
     return np.multiply(water_body_mask_map_scaled, gdd_filter_map_scaled)
 
 
-def apply_back_correction_to_agland_map(input_dataset, agland_map, correction_method='scale'):
+def apply_bias_correction_to_agland_map(input_dataset, agland_map, correction_method='scale'):
     """
-    Back correct the input AglandMap obj to match the state-level samples in input_dataset.
+    Bias correct the input AglandMap obj to match the state-level samples in input_dataset.
     This process does not guarantee a perfect match, as the outputs will break the probability
     distribution after each iteration of correction. Then correction_method is called to
     force each modified values in the 3 agland map to probability distribution
@@ -59,7 +59,7 @@ def apply_back_correction_to_agland_map(input_dataset, agland_map, correction_me
         out_pasture = crop_intermediate_state(pasture_map, agland_map.affine, input_dataset, i)
         out_other = crop_intermediate_state(other_map, agland_map.affine, input_dataset, i)
 
-        # Get the back correction factor from average values in the state
+        # Get the bias correction factor from average values in the state
         ground_truth_cropland = input_dataset.census_table.iloc[i]['CROPLAND_PER']
         ground_truth_pasture = input_dataset.census_table.iloc[i]['PASTURE_PER']
         ground_truth_other = input_dataset.census_table.iloc[i]['OTHER_PER']
@@ -77,23 +77,23 @@ def apply_back_correction_to_agland_map(input_dataset, agland_map, correction_me
         # to agland map (high res -> low res). For these cases, factor is set to
         # be 1
         if mean_pred_cropland != 0:
-            back_correction_factor_cropland = ground_truth_cropland / mean_pred_cropland
+            bias_correction_factor_cropland = ground_truth_cropland / mean_pred_cropland
         else:
-            back_correction_factor_cropland = 1
+            bias_correction_factor_cropland = 1
 
         if mean_pred_pasture != 0:
-            back_correction_factor_pasture = ground_truth_pasture / mean_pred_pasture
+            bias_correction_factor_pasture = ground_truth_pasture / mean_pred_pasture
         else:
-            back_correction_factor_pasture = 1
+            bias_correction_factor_pasture = 1
 
         if mean_pred_other != 0:
-            back_correction_factor_other = ground_truth_other / mean_pred_other
+            bias_correction_factor_other = ground_truth_other / mean_pred_other
         else:
-            back_correction_factor_other = 1
+            bias_correction_factor_other = 1
 
         agland_map.apply_factor(mask_index_cropland, mask_index_pasture, mask_index_other,
-                                back_correction_factor_cropland, back_correction_factor_pasture,
-                                back_correction_factor_other, correction_method=correction_method)
+                                bias_correction_factor_cropland, bias_correction_factor_pasture,
+                                bias_correction_factor_other, correction_method=correction_method)
 
     return agland_map
 
@@ -126,7 +126,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
     initial_agland_map.save_as_tif(deploy_setting_cfg['path_dir']['agland_map_output'][:-len('.tif')]
                                    + '_0' + '.tif')
 
-    # Back correct outputs for n times
+    # Bias correct outputs for n times
     input_dataset = Dataset(
         census_table=load_census_table_pkl(deploy_setting_cfg['path_dir']['census_table_input']),
         land_cover_code=land_cover_cfg['code']['MCD12Q1'],
@@ -134,13 +134,13 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
 
     for i in range(deploy_setting_cfg['post_process']['correction']['itr']):
         # Load previous agland map
-        print('Back Correction itr: {}/{}'.format(i, deploy_setting_cfg['post_process']['correction']['itr']))
+        print('Bias Correction itr: {}/{}'.format(i, deploy_setting_cfg['post_process']['correction']['itr']))
         intermediate_agland_map = load_tif_as_AglandMap(
             (deploy_setting_cfg['path_dir']['agland_map_output'][:-len('.tif')] + '_{}' + '.tif').format(str(i)),
             force_load=True)
 
-        # Do back correction
-        intermediate_agland_map = apply_back_correction_to_agland_map(
+        # Do bias correction
+        intermediate_agland_map = apply_bias_correction_to_agland_map(
             input_dataset,
             intermediate_agland_map,
             deploy_setting_cfg['post_process']['correction']['method'])

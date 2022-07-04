@@ -226,9 +226,9 @@ class Country:
         subnational_pasture = self.get_subnational_pasture()
         return np.nansum(subnational_pasture['PASTURE'].to_numpy())
 
-    def get_bias_factor(self):
+    def get_calibration_factor(self):
         """
-        Get bias correction factor (FAO / subnational report)
+        Get calibration factor (FAO / subnational report)
 
         Returns:
         """
@@ -237,16 +237,16 @@ class Country:
         cropland_subnational_sum, pasture_subnational_sum = self.get_subnational_cropland_sum(), \
                                                             self.get_subnational_pasture_sum()
 
-        # Bias Correction (Scaling)
+        # FAO Calibration (Scaling)
         # Use kHa as the standard unit for the conversion
         if cropland_subnational_sum == 0:
             # Zero division
             if abs(cropland_FAO_sum) <= 0.003:
-                print('Zero division encountered in {}. |cropland_FAO_sum| {} <= 0.003. Set bias_factor 1'.
+                print('Zero division encountered in {}. |cropland_FAO_sum| {} <= 0.003. Set calibration_factor 1'.
                       format(self.__class__.__name__, abs(cropland_FAO_sum)))
                 scaling_factor_cropland = 1
             else:
-                print('Zero division encountered in {}. |cropland_FAO_sum| {} > 0.003. Set bias_factor np.nan'.
+                print('Zero division encountered in {}. |cropland_FAO_sum| {} > 0.003. Set calibration_factor np.nan'.
                       format(self.__class__.__name__, abs(cropland_FAO_sum)))
                 scaling_factor_cropland = np.nan
         else:
@@ -256,11 +256,11 @@ class Country:
         if pasture_subnational_sum == 0:
             # Zero division
             if abs(pasture_FAO_sum) <= 0.003:
-                print('Zero division encountered in {}. |pasture_FAO_sum| {} <= 0.003. Set bias_factor 1'.
+                print('Zero division encountered in {}. |pasture_FAO_sum| {} <= 0.003. Set calibration_factor 1'.
                       format(self.__class__.__name__, abs(pasture_FAO_sum)))
                 scaling_factor_pasture = 1
             else:
-                print('Zero division encountered in {}. |pasture_FAO_sum| {} > 0.003. Set bias_factor np.nan'.
+                print('Zero division encountered in {}. |pasture_FAO_sum| {} > 0.003. Set calibration_factor np.nan'.
                       format(self.__class__.__name__, abs(pasture_FAO_sum)))
                 scaling_factor_pasture = np.nan
         else:
@@ -269,12 +269,12 @@ class Country:
 
         return scaling_factor_cropland, scaling_factor_pasture
 
-    def get_bias_corrected_dataset(self, bias_correct=False, convert_to_kha=True):
+    def get_FAO_calibrated_dataset(self, calibrate=False, convert_to_kha=True):
         """
-        Apply bias correction to the current subnational data in its own units
+        Apply FAO calibration to the current subnational data in its own units
 
         Args:
-            bias_correct (bool): if True, apply bias_correction, otherwise *1
+            calibrate (bool): if True, apply FAO calibration, otherwise *1
                                  (Default: False)
             convert_to_kha (bool): if True, also convert to kha, otherwise use
                                    class unit (Default: True)
@@ -282,7 +282,7 @@ class Country:
         Returns: (tuple of pd) dataframe of cropland, dataframe of pasture
         """
         scaling_factor_cropland, \
-        scaling_factor_pasture = self.get_bias_factor() if bias_correct else (1, 1)
+        scaling_factor_pasture = self.get_calibration_factor() if calibrate else (1, 1)
 
         # Apply factor to the original attribute
         # use .copy() to avoid SettingWithCopyWarning from pandas
@@ -298,19 +298,19 @@ class Country:
 
         return cropland_data, pasture_data
 
-    def merge_census_to_spatial(self, bias_correct=False, convert_to_kha=True):
+    def merge_census_to_spatial(self, calibrate=False, convert_to_kha=True):
         """
-        Bias and unit corrected (if specified) subnational stats data merged on spatial map in kHa
+        Calibration and unit corrected (if specified) subnational stats data merged on spatial map in kHa
 
         Args:
-            bias_correct (bool): if True, apply bias_correction, otherwise *1
+            calibrate (bool): if True, apply FAO calibration, otherwise *1
                                  (Default: False)
             convert_to_kha (bool): if True, also convert to kha, otherwise use
                                    class unit (Default: True)
 
         Returns: (pd) merged cropland and pasture census (with correction) with spatial_map
         """
-        cropland_data, pasture_data = self.get_bias_corrected_dataset(bias_correct, convert_to_kha)
+        cropland_data, pasture_data = self.get_FAO_calibrated_dataset(calibrate, convert_to_kha)
         merged_map = self.spatial_map.copy()
         merged_map = merged_map.merge(cropland_data, on='STATE', how='left')
         merged_map = merged_map.merge(pasture_data, on='STATE', how='left')

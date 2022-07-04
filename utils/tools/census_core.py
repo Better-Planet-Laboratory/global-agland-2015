@@ -46,41 +46,41 @@ def write_census_states_count_table(states_count_table, file_name):
     print('File {} generated'.format(file_name))
 
 
-def get_bias_factors_table(subnational_census):
+def get_calibration_factors_table(subnational_census):
     """
-    Get bias_correction factor tuples (cropland, pasture) for each country in
+    Get FAO calibration factor tuples (cropland, pasture) for each country in
     subnational_census
 
     Args:
         subnational_census (dict): country name (str) -> (Country)
 
-    Returns: (dict) country name (str) -> (bias_cropland, bias_pasture) (float, float)
+    Returns: (dict) country name (str) -> (calibration_cropland, calibration_pasture) (float, float)
     """
-    bias_factors_table = {}
+    calibration_factors_table = {}
     for country, census in subnational_census.items():
-        bias_factors_table[country] = census.get_bias_factor()
-    return bias_factors_table
+        calibration_factors_table[country] = census.get_calibration_factor()
+    return calibration_factors_table
 
 
-def write_bias_factors_table_to_csv(bias_factors_table, file_name):
+def write_calibration_factors_table_to_csv(calibration_factors_table, file_name):
     """
-    Write bias_factors_table to csv with attributes,
-    ['Country', 'bias_cropland', 'bias_pasture']
+    Write calibration_factors_table to csv with attributes,
+    ['Country', 'calibration_cropland', 'calibration_pasture']
 
     Args:
-        bias_factors_table (dict):  country name (str) -> (float, float)
+        calibration_factors_table (dict):  country name (str) -> (float, float)
         file_name (str): output directory
     """
     country_list = []
-    bias_cropland_list = []
-    bias_pasture_list = []
-    for country, (bias_cropland, bias_pasture) in bias_factors_table.items():
+    calibration_cropland_list = []
+    calibration_pasture_list = []
+    for country, (calibration_cropland, calibration_pasture) in calibration_factors_table.items():
         country_list.append(country)
-        bias_cropland_list.append(bias_cropland)
-        bias_pasture_list.append(bias_pasture)
+        calibration_cropland_list.append(calibration_cropland)
+        calibration_pasture_list.append(calibration_pasture)
     pd.DataFrame({'Country': country_list,
-                  'bias_cropland': bias_cropland_list,
-                  'bias_pasture': bias_pasture_list}).to_csv(file_name)
+                  'calibration_cropland': calibration_cropland_list,
+                  'calibration_pasture': calibration_pasture_list}).to_csv(file_name)
     print('File {} generated'.format(file_name))
 
 
@@ -109,7 +109,7 @@ def load_census_table_pkl(census_path):
     return load_pkl(census_path[:-len('.pkl')])
 
 
-def merge_subnation_to_world(world_census, subnational_census, bias_correct):
+def merge_subnation_to_world(world_census, subnational_census, calibration):
     """
     world_census contains global record from FAOSTAT, and subnational_census contains
     states level data for some countries. This function merge the two census sources
@@ -117,13 +117,13 @@ def merge_subnation_to_world(world_census, subnational_census, bias_correct):
     Args:
         world_census (World): World object
         subnational_census (dict): country name (str) -> (Country)
-        bias_correct (dict): country name (str) -> (bool) for bias correction
+        calibration (dict): country name (str) -> (bool) for calibration
 
     Returns: (pd) processed table
     """
-    assert (set(subnational_census.keys()) == set(bias_correct.keys())), \
-        'bias_correct must contain all countries in subnational_census'
-    return world_census.replace_subnation(subnational_census, bias_correct, inplace=False)
+    assert (set(subnational_census.keys()) == set(calibration.keys())), \
+        'calibration must contain all countries in subnational_census'
+    return world_census.replace_subnation(subnational_census, calibration, inplace=False)
 
 
 def census_has(census, attribute_name):

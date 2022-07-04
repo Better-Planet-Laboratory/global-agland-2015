@@ -21,20 +21,20 @@ def pipeline(world_census, subnational_census, census_setting_cfg, gdd_cfg, land
     Returns: (pd) processed census table
     """
     # Save intermediate outputs
-    # bias_factors_table - bias correction factors for each census sample
+    # calibration_factors_table - FAO calibration factors for each census sample
     # census_states_count_table - number of states count for each country in census
-    bias_factors_table_dir, \
-    census_states_count_table_dir = census_setting_cfg['path_dir']['outputs']['bias_factors_table'], \
+    calibration_factors_table_dir, \
+    census_states_count_table_dir = census_setting_cfg['path_dir']['outputs']['calibration_factors_table'], \
                                     census_setting_cfg['path_dir']['outputs']['census_states_count_table']
-    if bias_factors_table_dir is not None:
-        write_bias_factors_table_to_csv(get_bias_factors_table(subnational_census),
-                                        bias_factors_table_dir)
+    if calibration_factors_table_dir is not None:
+        write_calibration_factors_table_to_csv(get_calibration_factors_table(subnational_census), 
+                                               calibration_factors_table_dir)
     if census_states_count_table_dir is not None:
         write_census_states_count_table(count_census_states(subnational_census),
                                         census_states_count_table_dir)
 
     # Merge WORLD with SUBNATIONAL
-    merged_census = merge_subnation_to_world(world_census, subnational_census, census_setting_cfg['bias_correct'])
+    merged_census = merge_subnation_to_world(world_census, subnational_census, census_setting_cfg['calibrate'])
     print('Merge WORLD census with SUBNATIONAL census. Total samples: {}'.format(len(merged_census)))
 
     # Apply 2 filters

@@ -7,7 +7,7 @@ path_dir:
 # Note: this must match model
 feature_remove: []  # []
 
-# Back correction
+# Bias correction
 post_process:
   correction:
     itr: 3
