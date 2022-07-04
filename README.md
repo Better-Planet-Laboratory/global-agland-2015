@@ -8,8 +8,23 @@ This project is a continuation and update in methodology of the work from [Raman
 - [Land Cover](land_cover/README.md)
 
 ### Results and Analysis
-- [Evaluation](evaluation/README.md) contains code and figures to compare our map predictions to independent sources.
-- [Experiments](experiments/README.md) contains code to run a few different modelling and processing approaches.
+- [Evaluation](evaluation/README.md)
+- [Experiments](experiments/README.md)
+
+### Folder Structure
+- [configs](./configs/) (user-specified settings)
+- [utils](./utils/) (helper functions and tools)
+- [census_processor](./census_processor/) (country class files for which we have subnational data and helps data loading)
+- [gdd](./gdd/) (scripts and data for gdd filter mask)
+- [land_cover](./land_cover/) (scripts and data for land cover maps)
+- [models](./models/) (scripts and pre-trained model weights)
+- [FAOSTAT_data](./FAOSTAT_data/) ([FAOSTAT](https://www.fao.org/faostat/en/) dataset)
+- [subnational_stats](./subnational_stats/) (subnational census dataset)
+- [shapefile](./shapefile/) (shapefile data from [GADM](https://gadm.org/))
+- [evaluation](./evaluation/) (code and comparison results between map predictions and independent sources)
+- [experiments](./experiments/) (a collection of experiment settings)
+- [outputs](./outputs/) (a collection of experiment results)
+- [docs/source](./docs/source/) (results figures and visualization scripts)
 
 ### Requirements
 - Option 1 - PIP
