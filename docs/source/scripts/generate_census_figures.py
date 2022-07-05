@@ -1,15 +1,16 @@
 import argparse
 from utils.tools.census_core import *
-from utils.tools.visualizer import plot_merged_census
+from utils.tools.visualizer import *
 from utils import io
 from gdd.gdd_criteria import gdd_crop_criteria
 
+# Only include nan_filter regions as grey (with gdd_filter on top of the raster)
 MARKER = {
-    'nan_filter': -1,
-    'gdd_filter': -2
+    'nan_filter': -1, 
+    'gdd_mask': -2
 }
 
-ROOT = '../../../'
+ROOT = './' # run from root
 CENSUS_SETTING_CFG = io.load_yaml_config(ROOT + 'configs/census_setting_cfg.yaml')
 GDD_CFG = io.load_yaml_config(ROOT + 'configs/gdd_cfg.yaml')
 SUBNATIONAL_STATS_CFG = io.load_yaml_config(ROOT + 'configs/subnational_stats_cfg.yaml')
@@ -117,7 +118,7 @@ def mark_GDD_filter(census, gdd_config, accept_ratio, marker, gdd_crop_criteria,
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--output_dir", type=str, default='../_static/img/census/',
+    parser.add_argument("--output_dir", type=str, default=ROOT+'docs/source/_static/img/census/',
                         help="path dir output cropland and pasture from merged census")
 
     args = parser.parse_args()
@@ -135,15 +136,15 @@ def main():
 
     # Mark gdd filter
     GDD_CFG['path_dir']['GDD_filter_map'] = ROOT + GDD_CFG['path_dir']['GDD_filter_map']
-    merged_census = mark_GDD_filter(merged_census, GDD_CFG, CENSUS_SETTING_CFG['GDD_filter']['accept_ratio'],
-                                    MARKER['gdd_filter'], gdd_crop_criteria)
-    print(
-        'After gdd filter: {}'.format(len(merged_census) - list(merged_census['CROPLAND']).count(MARKER['gdd_filter'])
-                                      - list(merged_census['CROPLAND']).count(MARKER['nan_filter'])))
+    # merged_census = mark_GDD_filter(merged_census, GDD_CFG, CENSUS_SETTING_CFG['GDD_filter']['accept_ratio'],
+    #                                 MARKER['gdd_filter'], gdd_crop_criteria)
+    # print(
+    #     'After gdd filter: {}'.format(len(merged_census) - list(merged_census['CROPLAND']).count(MARKER['gdd_filter'])
+    #                                   - list(merged_census['CROPLAND']).count(MARKER['nan_filter'])))
 
     # Generate raster map of the final input to the model (in Kha not percentage)
     WORLD_CENSUS.assign_census_table(merged_census)
-    plot_merged_census(WORLD_CENSUS.census_table, MARKER, output_dir=args.output_dir)
+    plot_merged_census(WORLD_CENSUS.census_table, MARKER, GDD_CFG, output_dir=args.output_dir)
 
 
 if __name__ == '__main__':

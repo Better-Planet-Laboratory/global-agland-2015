@@ -1,4 +1,8 @@
+from matplotlib import projections
+import rasterio
+import rasterio.plot as rasterio_plot
 import numpy as np
+from osgeo import gdal
 import matplotlib
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -13,6 +17,10 @@ font = {'family': 'monospace',
         'size': 20}
 
 matplotlib.rc('font', **font)
+
+TRANSPARENT = colors.colorConverter.to_rgba('white',alpha = 0)
+
+GDD_MASK_CMAP = colors.ListedColormap(['#D4D4D4', TRANSPARENT])
 
 CROPLAND_CMAP10 = colors.ListedColormap([
     '#FEDFC9', '#FFCBA9', '#FFAE78',
@@ -278,7 +286,7 @@ def plot_FAO_census(world_census_table, attribute, cmap, num_bins, label, output
     plt.close()
 
 
-def plot_merged_census(census_table, marker, output_dir=None):
+def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
     """
     Plot merged census map generated from pipeline. Input census_table must have
     CROPLAND and PASTURE attributes, with 2 marker values indicating states filtered
@@ -287,8 +295,12 @@ def plot_merged_census(census_table, marker, output_dir=None):
     Args:
         census_table (pd): pd census table with geometry
         marker (dict): (str) -> (int) indicators for filtered samples
+        gdd_config (dict): gdd configs
         output_dir (str): output dir (Default: None)
     """
+    # Load GDD mask
+    gdd_mask_raster = rasterio.open(gdd_config['path_dir']['GDD_filter_map'])
+
     # Flip marker
     marker_flipped = {v: k for k, v in marker.items()}
 
@@ -305,23 +317,27 @@ def plot_merged_census(census_table, marker, output_dir=None):
     nan_cropland_bins = [int(i) for i in nan_cropland_bins]  # only in FAO (values are in kHa, not %)
 
     # Plot
-    ax = geo_census.plot(column='CROPLAND',
-                         edgecolor='black',
-                         legend=True,
-                         figsize=(20, 20),
-                         cmap=CROPLAND_CMAP10_OUTLIER2,
-                         norm=colors.BoundaryNorm(nan_cropland_bins, len(nan_cropland_bins)),
-                         legend_kwds={'label': 'CROPLAND (kHa)',
-                                      'orientation': 'vertical',
-                                      'pad': 0,
-                                      'shrink': 0.3,
-                                      'ticks': nan_cropland_bins})
+    fig, ax = plt.subplots(figsize=(20, 20))
+    geo_census.plot(ax=ax, 
+                    column='CROPLAND',
+                    edgecolor='black',
+                    legend=True,
+                    cmap=CROPLAND_CMAP10_OUTLIER2,
+                    norm=colors.BoundaryNorm(nan_cropland_bins, len(nan_cropland_bins)),
+                    legend_kwds={'label': 'CROPLAND (kHa)',
+                                'orientation': 'vertical',
+                                'pad': 0.01,
+                                'shrink': 0.3,
+                                'ticks': nan_cropland_bins})
     ax.set_axis_off()
 
     # Trick from stackoverflow to edit legend tick labels
     colourbar = ax.get_figure().get_axes()[1]
     colourbar.set_yticklabels(
         [marker_flipped[i] for i in nan_cropland_bins[0:len(marker)]] + nan_cropland_bins[len(marker):])
+
+    # Plot GDD mask on top
+    rasterio_plot.show(gdd_mask_raster, ax=ax, cmap=GDD_MASK_CMAP, zorder=5, alpha=0.9)
 
     if output_dir is not None:
         plt.savefig(output_dir + '/cropland_census_input.png', format='png', bbox_inches='tight')
@@ -340,22 +356,27 @@ def plot_merged_census(census_table, marker, output_dir=None):
     nan_pasture_bins = [int(i) for i in nan_pasture_bins]  # only in FAO (values are in kHa, not %)
 
     # Plot
-    ax = geo_census.plot(column='PASTURE',
-                         edgecolor='black',
-                         legend=True,
-                         figsize=(20, 20),
-                         cmap=PASTURE_CMAP10_OUTLIER2,
-                         norm=colors.BoundaryNorm(nan_pasture_bins, len(nan_pasture_bins)),
-                         legend_kwds={'label': 'PASTURE (kHa)',
-                                      'orientation': 'vertical',
-                                      'pad': 0,
-                                      'shrink': 0.3,
-                                      'ticks': nan_pasture_bins})
+    fig, ax = plt.subplots(figsize=(20, 20))
+    geo_census.plot(ax=ax, 
+                    column='PASTURE',
+                    edgecolor='black',
+                    legend=True,
+                    cmap=PASTURE_CMAP10_OUTLIER2,
+                    norm=colors.BoundaryNorm(nan_pasture_bins, len(nan_pasture_bins)),
+                    legend_kwds={'label': 'PASTURE (kHa)',
+                                'orientation': 'vertical',
+                                'pad': 0.01,
+                                'shrink': 0.3,
+                                'ticks': nan_pasture_bins})
     ax.set_axis_off()
 
     colourbar = ax.get_figure().get_axes()[1]
     colourbar.set_yticklabels(
         [marker_flipped[i] for i in nan_pasture_bins[0:len(marker)]] + nan_pasture_bins[len(marker):])
+    
+    # Plot GDD mask on top
+    rasterio_plot.show(gdd_mask_raster, ax=ax, cmap=GDD_MASK_CMAP, zorder=5, alpha=0.9)
+
     if output_dir is not None:
         plt.savefig(output_dir + '/pasture_census_input.png', format='png', bbox_inches='tight')
         print('File {} generated'.format(output_dir))
