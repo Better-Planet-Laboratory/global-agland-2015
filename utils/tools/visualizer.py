@@ -22,28 +22,28 @@ TRANSPARENT = colors.colorConverter.to_rgba('white',alpha = 0)
 
 GDD_MASK_CMAP = colors.ListedColormap(['#D4D4D4', TRANSPARENT])
 
-CROPLAND_CMAP10 = colors.ListedColormap([
+PASTURE_CMAP10 = colors.ListedColormap([
     '#FEDFC9', '#FFCBA9', '#FFAE78',
     '#FF9147', '#FF7416', '#EC5F00',
     '#BB4B00', '#923B00', '#7A3100',
     '#491D00'
 ])
 
-CROPLAND_CMAP10_OUTLIER2 = colors.ListedColormap([
+PASTURE_CMAP10_OUTLIER2 = colors.ListedColormap([
     '#D4D4D4', '#5D5D5D', '#FEDFC9',
     '#FFCBA9', '#FFAE78', '#FF9147',
     '#FF7416', '#EC5F00', '#BB4B00',
     '#923B00', '#7A3100', '#491D00'
 ])
 
-PASTURE_CMAP10 = colors.ListedColormap([
+CROPLAND_CMAP10 = colors.ListedColormap([
     '#E2FEE2', '#B9FEB9', '#78FF78',
     '#06FF06', '#00D400', '#00A300',
     '#007200', '#005100', '#003900',
     '#001800'
 ])
 
-PASTURE_CMAP10_OUTLIER2 = colors.ListedColormap([
+CROPLAND_CMAP10_OUTLIER2 = colors.ListedColormap([
     '#D4D4D4', '#5D5D5D', '#E2FEE2',
     '#B9FEB9', '#78FF78', '#06FF06',
     '#00D400', '#00A300', '#007200',
