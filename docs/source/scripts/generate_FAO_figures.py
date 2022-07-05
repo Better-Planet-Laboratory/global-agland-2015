@@ -2,7 +2,7 @@ import argparse
 from census_processor.world import World
 from utils import io
 
-ROOT = '../../../'
+ROOT = './' # run from root
 
 CENSUS_SETTING_CFG = io.load_yaml_config(ROOT + 'configs/census_setting_cfg.yaml')
 SHAPEFILE_CFG = io.load_yaml_config(ROOT + 'configs/shapefile_cfg.yaml')
@@ -14,9 +14,9 @@ WORLD_CENSUS = World(ROOT + SHAPEFILE_CFG['path_dir']['World'],
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--cropland_output_dir", type=str, default='../_static/img/FAOSTAT/cropland_FAO.png',
+    parser.add_argument("--cropland_output_dir", type=str, default='docs/source/_static/img/FAOSTAT/cropland_FAO.png',
                         help="path dir output cropland from FAO census")
-    parser.add_argument("--pasture_output_dir", type=str, default='../_static/img/FAOSTAT/pasture_FAO.png',
+    parser.add_argument("--pasture_output_dir", type=str, default='docs/source/_static/img/FAOSTAT/pasture_FAO.png',
                         help="path dir output pasture from FAO census")
 
     args = parser.parse_args()
