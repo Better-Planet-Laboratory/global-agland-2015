@@ -1,6 +1,6 @@
 import yaml
 import pickle
-from osgeo import gdal, osr
+from osgeo import gdal, osr, ogr
 import numpy as np
 
 
@@ -21,6 +21,42 @@ def load_pkl(directory):
     """ Load pkl file """
     with open(directory + '.pkl', 'rb') as f:
         return pickle.load(f)
+
+def save_shp_as_tif(dst_filename, shp_file, attribute_name, x_min, y_max, pixel_size, epsg=4326, 
+                    no_data_value=255, dtype=gdal.GDT_Float32):
+    """
+    Convert shp file with geometry and attribute to TIF file with projection 
+    x_min, -x_min, -y_max, y_max
+
+    Args:
+        dst_filename (str): output tif file dir
+        shp_file (str): input shapefile dir
+        attribute_name (str): attribute name in shapefile
+        x_min (float): x min in geo transform
+        y_max (float): y max in geo transform
+        pixel_size (float):  pixel size in geo transform
+        epsg (int): epsg in geo transform
+        no_data_value (int or float): replacement for nan (Default: 255)
+        dtype (gdal dtype): data type
+    """
+    shp_ds = ogr.Open(shp_file)
+    shp_layer = shp_ds.GetLayer()
+
+    cols = int((2*(-x_min)) / pixel_size)
+    rows = int((2*y_max) / pixel_size)
+
+    target_ds = gdal.GetDriverByName('GTiff').Create(dst_filename, cols, rows, 1, dtype) 
+    target_ds.SetGeoTransform((x_min, pixel_size, 0, -y_max, 0, pixel_size))
+    band = target_ds.GetRasterBand(1)
+    band.SetNoDataValue(no_data_value)
+    band.FlushCache()
+
+    gdal.RasterizeLayer(target_ds, [1], shp_layer, options = ["ATTRIBUTE={}".format(attribute_name)])  
+    target_dsSRS = osr.SpatialReference()
+    target_dsSRS.ImportFromEPSG(epsg)
+    target_ds.SetProjection(target_dsSRS.ExportToWkt())
+    target_ds = None
+    print('{} saved'.format(dst_filename))
 
 
 def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4326,

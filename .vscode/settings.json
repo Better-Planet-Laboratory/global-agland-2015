@@ -1,6 +1,11 @@
 {
     "terminal.integrated.env.linux": {
-        "PYTHONPATH": "/usr/lib/python37.zip:/usr/lib/python3.7:/usr/lib/python3.7/lib-dynload:/usr/local/lib/python3.7/dist-packages:/usr/lib/python3/dist-packages:${workspaceFolder}"
+        "PYTHONPATH": "/usr/bin/pip:/usr/lib/python37.zip:/usr/lib/python3.7:/usr/lib/python3.7/lib-dynload:/usr/local/lib/python3.7/dist-packages:/usr/lib/python3/dist-packages:${workspaceFolder}"
     },
-    "python.envFile": "${workspaceFolder}/.env"
+    "python.envFile": "${workspaceFolder}/.env",
+    "python.linting.enabled": true,
+    "python.linting.pylintPath": "pylint",
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "yapf",
+    "python.linting.pylintEnabled": true,
 }

@@ -27,6 +27,7 @@ RUN apt-get install -y \
     libsm6 \
     libxext6 \
     default-jre-headless
+    # libspatialindex-dev
 
 RUN curl https://download.osgeo.org/proj/proj-8.2.1.tar.gz | tar -xz &&\
     cd proj-8.2.1 &&\

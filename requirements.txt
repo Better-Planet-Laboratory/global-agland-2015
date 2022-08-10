@@ -16,3 +16,6 @@ h5py==3.7.0
 pyhdf==0.10.5
 xlrd==2.0.1
 openpyxl==3.0.9
+tobler==0.9.0
+rtree==1.0.0
+astropy==4.3.1

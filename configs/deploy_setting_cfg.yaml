@@ -1,7 +1,8 @@
 path_dir:
-  model: 'models/saved_models/GBM_model_python_1654759557429_1'  # model weights to be loaded (Default: null)
-  agland_map_output: 'outputs/agland_map_output.tif'
-  census_table_input: 'outputs/processed_census.pkl'
+  base: 'outputs/'
+  model: 'models/saved_models/GBM_model_python_1653612052202_1'  # model weights to be loaded (Default: null)
+  agland_map_output: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output.tif'
+  census_table_input: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/processed_census.pkl'
 
 # Land cover feature indices to be removed
 # Note: this must match model
@@ -9,6 +10,12 @@ feature_remove: []  # []
 
 # Bias correction
 post_process:
+  interpolation:
+    # seperable_filter: [0.5, 0, 0.5]
+    seperable_filter: [0.2, 0.2, 0.2, 0.2, 0.2]
+    converge: 3
+    r: 0.2  # relaxation
+
   correction:
     itr: 3
     method: 'scale'

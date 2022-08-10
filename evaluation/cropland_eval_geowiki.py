@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from utils.agland_map import *
 from utils.tools.visualizer import *
-from utils.process.post_process import *
+from utils.process.post_process import make_nonagricultural_mask
 
 
 def parse_geowiki_cropland(file_dir):
@@ -50,8 +50,11 @@ def reproject_geowiki_to_index_coord(geowiki_data, affine):
     grid_size = affine[0]
     min_x = affine[2]
     max_y = affine[5]
-    lat = np.flip(np.arange(-max_y + (grid_size / 2), max_y - (grid_size / 2) + grid_size, grid_size))
-    lon = np.arange(min_x + (grid_size / 2), -min_x - (grid_size / 2) + grid_size, grid_size)
+    lat = np.flip(
+        np.arange(-max_y + (grid_size / 2),
+                  max_y - (grid_size / 2) + grid_size, grid_size))
+    lon = np.arange(min_x + (grid_size / 2),
+                    -min_x - (grid_size / 2) + grid_size, grid_size)
 
     # Get nearest neighbor indices
     nearest_index = []
@@ -68,17 +71,28 @@ def reproject_geowiki_to_index_coord(geowiki_data, affine):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--geowiki_cropland_dir", type=str,
+
+    parser.add_argument("--geowiki_cropland_dir",
+                        type=str,
                         default='./loc_all_2.txt',
                         help="path dir to geowiki loc_all_2.txt")
-    parser.add_argument("--agland_map_dir", type=str,
-                        default='../outputs/case_by_case_1_scale_itr3_fr_0/agland_map_output_3.tif',
-                        help="path dir to agland map dir to be evaluated")
-    parser.add_argument("--water_body_dir", type=str, default='../land_cover/water_body_mask.tif',
+    parser.add_argument(
+        "--agland_map_dir",
+        type=str,
+        default=
+        '../outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output_2.tif',
+        help="path dir to agland map dir to be evaluated")
+    parser.add_argument("--water_body_dir",
+                        type=str,
+                        default='../land_cover/water_body_mask.tif',
                         help="path dir to water body mask tif")
-    parser.add_argument("--gdd_filter_map_dir", type=str, default='../gdd/gdd_filter_map_360x720.tif',
+    parser.add_argument("--gdd_filter_map_dir",
+                        type=str,
+                        default='../gdd/gdd_filter_map_360x720.tif',
                         help="path dir to gdd filter map tif")
-    parser.add_argument("--output_dir", type=str, default='./case_by_case_1_scale_itr3_fr_0/geowiki/',
+    parser.add_argument("--output_dir",
+                        type=str,
+                        default='../',
                         help="path dir to output evaluation figs")
 
     args = parser.parse_args()
@@ -94,30 +108,37 @@ def main():
     # Load data and pred results
     geowiki_cropland = parse_geowiki_cropland(args.geowiki_cropland_dir)
     agland_map = load_tif_as_AglandMap(args.agland_map_dir, force_load=True)
-    geowiki_cropland_by_index = reproject_geowiki_to_index_coord(geowiki_cropland, agland_map.affine)
+    geowiki_cropland_by_index = reproject_geowiki_to_index_coord(
+        geowiki_cropland, agland_map.affine)
 
     # Apply water body and gdd masks
     mask = make_nonagricultural_mask(args.water_body_dir,
                                      args.gdd_filter_map_dir,
-                                     shape=(agland_map.height, agland_map.width))
+                                     shape=(agland_map.height,
+                                            agland_map.width))
     agland_map.apply_mask(mask)
 
     # Extract prediction values
-    pred = agland_map.get_cropland()[
-        ((geowiki_cropland_by_index[:, 0]).astype(int), (geowiki_cropland_by_index[:, 1]).astype(int))]
+    pred = agland_map.get_cropland()[(
+        (geowiki_cropland_by_index[:, 0]).astype(int),
+        (geowiki_cropland_by_index[:, 1]).astype(int))]
 
     # Figure 1. Geowiki cropland scatter plot
-    plot_geowiki_cropland(geowiki_cropland_by_index, args.output_dir + output_geowiki_filename)
+    plot_geowiki_cropland(geowiki_cropland_by_index,
+                          args.output_dir + output_geowiki_filename)
 
     # Figure 2. nan scatter plots (due to masking)
-    plot_geowiki_cropland(geowiki_cropland_by_index[np.isnan(pred), :], args.output_dir + output_nan_filename)
+    plot_geowiki_cropland(geowiki_cropland_by_index[np.isnan(pred), :],
+                          args.output_dir + output_nan_filename)
 
     # Figure 3. Difference between Geowiki cropland and pred cropland
-    plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred, args.output_dir + output_diff_map_filename)
+    plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred,
+                                    args.output_dir + output_diff_map_filename)
 
     # Figure 4. Histogram of difference map
-    plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred,
-                                              args.output_dir + output_diff_hist_filename)
+    plot_histogram_diff_geowiki_pred_cropland(
+        geowiki_cropland_by_index, pred,
+        args.output_dir + output_diff_hist_filename)
 
 
 if __name__ == '__main__':
