@@ -11,8 +11,8 @@ feature_remove: []  # []
 # Bias correction
 post_process:
   interpolation:
-    # seperable_filter: [0.5, 0, 0.5]
-    seperable_filter: [0.2, 0.2, 0.2, 0.2, 0.2]
+    seperable_filter: [0.5, 0, 0.5]
+    # seperable_filter: [0.2, 0.2, 0.2, 0.2, 0.2]
     converge: 3
     r: 0.2  # relaxation
 

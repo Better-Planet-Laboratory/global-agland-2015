@@ -10,10 +10,12 @@ def main():
         type=str,
         default='./Global_cropland_3km_2015.tif',
         help="path dir to marland Global_cropland_3km_2015.tif")
-    parser.add_argument("--agland_map_dir",
-                        type=str,
-                        default='../pycno_interped_2.tif',
-                        help="path dir to agland map dir to be evaluated")
+    parser.add_argument(
+        "--agland_map_dir",
+        type=str,
+        default=
+        '../outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output_3.tif',
+        help="path dir to agland map dir to be evaluated")
     parser.add_argument("--water_body_dir",
                         type=str,
                         default='../land_cover/water_body_mask.tif',

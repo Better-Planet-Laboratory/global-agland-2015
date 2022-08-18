@@ -12,7 +12,7 @@ import cv2
 from geopandas import GeoDataFrame
 from ..metrics import *
 
-font = {'family': 'monospace', 'weight': 'normal', 'size': 20}
+font = {'family': 'monospace', 'weight': 'normal', 'size': 24}
 
 matplotlib.rc('font', **font)
 
@@ -30,6 +30,22 @@ PASTURE_CMAP10_OUTLIER2 = colors.ListedColormap([
     '#FF7416', '#EC5F00', '#BB4B00', '#923B00', '#7A3100', '#491D00'
 ])
 
+PASTURE_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
+    name='PASTURE_CMAP_FULL',
+    colors=[
+        '#FFF7F2', '#FFF2EA', '#FEEDE2', '#FEE9DA', '#FEE4D2', '#FEDFC9',
+        '#FEDAC1', '#FED5B9', '#FED0B1', '#FFCBA9', '#FFC7A1', '#FFC299',
+        '#FFBD90', '#FFB888', '#FFB380', '#FFAE78', '#FFA970', '#FFA468',
+        '#FFA05F', '#FF9B57', '#FF964F', '#FF9147', '#FF8C3F', '#FF8737',
+        '#FF822E', '#FF7D26', '#FF791E', '#FF7416', '#FF6F0E', '#FF6A06',
+        '#FC6600', '#F46200', '#EC5F00', '#E45C00', '#DC5800', '#D45500',
+        '#CC5200', '#C34F00', '#BB4B00', '#B34800', '#AB4500', '#A34100',
+        '#9B3E00', '#923B00', '#8A3700', '#823400', '#7A3100', '#722E00',
+        '#6A2A00', '#612700', '#592400', '#512000', '#491D00', '#411A00',
+        '#391700', '#301300', '#281000', '#200D00', '#180900', '#100600'
+    ],
+    N=1001)
+
 CROPLAND_CMAP10 = colors.ListedColormap([
     '#E2FEE2', '#B9FEB9', '#78FF78', '#06FF06', '#00D400', '#00A300',
     '#007200', '#005100', '#003900', '#001800'
@@ -40,10 +56,42 @@ CROPLAND_CMAP10_OUTLIER2 = colors.ListedColormap([
     '#00D400', '#00A300', '#007200', '#005100', '#003900', '#001800'
 ])
 
+CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
+    name='CROPLAND_CMAP_FULL',
+    colors=[
+        '#F2FFF2', '#EAFFEA', '#E2FEE2', '#DAFEDA', '#D2FED2', '#C9FEC9',
+        '#C1FEC1', '#B9FEB9', '#B1FEB1', '#A9FFA9', '#A1FFA1', '#99FF99',
+        '#90FF90', '#88FF88', '#80FF80', '#78FF78', '#70FF70', '#68FF68',
+        '#5FFF5F', '#57FF57', '#4FFF4F', '#47FF47', '#3FFF3F', '#37FF37',
+        '#2EFF2E', '#26FF26', '#1EFF1E', '#16FF16', '#0eff0e', '#06FF06',
+        '#00FC00', '#00F400', '#00EC00', '#00E400', '#00DC00', '#00D400',
+        '#00CC00', '#00C300', '#00BB00', '#00B300', '#00AB00', '#00A300',
+        '#009B00', '#009200', '#008A00', '#008200', '#007A00', '#007200',
+        '#006A00', '#006100', '#005900', '#005100', '#004900', '#004100',
+        '#003900', '#003000', '#002800', '#002000', '#001800', '#001000'
+    ],
+    N=1001)
+
 OTHER_CMAP10 = colors.ListedColormap([
     '#c4c4c4', '#a0a0a0', '#8e8e8e', '#7c7c7c', '#6b6b6b', '#595959',
     '#474747', '#353535', '#232323', '#000000'
 ])
+
+OTHER_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
+    name='OTHER_CMAP_FULL',
+    colors=[
+        '#F8F8F8', '#F4F4F4', '#F0F0F0', '#ECECEC', '#E8E8E8', '#E4E4E4',
+        '#E0E0E0', '#DCDCDC', '#D8D8D8', '#D4D4D4', '#D0D0D0', '#CCC',
+        '#C7C7C7', '#C3C3C3', '#BFBFBF', '#BBB', '#B7B7B7', '#B3B3B3',
+        '#AFAFAF', '#ABABAB', '#A7A7A7', '#A3A3A3', '#9F9F9F', '#9B9B9B',
+        '#969696', '#929292', '#8E8E8E', '#8A8A8A', '#868686', '#828282',
+        '#7E7E7E', '#7A7A7A', '#767676', '#727272', '#6E6E6E', '#6A6A6A',
+        '#666', '#616161', '#5D5D5D', '#595959', '#555', '#515151', '#4D4D4D',
+        '#494949', '#454545', '#414141', '#3D3D3D', '#393939', '#353535',
+        '#303030', '#2C2C2C', '#282828', '#242424', '#202020', '#1C1C1C',
+        '#181818', '#141414', '#101010', '#0C0C0C', '#080808'
+    ],
+    N=1001)
 
 LAND_COVER_CMAP17 = colors.ListedColormap([
     '#193300', '#00994C', '#CCCC00', '#CC6600', '#CCFFE5', '#4C0099',
@@ -215,18 +263,22 @@ def plot_agland_map_slice(array, type, output_dir=None):
     bins = [
         i for i in np.arange(min_val, max_val, (max_val - min_val) / num_bins)
     ] + [max_val]
-    norm = colors.BoundaryNorm(bins, num_bins, clip=True)
+    # norm = colors.BoundaryNorm(bins, num_bins, clip=True)
 
     if type == 'cropland':
-        cmap = CROPLAND_CMAP10
+        # cmap = CROPLAND_CMAP10
+        cmap = CROPLAND_CMAP_FULL
     elif type == 'pasture':
-        cmap = PASTURE_CMAP10
+        # cmap = PASTURE_CMAP10
+        cmap = PASTURE_CMAP_FULL
     elif type == 'other':
-        cmap = OTHER_CMAP10
+        # cmap = OTHER_CMAP10
+        cmap = OTHER_CMAP_FULL
 
     # Plot
-    fig, ax = plt.subplots(figsize=(18, 18))
-    im = ax.imshow(array, cmap=cmap, norm=norm)
+    fig, ax = plt.subplots(figsize=(18, 18), dpi=600)
+    # im = ax.imshow(array, cmap=cmap, norm=norm)
+    im = ax.imshow(array, cmap=cmap)
     plt.axis('off')
 
     axins = inset_axes(ax,
@@ -432,19 +484,19 @@ def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
     plt.close()
 
 
-def plot_agland_pred_vs_ground_truth(ground_truth, pred, output_dir=None):
+def plot_agland_pred_vs_ground_truth(
+        output_pred_vs_ground_truth_data_collection, output_dir=None):
     """
     Plot pred (x) vs. ground_truth (y) with a 1:1 line as reference for CROPLAND,
-    PASTURE and OTHER. Function assumes both inputs are nx3 np.array with above
-    order in place
+    PASTURE and OTHER. Function assumes output_pred_vs_ground_truth_data_collection is not an 
+    empty dict with ground_truth_collection and pred_collection info
 
     Args:
-        ground_truth (np.array): n-by-3 array with columns CROPLAND, PASTURE, OTHER
-        pred (np.array): n-by-3 array with columns CROPLAND, PASTURE, OTHER
+        output_pred_vs_ground_truth_data_collection (dict): pred and gt info with iteration int as keys
         output_dir (str): output dir (Default: None)
     """
 
-    def plot_helper(gt, pred, ax, x, m, b, title):
+    def base_plot_helper(gt, pred, ax, x, m, b, title):
         """ Helper plotter """
         ax.scatter(pred, gt, marker='x')
         ax.plot(x, m * x + b, c='r')
@@ -455,37 +507,157 @@ def plot_agland_pred_vs_ground_truth(ground_truth, pred, output_dir=None):
         ax.set_xlim([0, 1])
         ax.set_ylim([0, 1])
 
-    assert (ground_truth.ndim == pred.ndim == 2), "Input arrays must be 2D"
-    assert (ground_truth.shape[1] == pred.shape[1] == 3), \
-        "Input arrays must follow CROPLAND, PASTURE, OTHER order in columns"
+        return ax
 
-    # Load agland data
-    gt_cropland, gt_pasture, gt_other = ground_truth[:,
-                                                     0], ground_truth[:,
-                                                                      1], ground_truth[:,
-                                                                                       2]
-    pred_cropland, pred_pasture, pred_other = pred[:, 0], pred[:, 1], pred[:,
-                                                                           2]
+    def sub_plot_helper(iter_list, rmse_list, ax, markersize, linewidth):
+        """ Helper plotter """
+        ax.plot(np.asarray(iter_list),
+                np.asarray(rmse_list),
+                linewidth=linewidth,
+                c='k',
+                zorder=1)
+        ax.scatter(np.asarray(iter_list),
+                   np.asarray(rmse_list),
+                   marker='X',
+                   c='b',
+                   s=markersize,
+                   zorder=10)
+        ax.scatter(np.asarray(iter_list[-1]),
+                   np.asarray(rmse_list[-1]),
+                   marker='X',
+                   c='r',
+                   s=markersize,
+                   zorder=10)
+        ax.set_xticks(iter_list, ['iter_{}'.format(str(i)) for i in iter_list])
+        ax.set_ylabel('RMSE')
 
-    # Get RMSE results
+    def add_subplot_axes(ax, rect, axisbg='w'):
+        """
+        Helper plotter
+        Reference: 
+        https://stackoverflow.com/questions/17458580/embedding-small-plots-inside-subplots-in-matplotlib
+        """
+        fig = plt.gcf()
+        box = ax.get_position()
+        width = box.width
+        height = box.height
+        inax_position = ax.transAxes.transform(rect[0:2])
+        transFigure = fig.transFigure.inverted()
+        infig_position = transFigure.transform(inax_position)
+        x = infig_position[0]
+        y = infig_position[1]
+        width *= rect[2]
+        height *= rect[3]
+        subax = fig.add_axes([x, y, width, height], facecolor=axisbg)
+        x_labelsize = subax.get_xticklabels()[0].get_size()
+        y_labelsize = subax.get_yticklabels()[0].get_size()
+        x_labelsize *= rect[2]**0.5
+        y_labelsize *= rect[3]**0.5
+        subax.xaxis.set_tick_params(labelsize=x_labelsize)
+        subax.yaxis.set_tick_params(labelsize=y_labelsize)
+
+        return subax
+
+    assert (len(output_pred_vs_ground_truth_data_collection) >
+            0), "output_pred_vs_ground_truth_data_collection cannot be empty"
+
+    # subplot settings
+    markersize = 400
+    linewidth = 5
+    subplot_rect = [0.5, 0.1, 0.4, 0.3]
+
+    # Unpack data info and find RMSE results
+    plot_data_table = {}
     x_range = np.linspace(0, 1, 50)
-    m_cropland, b_cropland = np.polyfit(pred_cropland, gt_cropland, 1)
-    m_pasture, b_pasture = np.polyfit(pred_pasture, gt_pasture, 1)
-    m_other, b_other = np.polyfit(pred_other, gt_other, 1)
+    for itr, data_info in output_pred_vs_ground_truth_data_collection.items():
 
-    rmse_cropland = rmse((m_cropland * x_range + b_cropland), x_range)
-    rmse_pasture = rmse((m_pasture * x_range + b_pasture), x_range)
-    rmse_other = rmse((m_other * x_range + b_other), x_range)
+        ground_truth = data_info['ground_truth_collection']
+        pred = data_info['pred_collection']
 
-    # Plot results in 3 subplots
-    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 10))
-    plot_helper(gt_cropland, pred_cropland, ax[0], x_range, m_cropland,
-                b_cropland,
-                'Cropland | RMSE:{}'.format(round(rmse_cropland, 4)))
-    plot_helper(gt_pasture, pred_pasture, ax[1], x_range, m_pasture, b_pasture,
-                'Pasture | RMSE:{}'.format(round(rmse_pasture, 4)))
-    plot_helper(gt_other, pred_other, ax[2], x_range, m_other, b_other,
-                'Other | RMSE:{}'.format(round(rmse_other, 4)))
+        assert (ground_truth.ndim == pred.ndim == 2), "Input arrays must be 2D"
+        assert (ground_truth.shape[1] == pred.shape[1] == 3), \
+            "Input arrays must follow CROPLAND, PASTURE, OTHER order in columns"
+
+        gt_cropland, gt_pasture, gt_other = ground_truth[:,
+                                                         0], ground_truth[:,
+                                                                          1], ground_truth[:,
+                                                                                           2]
+        pred_cropland, pred_pasture, pred_other = pred[:, 0], pred[:,
+                                                                   1], pred[:,
+                                                                            2]
+
+        # Compute RMSE
+        m_cropland, b_cropland = np.polyfit(pred_cropland, gt_cropland, 1)
+        m_pasture, b_pasture = np.polyfit(pred_pasture, gt_pasture, 1)
+        m_other, b_other = np.polyfit(pred_other, gt_other, 1)
+
+        rmse_cropland = rmse((m_cropland * x_range + b_cropland), x_range)
+        rmse_pasture = rmse((m_pasture * x_range + b_pasture), x_range)
+        rmse_other = rmse((m_other * x_range + b_other), x_range)
+
+        plot_data_table[itr] = {
+            'gt_cropland': gt_cropland,
+            'gt_pasture': gt_pasture,
+            'gt_other': gt_other,
+            'pred_cropland': pred_cropland,
+            'pred_pasture': pred_pasture,
+            'pred_other': pred_other,
+            'm_cropland': m_cropland,
+            'b_cropland': b_cropland,
+            'm_pasture': m_pasture,
+            'b_pasture': b_pasture,
+            'm_other': m_other,
+            'b_other': b_other,
+            'rmse_cropland': rmse_cropland,
+            'rmse_pasture': rmse_pasture,
+            'rmse_other': rmse_other
+        }
+
+    # Use the last iteration as base plot
+    iter_list = sorted(list(plot_data_table.keys()))
+    base_iter = max(iter_list)
+
+    fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 10), dpi=600)
+    ax1 = base_plot_helper(
+        plot_data_table[base_iter]['gt_cropland'],
+        plot_data_table[base_iter]['pred_cropland'], ax[0], x_range,
+        plot_data_table[base_iter]['m_cropland'],
+        plot_data_table[base_iter]['b_cropland'], 'Cropland | RMSE:{}'.format(
+            round(plot_data_table[base_iter]['rmse_cropland'], 4)))
+
+    ax2 = base_plot_helper(
+        plot_data_table[base_iter]['gt_pasture'],
+        plot_data_table[base_iter]['pred_pasture'], ax[1], x_range,
+        plot_data_table[base_iter]['m_pasture'],
+        plot_data_table[base_iter]['b_pasture'], 'Pasture | RMSE:{}'.format(
+            round(plot_data_table[base_iter]['rmse_pasture'], 4)))
+
+    ax3 = base_plot_helper(
+        plot_data_table[base_iter]['gt_other'],
+        plot_data_table[base_iter]['pred_other'], ax[2], x_range,
+        plot_data_table[base_iter]['m_other'],
+        plot_data_table[base_iter]['b_other'], 'Other | RMSE:{}'.format(
+            round(plot_data_table[base_iter]['rmse_other'], 4)))
+
+    ax1_sub = add_subplot_axes(ax1, subplot_rect, axisbg='w')
+    ax2_sub = add_subplot_axes(ax2, subplot_rect, axisbg='w')
+    ax3_sub = add_subplot_axes(ax3, subplot_rect, axisbg='w')
+
+    sub_plot_helper(iter_list,
+                    [plot_data_table[i]['rmse_cropland'] for i in iter_list],
+                    ax1_sub,
+                    markersize=markersize,
+                    linewidth=linewidth)
+    sub_plot_helper(iter_list,
+                    [plot_data_table[i]['rmse_pasture'] for i in iter_list],
+                    ax2_sub,
+                    markersize=markersize,
+                    linewidth=linewidth)
+    sub_plot_helper(iter_list,
+                    [plot_data_table[i]['rmse_other'] for i in iter_list],
+                    ax3_sub,
+                    markersize=markersize,
+                    linewidth=linewidth)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
@@ -569,7 +741,7 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     pred_results[nan_index] = 0
     diff = geowiki_cropland_by_index[:, 2] / 100 - pred_results
 
-    fig, ax = plt.subplots(figsize=(18, 8))
+    fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
     im = plt.scatter(geowiki_cropland_by_index[:, 1],
                      geowiki_cropland_by_index[:, 0],
                      c=diff,
@@ -617,7 +789,7 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
                                      2] / 100 - pred_results[~nan_index]
     rmse_error = np.sqrt(np.mean(diff**2))
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
     plt.text(-0.85, 15000, r'$\mu={}$'.format(np.round(np.mean(diff), 4)))
     plt.text(-0.85, 13000, r'$\sigma={}$'.format(np.round(np.std(diff), 4)))
     plt.text(-0.85, 11000, r'RMSE=${}$'.format(np.round(rmse_error, 4)))
@@ -649,7 +821,7 @@ def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
     diff = maryland_map / 100 - pred_map
 
     # Plot
-    fig, ax = plt.subplots(figsize=(18, 8))
+    fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
     im = plt.imshow(diff, cmap='bwr', vmin=-1, vmax=1)
     plt.axis('off')
 
@@ -688,7 +860,7 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
     diff = maryland_map / 100 - pred_map
     rmse_error = np.sqrt(np.nanmean(diff**2))
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
     plt.text(-0.85, 1800000, r'$\mu={}$'.format(np.round(np.nanmean(diff), 4)))
     plt.text(-0.85, 1550000,
              r'$\sigma={}$'.format(np.round(np.nanstd(diff), 4)))
@@ -722,4 +894,3 @@ def plot_weights_array(weights_array):
     fig.add_axes(cax)
 
     cbar = fig.colorbar(im, cax=cax, orientation='horizontal')
-
