@@ -1,5 +1,5 @@
 path_dir:
-  global_area_map: 'land_cover/global_area.tif'
+  global_area_map: 'land_cover/global_area_43200x86400.tif'
   land_cover_map: 'land_cover/MCD12Q1_merged.tif'
   pred_input_map: 'land_cover/pred_input_map.pkl'
 

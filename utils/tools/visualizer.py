@@ -156,7 +156,11 @@ def plot_global_area_map(area_array, output_dir=None, scale=10):
     assert (scale > 0), "scale cannot be non negative"
     h, w = area_array.shape
 
-    # Reduce image size for visualization
+    # Reduce image size for visualization ONLY
+    # Note: if area_array is used for computation, interplation with
+    #       nearest neighbors will give wrong results, instead
+    #       need to re-generate or sum (for downsampling) and average
+    #       (for upsampling)
     area_array = cv2.resize(area_array,
                             dsize=(int(w) // scale, int(h) // scale),
                             interpolation=cv2.INTER_NEAREST)

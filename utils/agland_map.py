@@ -194,9 +194,9 @@ class AglandMap:
         pred_collection = np.zeros((num_samples, 3))
 
         for i in tqdm(range(num_samples)):
-            out_cropland = crop_intermediate_state(self.get_cropland(), self.affine, input_dataset, i, crop=True)
-            out_pasture = crop_intermediate_state(self.get_pasture(), self.affine, input_dataset, i, crop=True)
-            out_other = crop_intermediate_state(self.get_other(), self.affine, input_dataset, i, crop=True)
+            out_cropland = crop_intermediate_state(self.get_cropland(), self.affine, input_dataset.census_table, i, crop=True)
+            out_pasture = crop_intermediate_state(self.get_pasture(), self.affine, input_dataset.census_table, i, crop=True)
+            out_other = crop_intermediate_state(self.get_other(), self.affine, input_dataset.census_table, i, crop=True)
 
             ground_truth_cropland = input_dataset.census_table.iloc[i]['CROPLAND_PER']
             ground_truth_pasture = input_dataset.census_table.iloc[i]['PASTURE_PER']

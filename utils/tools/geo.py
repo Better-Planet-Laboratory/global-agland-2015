@@ -39,15 +39,15 @@ def get_border(index, shapefile):
     return [mapping(shapefile.iloc[index].geometry)]
 
 
-def crop_intermediate_state(array, affine, input_dataset, index, crop=False):
+def crop_intermediate_state(array, affine, census_table, index, crop=False):
     """
-    Crop index of input_dataset state on array with affine, return a
+    Crop index of census_table state on array with affine, return a
     cropped matrix with nodata to be -1
 
     Args:
         array (np.array): 2D map
         affine (affine.Affine): transform
-        input_dataset (Dataset): input census dataset to be matched to
+        census_table (pd.DataFrame): input census table to be matched to
         index (int): index in census table
         crop (bool): crop (Default: False)
 
@@ -64,7 +64,9 @@ def crop_intermediate_state(array, affine, input_dataset, index, crop=False):
             dataset.write(array, 1)
 
         with memfile.open() as dataset:
-            out, _ = mask(dataset, get_border(index, input_dataset.census_table),
-                          crop=crop, nodata=-1)
+            out, _ = mask(dataset,
+                          get_border(index, census_table),
+                          crop=crop,
+                          nodata=-1)
 
     return out[0]
