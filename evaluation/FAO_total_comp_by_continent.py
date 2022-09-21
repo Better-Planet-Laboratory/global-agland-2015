@@ -76,10 +76,9 @@ def main():
 
     # Load agland map and apply masks
     agland_map = load_tif_as_AglandMap(args.agland_map_dir, force_load=True)
-    nonagricultural_mask = make_nonagricultural_mask(args.water_body_dir,
-                                                     args.gdd_filter_map_dir,
-                                                     shape=(agland_map.height,
-                                                            agland_map.width))
+    nonagricultural_mask = make_nonagricultural_mask(
+        shape=(agland_map.height, agland_map.width),
+        mask_dir_list=[args.water_body_dir, args.gdd_filter_map_dir])
     # Our mask also include GDD - try not to apply mask
     # agland_map.apply_mask(nonagricultural_mask)
     cropland_map = agland_map.get_cropland().copy()

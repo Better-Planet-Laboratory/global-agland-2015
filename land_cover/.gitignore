@@ -2,3 +2,8 @@
 *.tif
 *.pkl
 *.hdf
+*.cpg
+*.dbf
+*.prj
+*.shx
+*.shp

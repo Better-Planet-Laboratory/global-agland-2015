@@ -112,10 +112,9 @@ def main():
         geowiki_cropland, agland_map.affine)
 
     # Apply water body and gdd masks
-    mask = make_nonagricultural_mask(args.water_body_dir,
-                                     args.gdd_filter_map_dir,
-                                     shape=(agland_map.height,
-                                            agland_map.width))
+    mask = make_nonagricultural_mask(
+        shape=(agland_map.height, agland_map.width),
+        mask_dir_list=[args.water_body_dir, args.gdd_filter_map_dir])
     agland_map.apply_mask(mask)
 
     # Extract prediction values

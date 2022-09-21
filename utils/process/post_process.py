@@ -12,32 +12,36 @@ from utils.tools.pycno_interp import pycno
 BIAS_CORRECTION_ATTRIBUTES = ['BC_CROP', 'BC_PAST', 'BC_OTHE']
 
 
-def make_nonagricultural_mask(water_body_mask_dir, gdd_filter_map_dir, shape):
+def make_nonagricultural_mask(shape, mask_dir_list=[]):
     """
-    Generate a non-agricultural boolean mask by merging water_body_mask and gdd_filter_map,
-    both mask shall indicate 0 as non-agricultural regions and 1 otherwise
+    Generate a non-agricultural boolean mask by merging a list of mask tif files, each 
+    mask shall indicate 0 as non-agricultural regions and 1 otherwise
 
     Args:
-        water_body_mask_dir (str): path directory to water body mask tif file
-        gdd_filter_map_dir (str): path directory to gdd filter map tif file
         shape (tuple): (height, width) of the output mask shape
+        mask_dir_list (list of str): list of path directories to nonagricultural mask tif files (Default: [])
 
     Returns: (np.array) 2D boolean mask matrix
     """
     # Load maps
-    water_body_mask_map = rasterio.open(water_body_mask_dir).read(1)
-    gdd_filter_map = rasterio.open(gdd_filter_map_dir).read(1)
+    nonagricultural_mask = np.ones(shape)
+    if mask_dir_list:
 
-    # Resize two maps to match the input shape
-    # Use nearest neighbors as interpolation method
-    water_body_mask_map_scaled = cv2.resize(water_body_mask_map,
-                                            dsize=(shape[1], shape[0]),
-                                            interpolation=cv2.INTER_NEAREST)
-    gdd_filter_map_scaled = cv2.resize(gdd_filter_map,
-                                       dsize=(shape[1], shape[0]),
-                                       interpolation=cv2.INTER_NEAREST)
+        # merge each mask
+        for mask_dir in mask_dir_list:
+            current_mask = rasterio.open(mask_dir).read(1)
 
-    return np.multiply(water_body_mask_map_scaled, gdd_filter_map_scaled)
+            # resize map to match the input shape
+            # use nearest neighbors as interpolation method
+            current_mask_scaled = cv2.resize(current_mask,
+                                             dsize=(shape[1], shape[0]),
+                                             interpolation=cv2.INTER_NEAREST)
+
+            # merge
+            nonagricultural_mask = np.multiply(nonagricultural_mask,
+                                               current_mask_scaled)
+
+    return nonagricultural_mask
 
 
 def check_weights_exists(deploy_setting_cfg, iter):

@@ -46,7 +46,7 @@ def save_shp_as_tif(dst_filename, shp_file, attribute_name, x_min, y_max, pixel_
     rows = int((2*y_max) / pixel_size)
 
     target_ds = gdal.GetDriverByName('GTiff').Create(dst_filename, cols, rows, 1, dtype) 
-    target_ds.SetGeoTransform((x_min, pixel_size, 0, -y_max, 0, pixel_size))
+    target_ds.SetGeoTransform((x_min, pixel_size, 0, y_max, 0, -pixel_size))
     band = target_ds.GetRasterBand(1)
     band.SetNoDataValue(no_data_value)
     band.FlushCache()

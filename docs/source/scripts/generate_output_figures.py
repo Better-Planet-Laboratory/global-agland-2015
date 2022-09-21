@@ -56,6 +56,10 @@ def main():
                         type=str,
                         default='../../../gdd/gdd_filter_map_360x720.tif',
                         help="path dir to gdd filter map tif")
+    parser.add_argument("--antarctica_mask_dir",
+                        type=str,
+                        default='../../../land_cover/antarctica_mask.tif',
+                        help="path dir to antarctica mask tif")
     args = parser.parse_args()
     print(args)
 
@@ -105,9 +109,12 @@ def main():
     # Save map plots
     map_height, map_width = agland_maps_table[next(iter(agland_maps_table))].height, \
                             agland_maps_table[next(iter(agland_maps_table))].width
-    mask = make_nonagricultural_mask(args.water_body_dir,
-                                     args.gdd_filter_map_dir,
-                                     shape=(map_height, map_width))
+    mask = make_nonagricultural_mask(shape=(map_height, map_width),
+                                     mask_dir_list=[
+                                         args.water_body_dir,
+                                         args.gdd_filter_map_dir,
+                                         args.antarctica_mask_dir
+                                     ])
     for itr, agland_map in agland_maps_table.items():
         output_map_dir = os.path.join(args.output_dir,
                                       'output_{}_'.format(str(itr)))
