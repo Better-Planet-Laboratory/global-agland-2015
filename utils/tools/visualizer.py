@@ -11,8 +11,9 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 import cv2
 from geopandas import GeoDataFrame
 from ..metrics import *
+import geopandas as gpd
 
-font = {'family': 'monospace', 'weight': 'normal', 'size': 24}
+font = {'family': 'Times New Roman', 'weight': 'normal', 'size': 24}
 
 matplotlib.rc('font', **font)
 
@@ -33,16 +34,17 @@ PASTURE_CMAP10_OUTLIER2 = colors.ListedColormap([
 PASTURE_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
     name='PASTURE_CMAP_FULL',
     colors=[
-        '#FFF7F2', '#FFF2EA', '#FEEDE2', '#FEE9DA', '#FEE4D2', '#FEDFC9',
-        '#FEDAC1', '#FED5B9', '#FED0B1', '#FFCBA9', '#FFC7A1', '#FFC299',
-        '#FFBD90', '#FFB888', '#FFB380', '#FFAE78', '#FFA970', '#FFA468',
-        '#FFA05F', '#FF9B57', '#FF964F', '#FF9147', '#FF8C3F', '#FF8737',
-        '#FF822E', '#FF7D26', '#FF791E', '#FF7416', '#FF6F0E', '#FF6A06',
-        '#FC6600', '#F46200', '#EC5F00', '#E45C00', '#DC5800', '#D45500',
-        '#CC5200', '#C34F00', '#BB4B00', '#B34800', '#AB4500', '#A34100',
-        '#9B3E00', '#923B00', '#8A3700', '#823400', '#7A3100', '#722E00',
-        '#6A2A00', '#612700', '#592400', '#512000', '#491D00', '#411A00',
-        '#391700', '#301300', '#281000', '#200D00', '#180900', '#100600'
+        '#FFFFFF', '#FFF7F2', '#FFF2EA', '#FEEDE2', '#FEE9DA', '#FEE4D2',
+        '#FEDFC9', '#FEDAC1', '#FED5B9', '#FED0B1', '#FFCBA9', '#FFC7A1',
+        '#FFC299', '#FFBD90', '#FFB888', '#FFB380', '#FFAE78', '#FFA970',
+        '#FFA468', '#FFA05F', '#FF9B57', '#FF964F', '#FF9147', '#FF8C3F',
+        '#FF8737', '#FF822E', '#FF7D26', '#FF791E', '#FF7416', '#FF6F0E',
+        '#FF6A06', '#FC6600', '#F46200', '#EC5F00', '#E45C00', '#DC5800',
+        '#D45500', '#CC5200', '#C34F00', '#BB4B00', '#B34800', '#AB4500',
+        '#A34100', '#9B3E00', '#923B00', '#8A3700', '#823400', '#7A3100',
+        '#722E00', '#6A2A00', '#612700', '#592400', '#512000', '#491D00',
+        '#411A00', '#391700', '#301300', '#281000', '#200D00', '#180900',
+        '#100600'
     ],
     N=1001)
 
@@ -59,16 +61,17 @@ CROPLAND_CMAP10_OUTLIER2 = colors.ListedColormap([
 CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
     name='CROPLAND_CMAP_FULL',
     colors=[
-        '#F2FFF2', '#EAFFEA', '#E2FEE2', '#DAFEDA', '#D2FED2', '#C9FEC9',
-        '#C1FEC1', '#B9FEB9', '#B1FEB1', '#A9FFA9', '#A1FFA1', '#99FF99',
-        '#90FF90', '#88FF88', '#80FF80', '#78FF78', '#70FF70', '#68FF68',
-        '#5FFF5F', '#57FF57', '#4FFF4F', '#47FF47', '#3FFF3F', '#37FF37',
-        '#2EFF2E', '#26FF26', '#1EFF1E', '#16FF16', '#0eff0e', '#06FF06',
-        '#00FC00', '#00F400', '#00EC00', '#00E400', '#00DC00', '#00D400',
-        '#00CC00', '#00C300', '#00BB00', '#00B300', '#00AB00', '#00A300',
-        '#009B00', '#009200', '#008A00', '#008200', '#007A00', '#007200',
-        '#006A00', '#006100', '#005900', '#005100', '#004900', '#004100',
-        '#003900', '#003000', '#002800', '#002000', '#001800', '#001000'
+        '#FFFFFF', '#F2FFF2', '#EAFFEA', '#E2FEE2', '#DAFEDA', '#D2FED2',
+        '#C9FEC9', '#C1FEC1', '#B9FEB9', '#B1FEB1', '#A9FFA9', '#A1FFA1',
+        '#99FF99', '#90FF90', '#88FF88', '#80FF80', '#78FF78', '#70FF70',
+        '#68FF68', '#5FFF5F', '#57FF57', '#4FFF4F', '#47FF47', '#3FFF3F',
+        '#37FF37', '#2EFF2E', '#26FF26', '#1EFF1E', '#16FF16', '#0eff0e',
+        '#06FF06', '#00FC00', '#00F400', '#00EC00', '#00E400', '#00DC00',
+        '#00D400', '#00CC00', '#00C300', '#00BB00', '#00B300', '#00AB00',
+        '#00A300', '#009B00', '#009200', '#008A00', '#008200', '#007A00',
+        '#007200', '#006A00', '#006100', '#005900', '#005100', '#004900',
+        '#004100', '#003900', '#003000', '#002800', '#002000', '#001800',
+        '#001000'
     ],
     N=1001)
 
@@ -80,9 +83,9 @@ OTHER_CMAP10 = colors.ListedColormap([
 OTHER_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
     name='OTHER_CMAP_FULL',
     colors=[
-        '#F8F8F8', '#F4F4F4', '#F0F0F0', '#ECECEC', '#E8E8E8', '#E4E4E4',
-        '#E0E0E0', '#DCDCDC', '#D8D8D8', '#D4D4D4', '#D0D0D0', '#CCC',
-        '#C7C7C7', '#C3C3C3', '#BFBFBF', '#BBB', '#B7B7B7', '#B3B3B3',
+        '#FFFFFF', '#F8F8F8', '#F4F4F4', '#F0F0F0', '#ECECEC', '#E8E8E8',
+        '#E4E4E4', '#E0E0E0', '#DCDCDC', '#D8D8D8', '#D4D4D4', '#D0D0D0',
+        '#CCC', '#C7C7C7', '#C3C3C3', '#BFBFBF', '#BBB', '#B7B7B7', '#B3B3B3',
         '#AFAFAF', '#ABABAB', '#A7A7A7', '#A3A3A3', '#9F9F9F', '#9B9B9B',
         '#969696', '#929292', '#8E8E8E', '#8A8A8A', '#868686', '#828282',
         '#7E7E7E', '#7A7A7A', '#767676', '#727272', '#6E6E6E', '#6A6A6A',
@@ -248,6 +251,79 @@ def plot_land_cover_map(land_cover_array,
     plt.close()
 
 
+def plot_agland_map_tif(agland_map_tif,
+                        type,
+                        global_boundary_shp=None,
+                        output_dir=None):
+    """
+    Helper function that plots slices of agland map ('cropland', 'pasture', 'other') that is 
+    in tif format. global_boundary_shp is the shapefile of global boundary that is plotted 
+    on top of the raster
+
+    Args:
+        agland_map_tif (str): path dir to agland map tif
+        type (str): 'cropland', 'pasture', or 'other'
+        global_boundary_shp (str, optional): path dir to boundary shp. Defaults to None.
+        output_dir (str, optional): output directory path. Defaults to None.
+    """
+    assert (type in ['cropland', 'pasture',
+                     'other']), "Unknown type input matrix"
+
+    # Initialize figure
+    fig, ax = plt.subplots(figsize=(18, 18), dpi=600)
+
+    # Plot global boundary
+    if global_boundary_shp is not None:
+        global_boundary_gpd = gpd.read_file(global_boundary_shp)
+        global_boundary_gpd.plot(ax=ax,
+                                 column='min_zoom',
+                                 edgecolor='black',
+                                 legend=False,
+                                 cmap=colors.ListedColormap([TRANSPARENT]))
+        ax.set_axis_off()
+
+    # Plot agland map content
+    if type == 'cropland':
+        cbar_label = 'Cropland Area %'
+        # cmap = CROPLAND_CMAP10
+        cmap = CROPLAND_CMAP_FULL
+    elif type == 'pasture':
+        cbar_label = 'Pasture Area %'
+        # cmap = PASTURE_CMAP10
+        cmap = PASTURE_CMAP_FULL
+    elif type == 'other':
+        cbar_label = 'Other Area %'
+        # cmap = OTHER_CMAP10
+        cmap = OTHER_CMAP_FULL
+
+    agland_map = rasterio.open(agland_map_tif)
+    im = rasterio_plot.show(agland_map, ax=ax, cmap=cmap, zorder=5, alpha=1)
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(0.05, 0.15, 0.3, 1),
+                       bbox_transform=ax.transAxes,
+                       borderpad=0)
+    cbar = fig.colorbar(im.get_images()[0], cax=axins, orientation='vertical')
+    cbar.ax.get_yaxis().set_ticks([])
+    for j, cover_p in enumerate(['-{}'.format(i * 20) for i in range(6)]):
+        cbar.ax.text(1,
+                     j * 0.17 + 0.003,
+                     cover_p,
+                     ha='left',
+                     va='center',
+                     fontsize=11.5)
+    cbar.set_label(cbar_label, rotation=90, labelpad=-50, y=0.55)
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+        print('File {} generated'.format(output_dir))
+
+    plt.show()
+    plt.close()
+
+
 def plot_agland_map_slice(array, type, output_dir=None):
     """
     Helper function that plots slices of agland map ('cropland', 'pasture', 'other')
@@ -257,7 +333,6 @@ def plot_agland_map_slice(array, type, output_dir=None):
         type (str): 'cropland', 'pasture', or 'other'
         output_dir (str, optional): output directory path. Defaults to None.
     """
-
     assert (type in ['cropland', 'pasture',
                      'other']), "Unknown type input matrix"
     # Default settings for agland map (cropland, pasture, other)
@@ -270,30 +345,41 @@ def plot_agland_map_slice(array, type, output_dir=None):
     # norm = colors.BoundaryNorm(bins, num_bins, clip=True)
 
     if type == 'cropland':
+        cbar_label = 'Cropland Area %'
         # cmap = CROPLAND_CMAP10
         cmap = CROPLAND_CMAP_FULL
     elif type == 'pasture':
+        cbar_label = 'Pasture Area %'
         # cmap = PASTURE_CMAP10
         cmap = PASTURE_CMAP_FULL
     elif type == 'other':
+        cbar_label = 'Other Area %'
         # cmap = OTHER_CMAP10
         cmap = OTHER_CMAP_FULL
 
     # Plot
     fig, ax = plt.subplots(figsize=(18, 18), dpi=600)
     # im = ax.imshow(array, cmap=cmap, norm=norm)
-    im = ax.imshow(array, cmap=cmap)
+    im = ax.imshow(array * 100, cmap=cmap)
     plt.axis('off')
 
     axins = inset_axes(ax,
                        width="5%",
                        height="50%",
                        loc='lower left',
-                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_to_anchor=(0.05, 0.15, 0.3, 1),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
-    cbar.ax.tick_params(labelsize=10.5)
+    cbar.ax.get_yaxis().set_ticks([])
+    for j, cover_p in enumerate(['-{}'.format(i * 20) for i in range(6)]):
+        cbar.ax.text(1,
+                     j * 17 + 0.27,
+                     cover_p,
+                     ha='left',
+                     va='center',
+                     fontsize=11.5)
+    cbar.set_label(cbar_label, rotation=90, labelpad=-50, y=0.55)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')

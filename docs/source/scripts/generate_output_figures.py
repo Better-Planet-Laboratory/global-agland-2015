@@ -1,8 +1,8 @@
 import argparse
-from mimetypes import suffix_map
 from utils.agland_map import *
 from utils.process.post_process import *
 import os
+from utils.tools.visualizer import plot_agland_map_tif
 
 LAND_COVER_CFG = load_yaml_config('../../../configs/land_cover_cfg.yaml')
 
@@ -60,6 +60,11 @@ def main():
                         type=str,
                         default='../../../land_cover/antarctica_mask.tif',
                         help="path dir to antarctica mask tif")
+    parser.add_argument(
+        "--global_boundary_shp",
+        type=str,
+        default='../../../shapefile/ne_10m_land/ne_10m_land.shp',
+        help="path dir to global boundary shp")
     args = parser.parse_args()
     print(args)
 
@@ -119,7 +124,48 @@ def main():
         output_map_dir = os.path.join(args.output_dir,
                                       'output_{}_'.format(str(itr)))
         agland_maps_table[itr] = agland_map.apply_mask(mask)
-        agland_map.plot(output_map_dir)
+
+        save_array_as_tif(output_map_dir + 'cropland.tif',
+                          agland_map.get_cropland(),
+                          x_min=-180,
+                          y_max=90,
+                          pixel_size=abs(-180) * 2 / agland_map.width,
+                          epsg=4326,
+                          no_data_value=255,
+                          dtype=gdal.GDT_Float64)
+
+        save_array_as_tif(output_map_dir + 'pasture.tif',
+                          agland_map.get_cropland(),
+                          x_min=-180,
+                          y_max=90,
+                          pixel_size=abs(-180) * 2 / agland_map.width,
+                          epsg=4326,
+                          no_data_value=255,
+                          dtype=gdal.GDT_Float64)
+
+        save_array_as_tif(output_map_dir + 'other.tif',
+                          agland_map.get_cropland(),
+                          x_min=-180,
+                          y_max=90,
+                          pixel_size=abs(-180) * 2 / agland_map.width,
+                          epsg=4326,
+                          no_data_value=255,
+                          dtype=gdal.GDT_Float64)
+
+        plot_agland_map_tif(output_map_dir + 'cropland.tif',
+                            type='cropland',
+                            global_boundary_shp=args.global_boundary_shp,
+                            output_dir=output_map_dir + 'cropland.png')
+
+        plot_agland_map_tif(output_map_dir + 'pasture.tif',
+                            type='pasture',
+                            global_boundary_shp=args.global_boundary_shp,
+                            output_dir=output_map_dir + 'pasture.png')
+
+        plot_agland_map_tif(output_map_dir + 'other.tif',
+                            type='other',
+                            global_boundary_shp=args.global_boundary_shp,
+                            output_dir=output_map_dir + 'other.png')
 
     # Make agland pred vs. ground truth plots
     plot_agland_pred_vs_ground_truth(

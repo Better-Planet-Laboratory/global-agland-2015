@@ -98,8 +98,6 @@ def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4
         y_max, 0, -pixel_size))
 
     # Check if data contains NaN, we need to set a NoDataValue
-    # Make sure this value is not in data
-    assert (no_data_value not in data_array)
     data_array[np.isnan(data_array)] = no_data_value
     dataset.GetRasterBand(1).SetNoDataValue(no_data_value)
 
