@@ -408,16 +408,12 @@ def plot_agland_map_slice(array, type, output_dir=None):
                        bbox_to_anchor=(0.05, 0.15, 0.3, 1),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
-    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
-    cbar.ax.get_yaxis().set_ticks([])
-    for j, cover_p in enumerate(['-{}'.format(i * 20) for i in range(6)]):
-        cbar.ax.text(1,
-                     j * 17 + 0.27,
-                     cover_p,
-                     ha='left',
-                     va='center',
-                     fontsize=11.5)
-    cbar.set_label(cbar_label, rotation=90, labelpad=-50, y=0.55)
+    cbar = fig.colorbar(im,
+                        cax=axins,
+                        orientation='vertical',
+                        ticks=[i * 0.2 for i in range(6)])
+    cbar.ax.set_yticklabels([str(i * 20) for i in range(6)], fontsize=11.5)
+    cbar.set_label(cbar_label, rotation=90, labelpad=-80, y=0.55)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
