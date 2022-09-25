@@ -13,7 +13,7 @@ from geopandas import GeoDataFrame
 from ..metrics import *
 import geopandas as gpd
 
-font = {'family': 'Times New Roman', 'weight': 'normal', 'size': 24}
+font = {'family': 'DejaVu Serif', 'weight': 'normal', 'size': 24}
 
 matplotlib.rc('font', **font)
 
@@ -72,6 +72,42 @@ CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
         '#007200', '#006A00', '#006100', '#005900', '#005100', '#004900',
         '#004100', '#003900', '#003000', '#002800', '#002000', '#001800',
         '#001000'
+    ],
+    N=1001)
+
+# CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
+#     name='CROPLAND_CMAP_FULL',
+#     colors=[
+#         '#ffffff', '#fefefe', '#fcfdfc', '#fbfcfb', '#fafbfa', '#f9f9f9',
+#         '#f7f8f7', '#f6f7f6', '#f5f6f5', '#f4f5f4', '#f2f4f2', '#f1f3f1',
+#         '#f0f2f0', '#eff1ef', '#edefed', '#eceeec', '#ebedeb', '#eaecea',
+#         '#e8ebe8', '#e7eae7', '#e2e6e2', '#dde2dd', '#d8ded8', '#d4dad3',
+#         '#cfd6cf', '#cad2ca', '#c5cec5', '#c1cac1', '#bcc6bc', '#b7c2b7',
+#         '#b3beb3', '#aebaae', '#aab6aa', '#a5b2a5', '#97a697', '#8a9a8a',
+#         '#7c8e7c', '#6f836f', '#627863', '#566c56', '#49624a', '#3d573e',
+#         '#314c32', '#254227', '#19381c', '#0c2e12', '#022402'
+#     ],
+#     N=1001)
+
+CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
+    name='CROPLAND_CMAP_FULL',
+    colors=[
+        '#ffffff', '#fefffe', '#fcfefc', '#fbfefb', '#fafdf9', '#f8fdf8',
+        '#f7fcf7', '#f5fcf5', '#f4fbf4', '#f3fbf3', '#f1faf1', '#f0faf0',
+        '#eff9ef', '#edf9ed', '#ecf8ec', '#eaf8ea', '#e9f7e9', '#e8f7e8',
+        '#e6f6e6', '#e5f6e5', '#e3f6e3', '#e1f6e1', '#dff6df', '#ddf6dd',
+        '#dbf6db', '#d9f6d9', '#d7f6d7', '#d5f6d5', '#d3f6d4', '#d1f6d2',
+        '#cff6d0', '#cdf6ce', '#cbf5cc', '#c9f5ca', '#c7f5c8', '#c5f5c6',
+        '#c3f5c4', '#c1f5c2', '#bff5c0', '#bdf5be', '#baf5bb', '#b8f5b9',
+        '#b5f6b6', '#b3f6b4', '#b0f6b2', '#aef6af', '#abf6ad', '#a9f6aa',
+        '#a6f6a8', '#a4f6a5', '#a1f7a3', '#9ef7a0', '#9cf79e', '#99f79b',
+        '#96f799', '#94f796', '#91f794', '#8ef791', '#8af88d', '#86f888',
+        '#81f983', '#7df97e', '#78fa7a', '#74fa75', '#6ffb6f', '#6afb6a',
+        '#65fb65', '#5ffc5f', '#5afc59', '#54fd53', '#4dfd4c', '#46fd45',
+        '#3efe3d', '#36fe35', '#2bfe2a', '#1cff1d', '#00ff06', '#00f30b',
+        '#00e70e', '#00db10', '#00cf12', '#00c313', '#00b713', '#00ac13',
+        '#00a013', '#009513', '#008a12', '#007f12', '#007411', '#006a0f',
+        '#005f0e', '#00550d', '#004b0b', '#004109', '#013707', '#032e03'
     ],
     N=1001)
 
@@ -297,7 +333,13 @@ def plot_agland_map_tif(agland_map_tif,
         cmap = OTHER_CMAP_FULL
 
     agland_map = rasterio.open(agland_map_tif)
-    im = rasterio_plot.show(agland_map, ax=ax, cmap=cmap, zorder=5, alpha=1)
+    im = rasterio_plot.show(agland_map,
+                            ax=ax,
+                            cmap=cmap,
+                            zorder=5,
+                            alpha=1,
+                            vmin=0,
+                            vmax=1)
     axins = inset_axes(ax,
                        width="5%",
                        height="50%",
@@ -305,16 +347,12 @@ def plot_agland_map_tif(agland_map_tif,
                        bbox_to_anchor=(0.05, 0.15, 0.3, 1),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
-    cbar = fig.colorbar(im.get_images()[0], cax=axins, orientation='vertical')
-    cbar.ax.get_yaxis().set_ticks([])
-    for j, cover_p in enumerate(['-{}'.format(i * 20) for i in range(6)]):
-        cbar.ax.text(1,
-                     j * 0.17 + 0.003,
-                     cover_p,
-                     ha='left',
-                     va='center',
-                     fontsize=11.5)
-    cbar.set_label(cbar_label, rotation=90, labelpad=-50, y=0.55)
+    cbar = fig.colorbar(im.get_images()[0],
+                        cax=axins,
+                        orientation='vertical',
+                        ticks=[i * 0.2 for i in range(6)])
+    cbar.ax.set_yticklabels([str(i * 20) for i in range(6)], fontsize=11.5)
+    cbar.set_label(cbar_label, rotation=90, labelpad=-80, y=0.55)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')

@@ -125,32 +125,32 @@ def main():
                                       'output_{}_'.format(str(itr)))
         agland_maps_table[itr] = agland_map.apply_mask(mask)
 
-        save_array_as_tif(output_map_dir + 'cropland.tif',
-                          agland_map.get_cropland(),
-                          x_min=-180,
-                          y_max=90,
-                          pixel_size=abs(-180) * 2 / agland_map.width,
-                          epsg=4326,
-                          no_data_value=255,
-                          dtype=gdal.GDT_Float64)
+        # save_array_as_tif(output_map_dir + 'cropland.tif',
+        #                   agland_map.get_cropland(),
+        #                   x_min=-180,
+        #                   y_max=90,
+        #                   pixel_size=abs(-180) * 2 / agland_map.width,
+        #                   epsg=4326,
+        #                   no_data_value=255,
+        #                   dtype=gdal.GDT_Float64)
 
-        save_array_as_tif(output_map_dir + 'pasture.tif',
-                          agland_map.get_cropland(),
-                          x_min=-180,
-                          y_max=90,
-                          pixel_size=abs(-180) * 2 / agland_map.width,
-                          epsg=4326,
-                          no_data_value=255,
-                          dtype=gdal.GDT_Float64)
+        # save_array_as_tif(output_map_dir + 'pasture.tif',
+        #                   agland_map.get_cropland(),
+        #                   x_min=-180,
+        #                   y_max=90,
+        #                   pixel_size=abs(-180) * 2 / agland_map.width,
+        #                   epsg=4326,
+        #                   no_data_value=255,
+        #                   dtype=gdal.GDT_Float64)
 
-        save_array_as_tif(output_map_dir + 'other.tif',
-                          agland_map.get_cropland(),
-                          x_min=-180,
-                          y_max=90,
-                          pixel_size=abs(-180) * 2 / agland_map.width,
-                          epsg=4326,
-                          no_data_value=255,
-                          dtype=gdal.GDT_Float64)
+        # save_array_as_tif(output_map_dir + 'other.tif',
+        #                   agland_map.get_cropland(),
+        #                   x_min=-180,
+        #                   y_max=90,
+        #                   pixel_size=abs(-180) * 2 / agland_map.width,
+        #                   epsg=4326,
+        #                   no_data_value=255,
+        #                   dtype=gdal.GDT_Float64)
 
         plot_agland_map_tif(output_map_dir + 'cropland.tif',
                             type='cropland',

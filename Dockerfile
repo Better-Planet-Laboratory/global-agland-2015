@@ -28,8 +28,7 @@ RUN apt-get install -y --no-install-recommends \
     python3.7 \
     python3.7-distutils \
     python3.7-dev \
-    default-jre-headless \
-    libspatialindex-dev
+    default-jre-headless
 
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.7 1
 RUN update-alternatives --set python /usr/bin/python3.7
@@ -71,3 +70,6 @@ RUN pip install -r requirements.txt
 
 COPY requirements.r .
 RUN Rscript requirements.r
+
+# Fix for geopandas to work
+RUN apt-get install -y libspatialindex-dev
