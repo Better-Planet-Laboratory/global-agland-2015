@@ -983,6 +983,95 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
     plt.close()
 
 
+def plot_diff_pred_pasture(diff_map, output_dir=None):
+    """
+    Scatter plot of pasture evaluation map.
+
+    Args:
+        diff_map (np.array): 2D array of pasture difference map
+        output_dir (str): output dir (Default: None)
+    """
+    # Use percentage
+    diff = diff_map * 100
+
+    # Plot
+    fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
+    im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
+    plt.axis('off')
+
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(-0.08, 0.20, 0.5, 1), # 0.5 for others; 0.25 for usa
+                       bbox_transform=ax.transAxes,
+                       borderpad=0)
+    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
+    cbar.ax.tick_params(labelsize=11.5)
+    cbar.set_label('Pasture Area \nDifference (%)',
+                   rotation=90,
+                   labelpad=-120,
+                   y=0.55)
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+
+    plt.show()
+    plt.close()
+
+
+def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
+    """
+    Histogram plot of reference - prediction map for pasture
+
+    Args:
+        diff_map (np.array): 2D array of pasture difference map
+        output_dir (str): output dir (Default: None)
+    """
+    # Use percentage
+    diff = diff_map * 100
+
+    rmse_error = np.sqrt(np.nanmean(diff**2))
+
+    # all correct to FAO
+    # australia
+    # iter-0: 20000, 24000, 28000
+    # iter-1,2,3: 15000, 17500, 20000
+    # brazil
+    # iter-0,1: 25000, 29000, 33000
+    # iter-2,3: 20000, 24000, 28000
+    # usa
+    # iter-0: 20000, 24000, 28000
+    # iter-1: 30000, 36000, 42000
+    # iter-2,3: 30000, 35000, 40000
+
+    # all correct to subnational
+    # australia
+    # iter-0: 25000, 29000, 33000
+    # iter-1,2,3: 15000, 18500, 22000
+    # brazil
+    # iter-0,1,2,3: 25000, 29000, 33000
+    # usa
+    # iter-0: 20000, 24000, 28000
+    # iter-1,2,3: 30000, 35000, 40000
+
+    fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
+    plt.text(-90, 22000, r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff), 4)))
+    plt.text(-90, 18500, r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
+    plt.text(-90, 15000, r'RMSE={:0.4f}'.format(np.round(rmse_error, 4)))
+
+    plt.xlim(-100, 100)
+    plt.hist(diff.flatten())
+    plt.xlabel('Reference - Prediction (%)')
+    plt.ylabel('Frequency (#)')
+
+    if output_dir is not None:
+        plt.savefig(output_dir, format='png', bbox_inches='tight')
+
+    plt.show()
+    plt.close()
+
+
 def plot_weights_array(weights_array):
     """
     Visualize 2D bias correction matrix
