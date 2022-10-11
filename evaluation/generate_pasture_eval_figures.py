@@ -16,8 +16,9 @@ def main():
     print(args)
 
     output_diff_map_dir = args.pasture_diff_map_dir[:-len('.tif')] + '.png'
-    output_histogram_map_dir = args.pasture_diff_map_dir[:-len('.tif'
-                                                               )] + '_hist.png'
+    output_histogram_map_dir = args.pasture_diff_map_dir[:-len('map.tif'
+                                                               )] + 'hist.png'
+
     pasture_diff_map = rasterio.open(args.pasture_diff_map_dir).read(1)
 
     # ============= Delete lines artifact for Brazil =============
