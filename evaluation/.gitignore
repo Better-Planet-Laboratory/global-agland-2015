@@ -1,2 +1,7 @@
 # MacOS
 .DS_Store
+
+# Pasture reference maps
+pasture_reference_maps/australia/*
+pasture_reference_maps/brazil/*
+pasture_reference_maps/usa/*
