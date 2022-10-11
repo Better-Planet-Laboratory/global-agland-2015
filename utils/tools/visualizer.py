@@ -13,7 +13,7 @@ from geopandas import GeoDataFrame
 from ..metrics import *
 import geopandas as gpd
 
-font = {'family': 'DejaVu Serif', 'weight': 'normal', 'size': 24}
+font = {'family': 'Helvetica', 'weight': 'normal', 'size': 24}
 
 matplotlib.rc('font', **font)
 
@@ -72,42 +72,6 @@ CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
         '#007200', '#006A00', '#006100', '#005900', '#005100', '#004900',
         '#004100', '#003900', '#003000', '#002800', '#002000', '#001800',
         '#001000'
-    ],
-    N=1001)
-
-# CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
-#     name='CROPLAND_CMAP_FULL',
-#     colors=[
-#         '#ffffff', '#fefefe', '#fcfdfc', '#fbfcfb', '#fafbfa', '#f9f9f9',
-#         '#f7f8f7', '#f6f7f6', '#f5f6f5', '#f4f5f4', '#f2f4f2', '#f1f3f1',
-#         '#f0f2f0', '#eff1ef', '#edefed', '#eceeec', '#ebedeb', '#eaecea',
-#         '#e8ebe8', '#e7eae7', '#e2e6e2', '#dde2dd', '#d8ded8', '#d4dad3',
-#         '#cfd6cf', '#cad2ca', '#c5cec5', '#c1cac1', '#bcc6bc', '#b7c2b7',
-#         '#b3beb3', '#aebaae', '#aab6aa', '#a5b2a5', '#97a697', '#8a9a8a',
-#         '#7c8e7c', '#6f836f', '#627863', '#566c56', '#49624a', '#3d573e',
-#         '#314c32', '#254227', '#19381c', '#0c2e12', '#022402'
-#     ],
-#     N=1001)
-
-CROPLAND_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
-    name='CROPLAND_CMAP_FULL',
-    colors=[
-        '#ffffff', '#fefffe', '#fcfefc', '#fbfefb', '#fafdf9', '#f8fdf8',
-        '#f7fcf7', '#f5fcf5', '#f4fbf4', '#f3fbf3', '#f1faf1', '#f0faf0',
-        '#eff9ef', '#edf9ed', '#ecf8ec', '#eaf8ea', '#e9f7e9', '#e8f7e8',
-        '#e6f6e6', '#e5f6e5', '#e3f6e3', '#e1f6e1', '#dff6df', '#ddf6dd',
-        '#dbf6db', '#d9f6d9', '#d7f6d7', '#d5f6d5', '#d3f6d4', '#d1f6d2',
-        '#cff6d0', '#cdf6ce', '#cbf5cc', '#c9f5ca', '#c7f5c8', '#c5f5c6',
-        '#c3f5c4', '#c1f5c2', '#bff5c0', '#bdf5be', '#baf5bb', '#b8f5b9',
-        '#b5f6b6', '#b3f6b4', '#b0f6b2', '#aef6af', '#abf6ad', '#a9f6aa',
-        '#a6f6a8', '#a4f6a5', '#a1f7a3', '#9ef7a0', '#9cf79e', '#99f79b',
-        '#96f799', '#94f796', '#91f794', '#8ef791', '#8af88d', '#86f888',
-        '#81f983', '#7df97e', '#78fa7a', '#74fa75', '#6ffb6f', '#6afb6a',
-        '#65fb65', '#5ffc5f', '#5afc59', '#54fd53', '#4dfd4c', '#46fd45',
-        '#3efe3d', '#36fe35', '#2bfe2a', '#1cff1d', '#00ff06', '#00f30b',
-        '#00e70e', '#00db10', '#00cf12', '#00c313', '#00b713', '#00ac13',
-        '#00a013', '#009513', '#008a12', '#007f12', '#007411', '#006a0f',
-        '#005f0e', '#00550d', '#004b0b', '#004109', '#013707', '#032e03'
     ],
     N=1001)
 
@@ -320,15 +284,15 @@ def plot_agland_map_tif(agland_map_tif,
 
     # Plot agland map content
     if type == 'cropland':
-        cbar_label = 'Cropland Area %'
+        cbar_label = 'Cropland Area (%)'
         # cmap = CROPLAND_CMAP10
         cmap = CROPLAND_CMAP_FULL
     elif type == 'pasture':
-        cbar_label = 'Pasture Area %'
+        cbar_label = 'Pasture Area (%)'
         # cmap = PASTURE_CMAP10
         cmap = PASTURE_CMAP_FULL
     elif type == 'other':
-        cbar_label = 'Other Area %'
+        cbar_label = 'Other Area (%)'
         # cmap = OTHER_CMAP10
         cmap = OTHER_CMAP_FULL
 
@@ -609,13 +573,16 @@ def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
 
 
 def plot_agland_pred_vs_ground_truth(
-        output_pred_vs_ground_truth_data_collection, output_dir=None):
+        mark_index,
+        output_pred_vs_ground_truth_data_collection,
+        output_dir=None):
     """
     Plot pred (x) vs. ground_truth (y) with a 1:1 line as reference for CROPLAND,
     PASTURE and OTHER. Function assumes output_pred_vs_ground_truth_data_collection is not an 
     empty dict with ground_truth_collection and pred_collection info
 
     Args:
+        mark_index (int): index in pred list to be highlighted red
         output_pred_vs_ground_truth_data_collection (dict): pred and gt info with iteration int as keys
         output_dir (str): output dir (Default: None)
     """
@@ -633,7 +600,8 @@ def plot_agland_pred_vs_ground_truth(
 
         return ax
 
-    def sub_plot_helper(iter_list, rmse_list, ax, markersize, linewidth):
+    def sub_plot_helper(mark_index, iter_list, rmse_list, ax, markersize,
+                        linewidth):
         """ Helper plotter """
         ax.plot(np.asarray(iter_list),
                 np.asarray(rmse_list),
@@ -646,8 +614,8 @@ def plot_agland_pred_vs_ground_truth(
                    c='b',
                    s=markersize,
                    zorder=10)
-        ax.scatter(np.asarray(iter_list[-1]),
-                   np.asarray(rmse_list[-1]),
+        ax.scatter(np.asarray(iter_list[mark_index]),
+                   np.asarray(rmse_list[mark_index]),
                    marker='X',
                    c='r',
                    s=markersize,
@@ -739,7 +707,7 @@ def plot_agland_pred_vs_ground_truth(
 
     # Use the last iteration as base plot
     iter_list = sorted(list(plot_data_table.keys()))
-    base_iter = max(iter_list)
+    base_iter = mark_index
 
     fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(30, 10), dpi=600)
     ax1 = base_plot_helper(
@@ -767,17 +735,20 @@ def plot_agland_pred_vs_ground_truth(
     ax2_sub = add_subplot_axes(ax2, subplot_rect, axisbg='w')
     ax3_sub = add_subplot_axes(ax3, subplot_rect, axisbg='w')
 
-    sub_plot_helper(iter_list,
+    sub_plot_helper(mark_index,
+                    iter_list,
                     [plot_data_table[i]['rmse_cropland'] for i in iter_list],
                     ax1_sub,
                     markersize=markersize,
                     linewidth=linewidth)
-    sub_plot_helper(iter_list,
+    sub_plot_helper(mark_index,
+                    iter_list,
                     [plot_data_table[i]['rmse_pasture'] for i in iter_list],
                     ax2_sub,
                     markersize=markersize,
                     linewidth=linewidth)
-    sub_plot_helper(iter_list,
+    sub_plot_helper(mark_index,
+                    iter_list,
                     [plot_data_table[i]['rmse_other'] for i in iter_list],
                     ax3_sub,
                     markersize=markersize,
@@ -868,10 +839,10 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
     im = plt.scatter(geowiki_cropland_by_index[:, 1],
                      geowiki_cropland_by_index[:, 0],
-                     c=diff,
+                     c=diff * 100,
                      cmap='bwr',
-                     vmin=-1,
-                     vmax=1,
+                     vmin=-100,
+                     vmax=100,
                      s=1)
     plt.axis('off')
 
@@ -879,11 +850,15 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
                        width="5%",
                        height="50%",
                        loc='lower left',
-                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_to_anchor=(0.08, 0.15, 0.3, 1),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
     cbar.ax.tick_params(labelsize=11.5)
+    cbar.set_label('Cropland Area \nDifference (%)',
+                   rotation=90,
+                   labelpad=-120,
+                   y=0.55)
     ax.invert_yaxis()
 
     if output_dir is not None:
@@ -911,15 +886,16 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     # Compute difference map between Geowiki and pred
     diff = geowiki_cropland_by_index[~nan_index,
                                      2] / 100 - pred_results[~nan_index]
+    diff *= 100  # use percentage
     rmse_error = np.sqrt(np.mean(diff**2))
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-0.85, 15000, r'$\mu={}$'.format(np.round(np.mean(diff), 4)))
-    plt.text(-0.85, 13000, r'$\sigma={}$'.format(np.round(np.std(diff), 4)))
-    plt.text(-0.85, 11000, r'RMSE=${}$'.format(np.round(rmse_error, 4)))
-    plt.xlim(-1, 1)
+    plt.text(-90, 15000, r'$\mu={}$'.format(np.round(np.mean(diff), 4)))
+    plt.text(-90, 13000, r'$\sigma={}$'.format(np.round(np.std(diff), 4)))
+    plt.text(-90, 11000, r'RMSE=${}$'.format(np.round(rmse_error, 4)))
+    plt.xlim(-100, 100)
     plt.hist(diff)
-    plt.xlabel('Geowiki - Prediction')
+    plt.xlabel('Geowiki - Prediction (%)')
     plt.ylabel('Frequency (#)')
 
     if output_dir is not None:
@@ -943,21 +919,26 @@ def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
 
     # Compute difference
     diff = maryland_map / 100 - pred_map
+    diff *= 100  # use percentage
 
     # Plot
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
-    im = plt.imshow(diff, cmap='bwr', vmin=-1, vmax=1)
+    im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
     plt.axis('off')
 
     axins = inset_axes(ax,
                        width="5%",
                        height="50%",
                        loc='lower left',
-                       bbox_to_anchor=(0, 0.15, 0.3, 1),
+                       bbox_to_anchor=(0.08, 0.15, 0.3, 1),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
     cbar.ax.tick_params(labelsize=11.5)
+    cbar.set_label('Cropland Area \nDifference (%)',
+                   rotation=90,
+                   labelpad=-120,
+                   y=0.55)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
@@ -982,17 +963,17 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
 
     # Compute difference
     diff = maryland_map / 100 - pred_map
+    diff *= 100  # use percentage
     rmse_error = np.sqrt(np.nanmean(diff**2))
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-0.85, 1800000, r'$\mu={}$'.format(np.round(np.nanmean(diff), 4)))
-    plt.text(-0.85, 1550000,
-             r'$\sigma={}$'.format(np.round(np.nanstd(diff), 4)))
-    plt.text(-0.85, 1300000, r'RMSE={}'.format(np.round(rmse_error, 4)))
+    plt.text(-90, 1800000, r'$\mu={}$'.format(np.round(np.nanmean(diff), 4)))
+    plt.text(-90, 1550000, r'$\sigma={}$'.format(np.round(np.nanstd(diff), 4)))
+    plt.text(-90, 1300000, r'RMSE={}'.format(np.round(rmse_error, 4)))
 
-    plt.xlim(-1, 1)
+    plt.xlim(-100, 100)
     plt.hist(diff.flatten())
-    plt.xlabel('Maryland - Prediction')
+    plt.xlabel('Maryland - Prediction (%)')
     plt.ylabel('Frequency (#)')
 
     if output_dir is not None:
