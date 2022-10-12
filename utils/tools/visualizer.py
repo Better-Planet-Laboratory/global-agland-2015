@@ -489,7 +489,7 @@ def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
                     norm=colors.BoundaryNorm(nan_cropland_bins,
                                              len(nan_cropland_bins)),
                     legend_kwds={
-                        'label': 'CROPLAND (kHa)',
+                        'label': 'Cropland (kHa)',
                         'orientation': 'vertical',
                         'pad': 0.01,
                         'shrink': 0.3,
@@ -542,7 +542,7 @@ def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
                     norm=colors.BoundaryNorm(nan_pasture_bins,
                                              len(nan_pasture_bins)),
                     legend_kwds={
-                        'label': 'PASTURE (kHa)',
+                        'label': 'Pasture (kHa)',
                         'orientation': 'vertical',
                         'pad': 0.01,
                         'shrink': 0.3,
@@ -999,13 +999,14 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
     plt.axis('off')
 
-    axins = inset_axes(ax,
-                       width="5%",
-                       height="50%",
-                       loc='lower left',
-                       bbox_to_anchor=(-0.08, 0.20, 0.5, 1), # 0.5 for others; 0.25 for usa
-                       bbox_transform=ax.transAxes,
-                       borderpad=0)
+    axins = inset_axes(
+        ax,
+        width="5%",
+        height="50%",
+        loc='lower left',
+        bbox_to_anchor=(-0.08, 0.20, 0.5, 1),  # 0.5 for others; 0.25 for usa
+        bbox_transform=ax.transAxes,
+        borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
     cbar.ax.tick_params(labelsize=11.5)
     cbar.set_label('Pasture Area \nDifference (%)',
@@ -1056,8 +1057,10 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
     # iter-1,2,3: 30000, 35000, 40000
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-90, 22000, r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff), 4)))
-    plt.text(-90, 18500, r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
+    plt.text(-90, 22000, r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff),
+                                                          4)))
+    plt.text(-90, 18500,
+             r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
     plt.text(-90, 15000, r'RMSE={:0.4f}'.format(np.round(rmse_error, 4)))
 
     plt.xlim(-100, 100)
