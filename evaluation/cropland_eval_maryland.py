@@ -14,7 +14,7 @@ def main():
         "--agland_map_dir",
         type=str,
         default=
-        '../outputs/all_correct_to_subnation_scale_itr3_fr_0/agland_map_output_3.tif',
+        '../outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output_3.tif',
         help="path dir to agland map dir to be evaluated")
     parser.add_argument("--water_body_dir",
                         type=str,

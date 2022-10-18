@@ -80,7 +80,7 @@ def main():
         "--agland_map_dir",
         type=str,
         default=
-        '../outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output_3.tif',
+        '../outputs/all_correct_to_subnation_scale_itr3_fr_0/agland_map_output_3.tif',
         help="path dir to agland map dir to be evaluated")
     parser.add_argument("--water_body_dir",
                         type=str,
@@ -130,7 +130,7 @@ def main():
     plot_geowiki_cropland(geowiki_cropland_by_index[np.isnan(pred), :],
                           args.output_dir + output_nan_filename)
 
-    # Figure 3. Difference between Geowiki cropland and pred cropland
+    # Figure 3. Difference between pred cropland and Geowiki cropland
     plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred,
                                     args.output_dir + output_diff_map_filename)
 

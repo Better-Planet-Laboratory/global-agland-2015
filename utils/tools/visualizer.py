@@ -809,7 +809,7 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
                                     pred_results,
                                     output_dir=None):
     """
-    Scatter plot of (geowiki-geowiki_cropland_by_index) cropland map, with nan removed.
+    Scatter plot of (pred_results - geowiki) cropland map, with nan removed.
     pred_results is the prediction results (in [0, 1]) that corresponds to
     geowiki_cropland_by_index indices
 
@@ -834,7 +834,7 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     #       removing the nan samples
     geowiki_cropland_by_index[nan_index] = 0
     pred_results[nan_index] = 0
-    diff = geowiki_cropland_by_index[:, 2] / 100 - pred_results
+    diff = pred_results - geowiki_cropland_by_index[:, 2] / 100
 
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
     im = plt.scatter(geowiki_cropland_by_index[:, 1],
@@ -872,7 +872,7 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
                                               pred_results,
                                               output_dir=None):
     """
-    Histogram plot of (geowiki-pred_results), with nan removed in pred_results
+    Histogram plot of (pred_results - geowiki), with nan removed in pred_results
 
     Args:
         geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
@@ -884,8 +884,8 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     nan_index = np.isnan(pred_results)
 
     # Compute difference map between Geowiki and pred
-    diff = geowiki_cropland_by_index[~nan_index,
-                                     2] / 100 - pred_results[~nan_index]
+    diff = pred_results[~nan_index] - geowiki_cropland_by_index[~nan_index,
+                                                                2] / 100
     diff *= 100  # use percentage
     rmse_error = np.sqrt(np.mean(diff**2))
 
@@ -895,7 +895,7 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     plt.text(-90, 11000, r'RMSE=${}$'.format(np.round(rmse_error, 4)))
     plt.xlim(-100, 100)
     plt.hist(diff)
-    plt.xlabel('Geowiki - Prediction (%)')
+    plt.xlabel('Prediction - Geowiki (%)')
     plt.ylabel('Frequency (#)')
 
     if output_dir is not None:
@@ -907,7 +907,7 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
 
 def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
     """
-    Plot of difference between maryland cropland and prediction cropland
+    Plot of difference between prediction cropland and maryland cropland
 
     Args:
         maryland_map (np.array): 2D array map of maryland cropland (reprojected to match agland)
@@ -918,7 +918,7 @@ def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
             ), "Input maps must have same shape"
 
     # Compute difference
-    diff = maryland_map / 100 - pred_map
+    diff = pred_map - maryland_map / 100
     diff *= 100  # use percentage
 
     # Plot
@@ -951,7 +951,7 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
                                                pred_map,
                                                output_dir=None):
     """
-    Histogram plot of (maryland_map-pred_map)
+    Histogram plot of (pred_map - maryland_map)
 
     Args:
         maryland_map (np.array): 2D array map of maryland cropland (reprojected to match agland)
@@ -962,7 +962,7 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
             ), "Input maps must have same shape"
 
     # Compute difference
-    diff = maryland_map / 100 - pred_map
+    diff = pred_map - maryland_map / 100
     diff *= 100  # use percentage
     rmse_error = np.sqrt(np.nanmean(diff**2))
 
@@ -973,7 +973,7 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
 
     plt.xlim(-100, 100)
     plt.hist(diff.flatten())
-    plt.xlabel('Maryland - Prediction (%)')
+    plt.xlabel('Prediction - Maryland (%)')
     plt.ylabel('Frequency (#)')
 
     if output_dir is not None:
