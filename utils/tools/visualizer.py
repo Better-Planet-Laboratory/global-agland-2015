@@ -992,7 +992,7 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
         output_dir (str): output dir (Default: None)
     """
     # Use percentage
-    diff = diff_map * 100
+    diff = -diff_map * 100
 
     # Plot
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
@@ -1023,14 +1023,14 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
 
 def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
     """
-    Histogram plot of reference - prediction map for pasture
+    Histogram plot of prediction map - reference for pasture
 
     Args:
         diff_map (np.array): 2D array of pasture difference map
         output_dir (str): output dir (Default: None)
     """
     # Use percentage
-    diff = diff_map * 100
+    diff = -diff_map * 100
 
     rmse_error = np.sqrt(np.nanmean(diff**2))
 
@@ -1065,7 +1065,7 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
 
     plt.xlim(-100, 100)
     plt.hist(diff.flatten())
-    plt.xlabel('Reference - Prediction (%)')
+    plt.xlabel('Prediction - Reference (%)')
     plt.ylabel('Frequency (#)')
 
     if output_dir is not None:
