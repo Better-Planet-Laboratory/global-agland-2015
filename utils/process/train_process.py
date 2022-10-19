@@ -20,33 +20,38 @@ def pipeline(training_cfg, land_cover_cfg):
     """
     # Load census_table input as Dataset obj
     input_dataset = Dataset(
-        census_table=load_census_table_pkl(training_cfg['path_dir']['inputs']['census_table_input']),
+        census_table=load_census_table_pkl(
+            training_cfg['path_dir']['inputs']['census_table_input']),
         land_cover_code=land_cover_cfg['code']['MCD12Q1'],
         remove_land_cover_feature_index=training_cfg['feature_remove'])
 
     # Declare model structure
-    prob_est = gbt.GradientBoostingTree(ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
-                                        max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
-                                        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'],
-                                        distribution=training_cfg['model']['gradient_boosting_tree']['distribution'])
+    prob_est = gbt.GradientBoostingTree(
+        ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
+        max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
+        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'],
+        distribution=training_cfg['model']['gradient_boosting_tree']
+        ['distribution'])
 
     # Load model weights if specified, otherwise train on input_dataset
     if training_cfg['path_dir']['inputs']['load_model'] is not None:
         try:
             prob_est.load(training_cfg['path_dir']['inputs']['load_model'])
-            print('Model loaded from {}'.format(training_cfg['path_dir']['inputs']['load_model']))
+            print('Model loaded from {}'.format(
+                training_cfg['path_dir']['inputs']['load_model']))
         except h2o.exceptions.H2OResponseError:
             raise h2o.exceptions.H2OResponseError(
-                'File {} is not valid model path.'.format(training_cfg['path_dir']['inputs']['load_model']))
+                'File {} is not valid model path.'.format(
+                    training_cfg['path_dir']['inputs']['load_model']))
 
     else:
         print('No parameters to load. Start training ...')
         prob_est.train(input_dataset)
         prob_est.save(training_cfg['path_dir']['outputs']['save_model'])
-        print('Model saved at {}'.format(training_cfg['path_dir']['outputs']['save_model']))
+        print('Model saved at {}'.format(
+            training_cfg['path_dir']['outputs']['save_model']))
 
-    # Evaluate the model on the whole input dataset
-    # Note: This generated figure is the raw prediction on the state level census table, therefore
-    #       it shall directly reflect the training performance
-    if training_cfg['path_dir']['outputs']['pred_vs_ground_truth_fig'] is not None:
-        prob_est.evaluate(input_dataset, training_cfg['path_dir']['outputs']['pred_vs_ground_truth_fig'])
+        # Evaluate the model on the whole input dataset
+        # Note: This generated raw prediction on the state level census table, therefore
+        #       it shall directly reflect the training performance
+        # _, _ = prob_est.evaluate(input_dataset)
