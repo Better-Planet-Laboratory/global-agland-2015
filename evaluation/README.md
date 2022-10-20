@@ -67,7 +67,7 @@ For each of these experiments, we have 4 different products. We either did 0, 1,
 
 #### Australia
 
-The reference data that we use for Australia is the [National Scale Land Use Version 5 (2010-2011)](https://www.awe.gov.au/abares/aclump/land-use/data-download). The product is a raster of 0.01º resolution, with cell values corresponding to land use types. Certain land use types correspond to pasture. Thus, to pre-process this product for our comparison, we calculate the proportion of "pasture" cells in an aggregate grid cell of 10 km x 10 km. We crop and project our prediction map to match this reference map, and we apply the water body mask (there is no need to apply the GDD mask).
+The reference data that we use for Australia is the [Land use of Australia 2015-16](https://www.agriculture.gov.au/abares/aclump/land-use/land-use-of-australia-2010-11_2015-16). The product is a raster of 250 m resolution, with cell values corresponding to land use types. Certain land use types correspond to pasture. Thus, to pre-process this product for our comparison, we calculate the proportion of "pasture" cells in an aggregate grid cell of 10 km x 10 km. We crop and project our prediction map to match this reference map, and we apply the water body mask (there is no need to apply the GDD mask).
 
 The reference map looks like:
 
@@ -130,21 +130,45 @@ The comparisons look like:
 
 
 
+#### Europe
+
+The reference data that we use for Europe is an [annual pasture map from OpenGeoHub for the year 2015](https://doi.org/10.21203/rs.3.rs-561383/v3). The map is based on LUCAS and CORINE land cover maps and provides the probability of observing pasture in a given cell. 
+
+To pre-process this product for our comparison, we aggregate the map to 10 km x 10 km, and calculate the mean probability of pasture. We assume this probability at a 10 km grid scale to be equivalent to the proportion of pasture in that grid cell. We crop and project our prediction map to match this reference map, and apply a water body mask as well as a GDD mask.
+
+The reference map looks like:
+
+![europe_raw](./all_correct_to_FAO_scale_itr3_fr_0/europe/europe.png)
+
+The comparisons look like:
+
+##### *all_correct_to_FAO_scale_itr3_fr_0*
+
+| iter 0                                                       | iter 1                                                       | iter 2                                                       | iter 3                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![all_correct_to_FAO_scale_itr3_fr_0_usa_diff_itr0](./all_correct_to_FAO_scale_itr3_fr_0/europ/agland_map_output_0_eu_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_usa_diff_itr1](./u/useea/agland_map_output_1_usa_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_usa_diff_itr2](./all_correct_to_FAO_scale_itr3_fr_0/usa/agland_map_output_2_usa_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_usa_diff_itr3](./all_correct_to_FAO_scale_itr3_fr_0/usa/agland_map_output_3_usa_diff_map.png) |
+| ![all_correct_to_FAO_scale_itr3_fr_0_usa_hist_itr0](./all_correct_to_FAO_scale_itr3_fr_0/usa/agland_map_output_0_usa_diff_hist.png) | ![all_correct_to_FAO_scale_itr3_fr_0_usa_hist_itr1](./all_correct_to_FAO_scale_itr3_fr_0/usa/agland_map_output_1_usa_diff_hist.png) | ![all_correct_to_FAO_scale_itr3_fr_0_usa_hist_itr2](./all_correct_to_FAO_scale_itr3_fr_0/usa/agland_map_output_2_usa_diff_hist.png) | ![all_correct_to_FAO_scale_itr3_fr_0_usa_hist_itr3](./all_correct_to_FAO_scale_itr3_fr_0/usa/agland_map_output_3_usa_diff_hist.png) |
+
+##### *all_correct_to_subnation_scale_itr3_fr_0*
+
+| iter 0                                                       | iter 1                                                       | iter 2                                                       | iter 3                                                       |
+| ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ![all_correct_to_subnation_scale_itr3_fr_0_usa_diff_itr0](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_0_usa_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_usa_diff_itr1](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_1_usa_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_usa_diff_itr2](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_2_usa_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_usa_diff_itr3](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_3_usa_diff_map.png) |
+| ![all_correct_to_subnation_scale_itr3_fr_0_usa_hist_itr0](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_0_usa_diff_hist.png) | ![all_correct_to_subnation_scale_itr3_fr_0_usa_hist_itr1](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_1_usa_diff_hist.png) | ![all_correct_to_subnation_scale_itr3_fr_0_usa_hist_itr2](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_2_usa_diff_hist.png) | ![all_correct_to_subnation_scale_itr3_fr_0_usa_hist_itr3](./all_correct_to_subnation_scale_itr3_fr_0/usa/agland_map_output_3_usa_diff_hist.png) |
+
+
+
 #### USA
 
 The reference data that we use for USA is a combination of [NLCD 2016](https://www.mrlc.gov/data/nlcd-2016-land-cover-conus) and [Rangelands](https://data.fs.usda.gov/geodata/rastergateway/rangelands/index.php). Both products are rasters of 30 m resolution, with cell values corresponding to land use types. Based on the [NLCD legend](https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description), the class of interest is:
 
 * 81 - Pasture/Hay
 
-The Rangelands map unfortunately does not have a legend. The Rangelands [research paper](https://www.fs.fed.us/rm/pubs_other/rmrs_2011_reeves_m001.pdf) suggests that the following categories are classes of interest:
+The Rangelands map is based on NRI (National Resources Inventory) definitions of rangeland using the LANDFIRE model [(see research paper)](https://www.fs.usda.gov/research/treesearch/41872). The NRI definition of rangeland encompasses "rangeland", "afforested rangeland" and "transitional rangeland". However, in the paper Fig. 3, it says that "transitional rangelands are not included in the rangeland tally". Furthermore, the census data we use for pasture for USA is "Grassland and other **nonforested** pasture and range in farms plus estimates of open or **nonforested** grazing lands not in farms". Thus we should omit transitional rangeland + afforested rangeland and only include:
 
 * Rangeland
-* Transitional Rangeland
-* Afforested Rangeland
 
-That being said, in the [paper Fig. 3](https://www.fs.fed.us/rm/pubs_other/rmrs_2011_reeves_m001.pdf), it says that "transitional rangelands are not included in the rangeland tally". Furthermore, the census data we use for pasture for USA is "Grassland and other **nonforested** pasture and range in farms plus estimates of open or **nonforested** grazing lands not in farms". Thus we should only count the "rangeland" category and omit transitional rangeland + afforested ones.
-
-So, to pre-process this product for our comparison, we calculate the proportion of "pasture" cells in an aggregate grid cell of 10 km x 10 km, and sum both reference maps. We crop and project our prediction map to match this summed reference map, and we apply the water body mask (there is no need to apply the GDD mask since the conterminous US is below 50ºN).
+So, to pre-process these products for our comparison, we calculate the proportion of "pasture" cells in an aggregate grid cell of 10 km x 10 km, and sum both reference maps. We crop and project our prediction map to match this summed reference map, and we apply the water body mask (there is no need to apply the GDD mask since the conterminous US is below 50ºN).
 
 The reference maps look like:
 
