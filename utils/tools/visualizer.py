@@ -999,14 +999,18 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
     plt.axis('off')
 
-    axins = inset_axes(
-        ax,
-        width="5%",
-        height="50%",
-        loc='lower left',
-        bbox_to_anchor=(-0.08, 0.20, 0.5, 1),  # 0.5 for others; 0.25 for usa
-        bbox_transform=ax.transAxes,
-        borderpad=0)
+    # Default: (-0.08, 0.20, 0.5, 1)
+    # brazil: (-0.08, 0.20, 0.6, 0.92)
+    # australia: (-0.08, 0.20, 0.5, 0.92)
+    # europe: diff = diff[80:-1, 150:] for demo, (-0.05, 0.20, 0.4, 0.92)
+    # usa: (-0.08, 0.20, 0.26, 0.99)
+    axins = inset_axes(ax,
+                       width="5%",
+                       height="50%",
+                       loc='lower left',
+                       bbox_to_anchor=(-0.08, 0.20, 0.26, 0.99),
+                       bbox_transform=ax.transAxes,
+                       borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
     cbar.ax.tick_params(labelsize=11.5)
     cbar.set_label('Pasture Area \nDifference (%)',
@@ -1063,9 +1067,9 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
     # iter-1,2,3: (-95, -95, -95), (31000, 25500, 20000)
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-95, 31000, r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff),
+    plt.text(-95, 32000, r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff),
                                                           4)))
-    plt.text(-95, 25500,
+    plt.text(-95, 26000,
              r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
     plt.text(-95, 20000, r'RMSE={:0.4f}'.format(np.round(rmse_error, 4)))
 
@@ -1075,7 +1079,10 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
     plt.ylabel('Frequency (#)')
 
     if output_dir is not None:
-        plt.savefig(output_dir, format='png', bbox_inches='tight')
+        plt.savefig(output_dir,
+                    format='png',
+                    bbox_inches='tight',
+                    transparent=True)
 
     plt.show()
     plt.close()
