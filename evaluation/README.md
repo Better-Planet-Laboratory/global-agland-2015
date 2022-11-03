@@ -75,13 +75,11 @@ The reference map looks like:
 
 Note: there were multiple land cover definitions that are of interest:
 
-* 4 - grazing native vegetation - lu_codev7n 210
-* 7 - grazing modified pastures - lu_codev7n 320
-* 10 - irrigated pastures - lu_codev7n 420
+* 210 - Grazing native vegetation
+* 320 - Grazing modified pastures
+* 420 - Irrigated pastures
 
-At first, it was unclear whether "grazing native vegetation" should be included (i.e. whether it would count as "land used mainly for grazing" as per the census). We tried once including it and once without. The maps including grazing native vegetation match better, and the definitions match better, so we decided to move forward including all of the above.
-
-
+The comparisons look like:
 
 ##### *all_correct_to_FAO_scale_itr3_fr_0*
 
@@ -160,11 +158,12 @@ The comparisons look like:
 
 #### USA
 
-The reference data that we use for USA is a combination of [NLCD 2016](https://www.mrlc.gov/data/nlcd-2016-land-cover-conus) and [Rangelands](https://data.fs.usda.gov/geodata/rastergateway/rangelands/index.php). Both products are rasters of 30 m resolution, with cell values corresponding to land use types. Based on the [NLCD legend](https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description), the class of interest is:
+The reference data that we use for USA is a combination of [NLCD 2011](https://www.mrlc.gov/data/nlcd-2011-land-cover-conus) and [Rangelands](https://data.fs.usda.gov/geodata/rastergateway/rangelands/index.php). Both products are rasters of 30 m resolution, with cell values corresponding to land use types. We use NLCD 2011 because our census data is for the year 2012. Based on the [NLCD legend](https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description), the class of interest is:
 
 * 81 - Pasture/Hay
 
-The Rangelands map is based on NRI (National Resources Inventory) definitions of rangeland using the LANDFIRE model [(see research paper)](https://www.fs.usda.gov/research/treesearch/41872). The NRI definition of rangeland encompasses "rangeland", "afforested rangeland" and "transitional rangeland". However, in the paper Fig. 3, it says that "transitional rangelands are not included in the rangeland tally". Furthermore, the census data we use for pasture for USA is "Grassland and other **nonforested** pasture and range in farms plus estimates of open or **nonforested** grazing lands not in farms". Thus we should omit transitional rangeland + afforested rangeland and only include:
+The Rangelands map is based on NRI (National Resources Inventory) definitions of rangeland using the LANDFIRE model [(see research paper)](https://www.fs.usda.gov/research/treesearch/41872). It is based on the year 2001, but there are no products nearer to 2012 that can be used (the [Rangelands Analysis Product maps](https://rangelands.app/products/#cover) exist for 2012, but as per their website, "are intended to be used alongside local knowledge and on-the-ground data to inform management actions. They should not be used in isolation to quantify rangeland resources"). 
+The NRI definition of rangeland encompasses "rangeland", "afforested rangeland" and "transitional rangeland". However, in the paper Fig. 3, it says that "transitional rangelands are not included in the rangeland tally". Furthermore, the census data we use for pasture for USA is "Grassland and other **nonforested** pasture and range in farms plus estimates of open or **nonforested** grazing lands not in farms". Thus we should omit transitional rangeland + afforested rangeland and only include:
 
 * Rangeland
 
