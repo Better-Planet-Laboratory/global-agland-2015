@@ -43,7 +43,7 @@ r_bra <- rast(file_bra)
 #################################
 
 ### Uncomment this section if running for the first time
-### But it takes very long to run, so for subsequent testing
+### But it takes very long to run/need to be run on HPC, so for subsequent testing
 ### Can just skip this and run the short version
 
 # # Identify raster values corresponding to the classes of interest
@@ -51,7 +51,7 @@ r_bra <- rast(file_bra)
 # 
 # # Split raster into smaller more manageable chunks
 # tile_template <- r_bra # make a template raster with same extent
-# res(tile_template) <- c(2,2) # change the resolution to much coarser
+# res(tile_template) <- res(tile_template)*10000 # change the resolution to much coarser
 # makeTiles(r_bra, tile_template, "evaluation/pasture_reference_maps/brazil/tiles/brazil_tile.tif", extend=T)
 # tile_list <- list.files(here("evaluation/pasture_reference_maps/brazil/tiles"))
 # r_list <- vector(mode="list", length=length(tile_list))
@@ -159,8 +159,8 @@ absdif_exp2 <- prop_bra-exp2_bra
 ##################
 
 # Save all_correct_to_FAO_scale
-writeRaster(r_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_landuse.tif"))
-writeRaster(prop_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_reference.tif"))
+writeRaster(r_bra_resample, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
+writeRaster(prop_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
 writeRaster(exp1_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_pred_map.tif")))
 writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_diff_map.tif")))
 hist <- hist(absdif_exp1)
@@ -172,8 +172,8 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", p
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(r_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_landuse.tif"))
-writeRaster(prop_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_reference.tif"))
+writeRaster(r_bra_resample, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
+writeRaster(prop_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
 writeRaster(exp2_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_pred_map.tif")))
 writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_map.tif")))
 hist <- hist(absdif_exp2)
@@ -183,3 +183,4 @@ sigma <- round(sd(values(absdif_exp1), na.rm=T), 4)
 musigma <- data.frame(mu=mu, sigma=sigma)
 write.csv(histdf, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_hist.csv")))
 write.csv(musigma, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_musigma.csv")))
+
