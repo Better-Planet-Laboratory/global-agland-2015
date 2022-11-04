@@ -34,9 +34,10 @@ water_body_mask <- rast(here("land_cover/water_body_mask.tif"))
 # No need for GDD masks for Australia (doesn't go above 50ºN)
 
 # Load reference map
-file_aus <- here("evaluation/pasture_reference_maps/australia/luav5g9abll20160704a02egigeo___/lu10v5ug")
+file_aus <- here("evaluation/pasture_reference_maps/australia/NLUM_ALUMV8_250m_2015_16_alb/NLUM_ALUMV8_250m_2015_16_alb.tif")
 r_aus <- rast(file_aus)
 levels_aus <- cats(r_aus)[[1]]
+names(r_aus) <- "Value"
 
 
 ##########################
@@ -44,38 +45,41 @@ levels_aus <- cats(r_aus)[[1]]
 ##########################
 
 # Identify raster values corresponding to the classes of interest
-values_aus <- levels_aus$VALUE[which(levels_aus$LU_CODEV7N %in% c(210, 320, 420))] # correspond to grazing native veg, grazing mod past, irrig past
+values_aus <- c(210, 320, 420) # correspond to grazing native veg, grazing mod past, irrig past
 
 # Create a new raster of counts of classes of interest (including "grazing native vegetation")
 r_count <- r_aus 
 r_count[r_aus %in% values_aus] <- 1 
 r_count[!(r_aus %in% values_aus)] <- 0 
 
-# Aggregate to same resolution as our product
-aggfactor_aus <- res(exp1_global)[1]/res(r_count)[1]
-prop_aus <- aggregate(r_count, aggfactor_aus, fun=sum)/(aggfactor_aus^2)
+# Original resolution is 250m; aggregate to 10km
+aggfactor_aus <- floor(10000/250)
+prop_aus <- aggregate(r_count, fact=aggfactor_aus, fun=sum)/(aggfactor_aus^2)
 
 # Mask by water body for plotting
-water_body_mask_aus <- crop(water_body_mask, prop_aus)
-water_body_mask_aus <- project(water_body_mask_aus, prop_aus)
+water_body_mask_aus <- project(water_body_mask, prop_aus)
 prop_aus <- mask(prop_aus, water_body_mask_aus, maskvalues=0)
+
+# Mask by shapefile (water body mask introduced islands that are not part of Australia)
+shp_aus <- vect(here("shapefile/Australia/gadm36_AUS_1.shp"))
+prop_aus <- mask(prop_aus, shp_aus)
 
 
 ###########################
 ### PREP PREDICTION MAP ###
 ###########################
 
-# Crop our global rasters to the reference region
-exp1_aus <- crop(exp1_global, prop_aus)
-exp2_aus <- crop(exp2_global, prop_aus)
-
-# Project our cropped rasters to match the reference map
-exp1_aus <- project(exp1_aus, prop_aus)
-exp2_aus <- project(exp2_aus, prop_aus)
+# Project and crop our global rasters to the reference region
+exp1_aus <- project(exp1_global, prop_aus)
+exp2_aus <- project(exp2_global, prop_aus)
 
 # Mask out water bodies
 exp1_aus <- mask(exp1_aus, water_body_mask_aus, maskvalues=0)
 exp2_aus <- mask(exp2_aus, water_body_mask_aus, maskvalues=0)
+
+# Mask by shapefile
+exp1_aus <- mask(exp1_aus, shp_aus)
+exp2_aus <- mask(exp2_aus, shp_aus)
 
 
 ####################################
@@ -90,6 +94,8 @@ absdif_exp2 <- prop_aus-exp2_aus
 ##################
 ### SAVE PLOTS ###
 ##################
+
+# Save outputs to tif, will be converted to png in python to match format/colour scheme used for cropland comparisons
 
 # Save all_correct_to_FAO_scale
 writeRaster(r_aus, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia/australia_landuse.tif"), overwrite=T)
@@ -116,3 +122,4 @@ sigma <- round(sd(values(absdif_exp1), na.rm=T), 4)
 musigma <- data.frame(mu=mu, sigma=sigma)
 write.csv(histdf, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_diff_hist.csv")))
 write.csv(musigma, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_diff_musigma.csv")))
+
