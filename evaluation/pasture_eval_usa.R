@@ -34,7 +34,7 @@ water_body_mask <- rast(here("land_cover/water_body_mask.tif"))
 # No need for GDD masks for USA (doesn't go above 50ºN)
 
 # Load reference maps
-file_usa_nlcd <- here("evaluation/pasture_reference_maps/usa/nlcd_2016_land_cover_l48_20210604/nlcd_2016_land_cover_l48_20210604.img")
+file_usa_nlcd <- here("evaluation/pasture_reference_maps/usa/nlcd_2011_land_cover_l48_20210604/nlcd_2011_land_cover_l48_20210604.img")
 r_usa_nlcd <- rast(file_usa_nlcd)
 
 file_usa_range <- here("evaluation/pasture_reference_maps/usa/Rangelands_v1/Rangelands_v1.tif")
@@ -47,7 +47,7 @@ levels_usa <- cats(r_usa_range)[[1]]
 #################################
 
 ### Uncomment this section if running for the first time
-### But it takes very long to run, so for subsequent testing
+### But it takes very long to run and requires HPC, so for subsequent testing
 ### Can just skip this and run the short version
 
 ### NLCD
@@ -57,7 +57,7 @@ levels_usa <- cats(r_usa_range)[[1]]
 # 
 # # Split raster into smaller more manageable chunks
 # tile_template <- r_usa_nlcd # make a template raster with same extent
-# res(tile_template) <- c(300000,300000) # change the resolution to much coarser
+# res(tile_template) <- res(tile_template)*10000  # change the resolution to much coarser
 # makeTiles(r_usa_nlcd, tile_template, "evaluation/pasture_reference_maps/usa/tiles/usa_tile_nlcd_.tif", extend=T, NAflag=NA)
 # tile_list <- list.files(here("evaluation/pasture_reference_maps/usa/tiles"),"_nlcd")
 # tile_list <- tile_list[endsWith(tile_list,"tif")]
@@ -72,7 +72,7 @@ levels_usa <- cats(r_usa_range)[[1]]
 #   r_count[r %in% values_usa_nlcd] <- 1
 #   r_count[!(r %in% values_usa_nlcd)] <- 0
 #   
-#   # Original resolution is 30m; aggregate to approx 10km (quick) then we can resample to exactly 10km
+#   # Original resolution is 30m; aggregate to approx 10km then we can resample to exactly 10km
 #   aggfactor <- 10000/30
 #   r_agg <- aggregate(r_count, floor(aggfactor), fun=sum) # aggregate needs to be on integer, hence floor()
 #   
@@ -103,15 +103,14 @@ levels_usa <- cats(r_usa_range)[[1]]
 # 
 # # Split raster into smaller more manageable chunks
 # tile_template <- r_usa_range # make a template raster with same extent
-# res(tile_template) <- c(300000,300000) # change the resolution to much coarser
+# res(tile_template) <- res(tile_template)*10000 # change the resolution to much coarser
 # makeTiles(r_usa_range, tile_template, "evaluation/pasture_reference_maps/usa/tiles/usa_tile_range_.tif", extend=T, NAflag=NA)
 # tile_list <- list.files(here("evaluation/pasture_reference_maps/usa/tiles"),"tile_range")
 # tile_list <- tile_list[endsWith(tile_list, "tif")]
 # tile_list <- tile_list[c(1,73,84,95,106,117,128,139,150,2,13,24,35,46,57,68,70:72,74:83,85:94,96:105,107:116,118:127,129:138,140:149,151:160,3:12,14:23,25:34,36:45,47:56,58:67,69)]
 # r_list <- vector(mode="list", length=length(tile_list))
 # 
-# # for (i in 1:length(tile_list)) { # need large amount of memory to run this (or split into smaller loops)
-# for (i in 1:40) {
+# for (i in 1:length(tile_list)) { # need large amount of memory to run this (or split into smaller loops)
 #   
 #   # Create a new raster of counts of classes of interest
 #   r <- rast(here("evaluation/pasture_reference_maps/usa/tiles", tile_list[i]))
@@ -119,7 +118,7 @@ levels_usa <- cats(r_usa_range)[[1]]
 #   r_count[r %in% values_usa_range] <- 1
 #   r_count[!(r %in% values_usa_range)] <- 0
 #   
-#   # Original resolution is 30m; aggregate to approx 10km (quick) then we can resample to exactly 10km
+#   # Original resolution is 30m; aggregate to approx 10km then we can resample to exactly 10km
 #   aggfactor <- 10000/30
 #   r_agg <- aggregate(r_count, floor(aggfactor), fun=sum) # aggregate needs to be on integer, hence floor()
 #   
@@ -160,7 +159,7 @@ values_usa_nlcd <- 81
 
 # Load values needed in code chunks below
 aggfactor <- 10000/30
-r_usa_nlcd_agg <- rast(here("evaluation/pasture_reference_maps/usa/usa_agg_nlcd_withoutWriteRaster.tif"))
+r_usa_nlcd_agg <- rast(here("evaluation/pasture_reference_maps/usa/usa_agg_nlcd.tif"))
 
 # Create a template of the desired resolution
 template_usa_nlcd <- rast(nrows=nrow(r_usa_nlcd), ncols=ncol(r_usa_nlcd), ext=ext(r_usa_nlcd))
@@ -177,7 +176,7 @@ values_usa_range <- levels_usa$VALUE[which(levels_usa$LABEL %in% c("Rangeland"))
 
 # Load values needed in code chunks below
 aggfactor <- 10000/30
-r_usa_range_agg <- rast(here("evaluation/pasture_reference_maps/usa/usa_agg_range_withoutWriteRaster.tif"))
+r_usa_range_agg <- rast(here("evaluation/pasture_reference_maps/usa/usa_agg_range.tif"))
 
 # Create a template of the desired resolution
 template_usa_range <- rast(nrows=nrow(r_usa_range), ncols=ncol(r_usa_range), ext=ext(r_usa_range))
@@ -245,9 +244,9 @@ absdif_exp2 <- proj_usa-exp2_usa
 ##################
 
 # Save all_correct_to_FAO_scale
-writeRaster(mask(project(r_usa_nlcd_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_nlcd.tif"))
-writeRaster(mask(project(r_usa_range_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_range.tif"))
-writeRaster(prop_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_reference.tif"))
+writeRaster(mask(project(r_usa_nlcd_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
+writeRaster(mask(project(r_usa_range_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
+writeRaster(prop_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
 writeRaster(exp1_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")))
 writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")))
 hist <- hist(absdif_exp1)
@@ -259,9 +258,9 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", past
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(mask(project(r_usa_nlcd_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_nlcd.tif"))
-writeRaster(mask(project(r_usa_range_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_range.tif"))
-writeRaster(mask(project(prop_usa, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_reference.tif"))
+writeRaster(mask(project(r_usa_nlcd_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
+writeRaster(mask(project(r_usa_range_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
+writeRaster(mask(project(prop_usa, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
 writeRaster(exp2_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")))
 writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")))
 hist <- hist(absdif_exp2)
