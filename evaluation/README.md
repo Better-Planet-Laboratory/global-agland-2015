@@ -1,10 +1,10 @@
 ## Evaluation
 
-Due to limitation on current available references, we use different products to evaluate our output cropland and pasture map seperately. 
+Due to limitation on current available references, we use different products to evaluate our output cropland and pasture map separately. 
 
 ### Cropland 
 #### GeoWiki
-One of the references we used for cropland validation is from this [paper](https://www.nature.com/articles/sdata2017136), and their data can be downloaded from [here](https://doi.pangaea.de/10.1594/PANGAEA.873912). In the GeoWiki cropland product, each individual point has a % cropland estimate over a span of time stamps. The basic process is to reproject the lattitude and longitude coordinates of these points to indices form based on the resolution in our final product using nearest neighbors, then extract the raster data points for comparison. Note that since our final product has water-body masks and GDD masks applied, points located in the mask regions are not included in the evaluation. Detailed implementation could be found [here](./cropland_eval_geowiki.py). Specifically, we have a total of 35866 unique sample points in GeoWiki cropland, with 1156 points getting masked out, leaving a total of 34710 samples at the end. 
+One of the references we used for cropland validation is from this [paper](https://www.nature.com/articles/sdata2017136), and their data can be downloaded from [here](https://doi.pangaea.de/10.1594/PANGAEA.873912). In the GeoWiki cropland product, each individual point has a % cropland estimate over a span of time stamps. The basic process is to reproject the latitude and longitude coordinates of these points to indices form based on the resolution in our final product using nearest neighbours, then extract the raster data points for comparison. Note that since our final product has water-body masks and GDD masks applied, points located in the mask regions are not included in the evaluation. Detailed implementation could be found [here](./cropland_eval_geowiki.py). Specifically, we have a total of 35866 unique sample points in GeoWiki cropland, with 1156 points getting masked out, leaving a total of 34710 samples at the end. 
 
 Temporal-averaged GeoWiki scatter plot and mask-removed points are shown in the two figures below. 
 ![geowiki_raw](./all_correct_to_FAO_scale_itr3_fr_0/geowiki/geowiki_scatter.png)
@@ -31,7 +31,7 @@ Now we show the GeoWiki and output cropland product difference maps and their hi
 As we can see from the figures above, for all experiments, as number of iteration goes up, the difference between GeoWiki and predicted cropland output becomes smaller. However, when we compare the "all correct to FAO" and "all correct to subnation" cases, the difference between the two is also minimal. This likely means GeoWiki cropland is neither closer to FAO data nor subnational data, might be somewhere in between.
 
 #### Maryland
-Another reference we used for cropland validation is Maryland cropland for 2015, which could be found [here](https://glad.umd.edu/dataset/croplands). Unlike GeoWiki cropland data, Maryland cropland data provides % cropland values in all pixels globally. Since the  original merged data is in 3km resolution, we reproject the Maryland cropland map to match the geo-transform used in our final product using nearest neighbors. Again, we ignore the regions cropped by the masks. 
+Another reference we used for cropland validation is Maryland cropland for 2015, which could be found [here](https://glad.umd.edu/dataset/croplands). Unlike GeoWiki cropland data, Maryland cropland data provides % cropland values in all pixels globally. Since the  original merged data is in 3km resolution, we reproject the Maryland cropland map to match the geo-transform used in our final product using nearest neighbours. Again, we ignore the regions cropped by the masks. 
 
 Below shows the raw Maryland cropland map. 
 ![maryland_raw](./all_correct_to_FAO_scale_itr3_fr_0/maryland/maryland.png)
@@ -50,7 +50,7 @@ Below shows the raw Maryland cropland map.
 | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_diff_itr0](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_0_maryland_diff_map.png)  | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_diff_itr1](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_1_maryland_diff_map.png)  | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_diff_itr2](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_2_maryland_diff_map.png)  | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_diff_itr3](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_3_maryland_diff_map.png)  |
 | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_hist_itr0](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_0_maryland_diff_hist.png) | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_hist_itr1](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_1_maryland_diff_hist.png) | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_hist_itr2](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_2_maryland_diff_hist.png) | ![all_correct_to_subnation_scale_itr3_fr_0_maryland_hist_itr3](./all_correct_to_subnation_scale_itr3_fr_0/maryland/agland_map_output_3_maryland_diff_hist.png) |
 
-Quite interestingly, in this case, for all experiments, as we increase the number of iterations (and converging to the input dataset), the difference between output and Maryland cropland actually gets larger. Similar to the GeoWiki case, this likely shows Maryland cropland map also stays somehwere in between FAO and subnational census. 
+Quite interestingly, in this case, for all experiments, as we increase the number of iterations (and converging to the input dataset), the difference between output and Maryland cropland actually gets larger. Similar to the GeoWiki case, this likely shows Maryland cropland map also stays somewhere in between FAO and subnational census. 
 
 
 
