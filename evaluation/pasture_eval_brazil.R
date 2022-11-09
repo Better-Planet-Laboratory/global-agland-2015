@@ -123,26 +123,28 @@ prop_bra <- r_bra_resample/(aggfactor^2)
 ### PREP PREDICTION MAP ###
 ###########################
 
-# Crop our global rasters to the reference region
-exp1_bra <- crop(exp1_global, prop_bra)
-exp2_bra <- crop(exp2_global, prop_bra)
+# Project our reference map to match the global prediction rasters
+proj_bra <- project(prop_bra, exp1_global)
 
-# Project our cropped rasters to match the reference map
-exp1_bra <- project(exp1_bra, prop_bra)
-exp2_bra <- project(exp2_bra, prop_bra)
+# Crop our rasters (bounding box approx around bra)
+exp1_bra <- crop(exp1_global, ext(-75, -32, -35, 6))
+exp2_bra <- crop(exp2_global, ext(-75, -32, -35, 6))
+proj_bra <- crop(proj_bra, ext(-75, -32, -35, 6))
 
-# No need to mask out GDD for Brazil, does not go above 50º latitude
+# No need to mask out GDD for Brazil, does not go above 50ºN latitude
 
 # Mask out water bodies
 water_body_mask_bra <- crop(water_body_mask, exp1_bra)
 water_body_mask_bra <- project(water_body_mask_bra, exp1_bra)
 exp1_bra <- mask(exp1_bra, water_body_mask_bra, maskvalues=0)
 exp2_bra <- mask(exp2_bra, water_body_mask_bra, maskvalues=0)
+proj_bra <- mask(proj_bra, water_body_mask_bra, maskvalues=0)
 
-# Mask out just Brazil (not neighbouring countries)
-shp_bra <- vect(here("shapefile/Brazil/gadm36_BRA_1.shp"))
+# Mask out just bra (not neighbouring countries)
+shp_bra <- vect(here("shapefile/BRA/gadm36_BRA_1.shp"))
 exp1_bra <- mask(exp1_bra, shp_bra)
 exp2_bra <- mask(exp2_bra, shp_bra)
+proj_bra <- mask(proj_bra, shp_bra)
 
 
 ####################################

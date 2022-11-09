@@ -214,7 +214,7 @@ exp1_usa <- crop(exp1_global, ext(-126, -65, 24, 49))
 exp2_usa <- crop(exp2_global, ext(-126, -65, 24, 49))
 proj_usa <- crop(proj_usa, ext(-126, -65, 24, 49))
 
-# No need to mask out GDD for conterminous USA, does not go above 50º latitude
+# No need to mask out GDD for conterminous USA, does not go above 50ºN latitude
 
 # Mask out water bodies
 water_body_mask_usa <- crop(water_body_mask, exp1_usa)

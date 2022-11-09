@@ -69,17 +69,28 @@ prop_aus <- mask(prop_aus, shp_aus)
 ### PREP PREDICTION MAP ###
 ###########################
 
-# Project and crop our global rasters to the reference region
-exp1_aus <- project(exp1_global, prop_aus)
-exp2_aus <- project(exp2_global, prop_aus)
+# Project our reference map to match the global prediction rasters
+proj_aus <- project(prop_aus, exp1_global)
+
+# Crop our rasters (bounding box approx around Australia)
+exp1_aus <- crop(exp1_global, ext(109, 160, -46, -10))
+exp2_aus <- crop(exp2_global, ext(109, 160, -46, -10))
+proj_aus <- crop(proj_aus, ext(109, 160, -46, -10))
+
+# No need to mask out GDD for Australia, does not go above 50ºN latitude
 
 # Mask out water bodies
+water_body_mask_aus <- crop(water_body_mask, exp1_aus)
+water_body_mask_aus <- project(water_body_mask_aus, exp1_aus)
 exp1_aus <- mask(exp1_aus, water_body_mask_aus, maskvalues=0)
 exp2_aus <- mask(exp2_aus, water_body_mask_aus, maskvalues=0)
+proj_aus <- mask(proj_aus, water_body_mask_aus, maskvalues=0)
 
-# Mask by shapefile
+# Mask out just aus (not neighbouring countries)
+shp_aus <- vect(here("shapefile/AUS/gadm36_AUS_1.shp"))
 exp1_aus <- mask(exp1_aus, shp_aus)
 exp2_aus <- mask(exp2_aus, shp_aus)
+proj_aus <- mask(proj_aus, shp_aus)
 
 
 ####################################
