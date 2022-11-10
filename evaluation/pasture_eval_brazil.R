@@ -64,7 +64,7 @@ r_bra <- rast(file_bra)
 #   r_count[r %in% values_bra] <- 1
 #   r_count[!(r %in% values_bra)] <- 0
 # 
-#   # Original resolution is 30m; aggregate to approx 10km (quick) then we can resample to exactly 10km
+#   # Original resolution is 30m; aggregate to approx 10km
 #   aggfactor <- 10000/30
 #   r_agg <- aggregate(r_count, floor(aggfactor), fun=sum) # aggregate needs to be on integer, hence floor()
 # 
@@ -78,17 +78,6 @@ r_bra <- rast(file_bra)
 # r_collection <- sprc(r_list)
 # r_bra_agg <- mosaic(r_collection)
 # writeRaster(r_bra_agg, "evaluation/pasture_reference_maps/brazil/brazil_agg.tif")
-# 
-# # Create a template of the desired resolution
-# template_bra <- rast(nrows=nrow(r_bra), ncols=ncol(r_bra), ext=ext(r_bra))
-# res(template_bra) <- res(template_bra)*aggfactor # we want to aggregate from 30m to 10km grid cells
-# template_bra
-# 
-# # Resample to 10km
-# r_bra_resample <- resample(r_bra_agg, template_bra) # this resamples the 9990m to 10km
-# 
-# # Calculate proportion of pasture per 10km grid cell
-# prop_bra <- r_bra_resample/(aggfactor^2)
 
 
 ##################################
@@ -103,20 +92,12 @@ r_bra <- rast(file_bra)
 # Identify raster values corresponding to the classes of interest
 values_bra <- c(15, 21)
 
-# Load values needed in code chunks below
-aggfactor <- 10000/30
+# Load aggregated raster
 r_bra_agg <- rast(here("evaluation/pasture_reference_maps/brazil/brazil_agg.tif"))
 
-# Create a template of the desired resolution
-template_bra <- rast(nrows=nrow(r_bra), ncols=ncol(r_bra), ext=ext(r_bra))
-res(template_bra) <- res(template_bra)*aggfactor # we want to aggregate from 30m to 10km grid cells
-template_bra
-
-# Resample to 10km
-r_bra_resample <- resample(r_bra_agg, template_bra) # this resamples the 9990m to 10km
-
 # Calculate proportion of pasture per 10km grid cell
-prop_bra <- r_bra_resample/(aggfactor^2)
+aggfactor <- 10000/30
+prop_bra <- r_bra_agg/(aggfactor^2)
 
 
 ###########################
@@ -141,7 +122,7 @@ exp2_bra <- mask(exp2_bra, water_body_mask_bra, maskvalues=0)
 proj_bra <- mask(proj_bra, water_body_mask_bra, maskvalues=0)
 
 # Mask out just bra (not neighbouring countries)
-shp_bra <- vect(here("shapefile/BRA/gadm36_BRA_1.shp"))
+shp_bra <- vect(here("shapefile/Brazil/gadm36_BRA_1.shp"))
 exp1_bra <- mask(exp1_bra, shp_bra)
 exp2_bra <- mask(exp2_bra, shp_bra)
 proj_bra <- mask(proj_bra, shp_bra)
@@ -152,8 +133,8 @@ proj_bra <- mask(proj_bra, shp_bra)
 ####################################
 
 # Calculate differences
-absdif_exp1 <- prop_bra-exp1_bra
-absdif_exp2 <- prop_bra-exp2_bra
+absdif_exp1 <- proj_bra-exp1_bra
+absdif_exp2 <- proj_bra-exp2_bra
 
 
 ##################
@@ -161,10 +142,10 @@ absdif_exp2 <- prop_bra-exp2_bra
 ##################
 
 # Save all_correct_to_FAO_scale
-writeRaster(r_bra_resample, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
-writeRaster(prop_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
-writeRaster(exp1_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_pred_map.tif")))
-writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_diff_map.tif")))
+writeRaster(r_bra_agg, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
+writeRaster(proj_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
+writeRaster(exp1_bra, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp1)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
@@ -174,10 +155,10 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", p
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(r_bra_resample, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
-writeRaster(prop_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
-writeRaster(exp2_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_pred_map.tif")))
-writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_map.tif")))
+writeRaster(r_bra_agg, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
+writeRaster(proj_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
+writeRaster(exp2_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp2)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)

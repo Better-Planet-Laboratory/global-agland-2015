@@ -87,7 +87,7 @@ exp2_aus <- mask(exp2_aus, water_body_mask_aus, maskvalues=0)
 proj_aus <- mask(proj_aus, water_body_mask_aus, maskvalues=0)
 
 # Mask out just aus (not neighbouring countries)
-shp_aus <- vect(here("shapefile/AUS/gadm36_AUS_1.shp"))
+shp_aus <- vect(here("shapefile/Australia/gadm36_AUS_1.shp"))
 exp1_aus <- mask(exp1_aus, shp_aus)
 exp2_aus <- mask(exp2_aus, shp_aus)
 proj_aus <- mask(proj_aus, shp_aus)
@@ -98,8 +98,8 @@ proj_aus <- mask(proj_aus, shp_aus)
 ####################################
 
 # Calculate differences 
-absdif_exp1 <- prop_aus-exp1_aus
-absdif_exp2 <- prop_aus-exp2_aus
+absdif_exp1 <- proj_aus-exp1_aus
+absdif_exp2 <- proj_aus-exp2_aus
 
 
 ##################
@@ -110,9 +110,9 @@ absdif_exp2 <- prop_aus-exp2_aus
 
 # Save all_correct_to_FAO_scale
 writeRaster(r_aus, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia/australia_landuse.tif"), overwrite=T)
-writeRaster(prop_aus, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia/australia_reference.tif"), overwrite=T)
-writeRaster(exp1_aus, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_pred_map.tif")))
-writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_diff_map.tif")))
+writeRaster(proj_aus, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia/australia_reference.tif"), overwrite=T)
+writeRaster(exp1_aus, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp1)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
@@ -123,9 +123,9 @@ write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/australia
 
 # Save all_correct_to_subnation_scale
 writeRaster(r_aus, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia/australia_landuse.tif"), overwrite=T)
-writeRaster(prop_aus, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia/australia_reference.tif"), overwrite=T)
-writeRaster(exp2_aus, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_pred_map.tif")))
-writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_diff_map.tif")))
+writeRaster(proj_aus, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia/australia_reference.tif"), overwrite=T)
+writeRaster(exp2_aus, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/australia", paste0("agland_map_output_",iter,"_australia_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp2)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)

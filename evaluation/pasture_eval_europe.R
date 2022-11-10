@@ -49,20 +49,15 @@ r_eu <- rast(file_eu)
 # We can treat the probabilities as the proportion of pasture within the 30m cells
 # Then just take the average
 
-# Create a template of the desired resolution
-aggfactor_eu <- 10000/30
-template_eu <- rast(nrows=nrow(r_eu), ncols=ncol(r_eu), ext=ext(r_eu))
-res(template_eu) <- res(template_eu)*aggfactor_eu # we want to aggregate from 30m to 10km grid cells
-template_eu
-
 # Aggregate probabilities
-# r_eu_resample <- resample(r_eu, template_eu)
-# writeRaster(r_eu_resample, here("evaluation/pasture_reference_maps/europe/eu_resample.tif"))
-r_eu_resample <- rast(here("evaluation/pasture_reference_maps/europe/eu_resample.tif"))
+# aggfactor_eu <- 10000/30
+# r_eu_agg <- aggregate(r_eu, aggfactor_eu, fun=mean, na.rm=T)
+# writeRaster(r_eu_agg, here("evaluation/pasture_reference_maps/europe/eu_agg.tif"))
+r_eu_agg <- rast(here("evaluation/pasture_reference_maps/europe/eu_agg.tif"))
 
 # Convert to prop
-names(r_eu_resample) <- "Value"
-prop_eu <- r_eu_resample/100
+names(r_eu_agg) <- "Value"
+prop_eu <- r_eu_agg/100
 
 
 ###########################
@@ -114,10 +109,10 @@ absdif_exp2 <- proj_eu-exp2_eu
 ##################
 
 # Save all_correct_to_FAO_scale
-writeRaster(mask(project(r_eu_resample, exp1_eu),mask_eu), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe/eu.tif"), overwrite=T)
-writeRaster(mask(project(prop_eu, exp1_eu),mask_eu), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe/eu_reference.tif"), overwrite=T)
-writeRaster(exp1_eu, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_pred_map.tif")))
-writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_diff_map.tif")))
+writeRaster(mask(project(r_eu_agg, exp1_eu),mask_eu), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe/eu_agg.tif"), overwrite=T)
+writeRaster(proj_eu, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe/eu_reference.tif"), overwrite=T)
+writeRaster(exp1_eu, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp1)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
@@ -127,10 +122,10 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe", p
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(mask(project(r_eu_resample, exp1_eu),mask_eu), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe/eu.tif"), overwrite=T)
-writeRaster(mask(project(prop_eu, exp1_eu),mask_eu), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe/eu_reference.tif"), overwrite=T)
-writeRaster(exp2_eu, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_pred_map.tif")))
-writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_diff_map.tif")))
+writeRaster(mask(project(r_eu_agg, exp1_eu),mask_eu), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe/eu_agg.tif"), overwrite=T)
+writeRaster(proj_eu, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe/eu_reference.tif"), overwrite=T)
+writeRaster(exp2_eu, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/europe", paste0("agland_map_output_",iter,"_eu_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp2)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)

@@ -72,7 +72,7 @@ levels_usa <- cats(r_usa_range)[[1]]
 #   r_count[r %in% values_usa_nlcd] <- 1
 #   r_count[!(r %in% values_usa_nlcd)] <- 0
 #   
-#   # Original resolution is 30m; aggregate to approx 10km then we can resample to exactly 10km
+#   # Original resolution is 30m; aggregate to approx 10km
 #   aggfactor <- 10000/30
 #   r_agg <- aggregate(r_count, floor(aggfactor), fun=sum) # aggregate needs to be on integer, hence floor()
 #   
@@ -87,14 +87,6 @@ levels_usa <- cats(r_usa_range)[[1]]
 # r_usa_nlcd_agg <- mosaic(r_collection)
 # plot(r_usa_nlcd_agg)
 # writeRaster(r_usa_nlcd_agg, "evaluation/pasture_reference_maps/usa/tiles/usa_agg_nlcd.tif")
-# 
-# # Create a template of the desired resolution
-# template_usa_nlcd <- rast(nrows=nrow(r_usa_nlcd), ncols=ncol(r_usa_nlcd), ext=ext(r_usa_nlcd))
-# res(template_usa_nlcd) <- res(template_usa_nlcd)*aggfactor # we want to aggregate from 30m to 10km grid cells
-# template_usa_nlcd
-# 
-# # Resample to 10km
-# r_usa_nlcd_resample <- resample(r_usa_nlcd_agg, template_usa_nlcd) # this resamples the 9990m to 10km
 
 ### RANGELANDS
 
@@ -118,7 +110,7 @@ levels_usa <- cats(r_usa_range)[[1]]
 #   r_count[r %in% values_usa_range] <- 1
 #   r_count[!(r %in% values_usa_range)] <- 0
 #   
-#   # Original resolution is 30m; aggregate to approx 10km then we can resample to exactly 10km
+#   # Original resolution is 30m; aggregate to approx 10km
 #   aggfactor <- 10000/30
 #   r_agg <- aggregate(r_count, floor(aggfactor), fun=sum) # aggregate needs to be on integer, hence floor()
 #   
@@ -133,14 +125,6 @@ levels_usa <- cats(r_usa_range)[[1]]
 # r_usa_range_agg <- mosaic(r_collection)
 # plot(r_usa_range_agg)
 # writeRaster(r_usa_range_agg, "evaluation/pasture_reference_maps/usa/tiles/usa_agg_range.tif")
-# 
-# # Create a template of the desired resolution
-# template_usa_range <- rast(nrows=nrow(r_usa_range), ncols=ncol(r_usa_range), ext=ext(r_usa_range))
-# res(template_usa_range) <- res(template_usa_range)*aggfactor # we want to aggregate from 30m to 10km grid cells
-# template_usa_range
-# 
-# # Resample to 10km
-# r_usa_range_resample <- resample(r_usa_range_agg, template_usa_range) # this resamples the 9990m to 10km
 
 
 ##################################
@@ -157,34 +141,16 @@ levels_usa <- cats(r_usa_range)[[1]]
 # Identify raster values corresponding to the classes of interest
 values_usa_nlcd <- 81
 
-# Load values needed in code chunks below
-aggfactor <- 10000/30
+# Load aggregated raster
 r_usa_nlcd_agg <- rast(here("evaluation/pasture_reference_maps/usa/usa_agg_nlcd.tif"))
-
-# Create a template of the desired resolution
-template_usa_nlcd <- rast(nrows=nrow(r_usa_nlcd), ncols=ncol(r_usa_nlcd), ext=ext(r_usa_nlcd))
-res(template_usa_nlcd) <- res(template_usa_nlcd)*aggfactor # we want to aggregate from 30m to 10km grid cells
-template_usa_nlcd
-
-# Resample to 10km
-r_usa_nlcd_resample <- resample(r_usa_nlcd_agg, template_usa_nlcd) # this resamples the 9990m to 10km
 
 ### RANGELANDS
 
 # Identify raster values corresponding to the classes of interest
 values_usa_range <- levels_usa$VALUE[which(levels_usa$LABEL %in% c("Rangeland"))]
 
-# Load values needed in code chunks below
-aggfactor <- 10000/30
+# Load aggregated raster
 r_usa_range_agg <- rast(here("evaluation/pasture_reference_maps/usa/usa_agg_range.tif"))
-
-# Create a template of the desired resolution
-template_usa_range <- rast(nrows=nrow(r_usa_range), ncols=ncol(r_usa_range), ext=ext(r_usa_range))
-res(template_usa_range) <- res(template_usa_range)*aggfactor # we want to aggregate from 30m to 10km grid cells
-template_usa_range
-
-# Resample to 10km
-r_usa_range_resample <- resample(r_usa_range_agg, template_usa_range) # this resamples the 9990m to 10km
 
 
 ########################
@@ -192,13 +158,13 @@ r_usa_range_resample <- resample(r_usa_range_agg, template_usa_range) # this res
 ########################
 
 # Make CRS & extents match
-crs(r_usa_nlcd_resample) <- crs(r_usa_nlcd)
-crs(r_usa_range_resample) <- crs(r_usa_range)
-r_usa_nlcd_resample <- project(r_usa_nlcd_resample, r_usa_range_resample)
+crs(r_usa_nlcd_agg) <- crs(r_usa_nlcd)
+crs(r_usa_range_agg) <- crs(r_usa_range)
+r_usa_nlcd_agg <- project(r_usa_nlcd_agg, r_usa_range_agg)
 
 # Calculate proportion of pasture per 10km grid cell
-r_usa_resample <- r_usa_nlcd_resample + r_usa_range_resample
-prop_usa <- r_usa_resample/(aggfactor^2)
+r_usa_agg <- r_usa_nlcd_agg + r_usa_range_agg
+prop_usa <- r_usa_agg/(aggfactor^2)
 prop_usa[prop_usa > 1] <- 1 # some cells add to more than 1, clamp them
 
 
@@ -244,11 +210,11 @@ absdif_exp2 <- proj_usa-exp2_usa
 ##################
 
 # Save all_correct_to_FAO_scale
-writeRaster(mask(project(r_usa_nlcd_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
-writeRaster(mask(project(r_usa_range_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
-writeRaster(prop_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
-writeRaster(exp1_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")))
-writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")))
+writeRaster(mask(project(r_usa_nlcd_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
+writeRaster(mask(project(r_usa_range_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
+writeRaster(proj_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
+writeRaster(exp1_usa, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp1, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp1)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
@@ -258,11 +224,11 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", past
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(mask(project(r_usa_nlcd_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
-writeRaster(mask(project(r_usa_range_resample, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
-writeRaster(mask(project(prop_usa, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
-writeRaster(exp2_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")))
-writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")))
+writeRaster(mask(project(r_usa_nlcd_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
+writeRaster(mask(project(r_usa_range_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
+writeRaster(proj_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
+writeRaster(exp2_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")), overwrite=T)
+writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")), overwrite=T)
 hist <- hist(absdif_exp2)
 histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
 mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
