@@ -105,7 +105,12 @@ levels_usa <- cats(r_usa_range)[[1]]
 # for (i in 1:length(tile_list)) { # need large amount of memory to run this (or split into smaller loops)
 #   
 #   # Create a new raster of counts of classes of interest
-#   r <- rast(here("evaluation/pasture_reference_maps/usa/tiles", tile_list[i]))
+#   # makeTiles & writeRaster result in many tiles being NA for some unknown reason
+#   # But the extents are correct
+#   # So let's use those extents, and crop the main raster on the fly,
+#   # Without needing to use writeRaster 
+#   e <- ext(rast(here("evaluation/pasture_reference_maps/usa/tiles", tile_list[i])))
+#   r <- crop(r_usa_range, e)
 #   r_count <- r
 #   r_count[r %in% values_usa_range] <- 1
 #   r_count[!(r %in% values_usa_range)] <- 0
@@ -163,9 +168,11 @@ crs(r_usa_range_agg) <- crs(r_usa_range)
 r_usa_nlcd_agg <- project(r_usa_nlcd_agg, r_usa_range_agg)
 
 # Calculate proportion of pasture per 10km grid cell
+aggfactor <- 10000/30
 r_usa_agg <- r_usa_nlcd_agg + r_usa_range_agg
 prop_usa <- r_usa_agg/(aggfactor^2)
 prop_usa[prop_usa > 1] <- 1 # some cells add to more than 1, clamp them
+names(prop_usa) <- "Value"
 
 
 ###########################
