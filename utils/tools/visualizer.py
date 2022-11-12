@@ -683,9 +683,9 @@ def plot_agland_pred_vs_ground_truth(
         m_pasture, b_pasture = np.polyfit(pred_pasture, gt_pasture, 1)
         m_other, b_other = np.polyfit(pred_other, gt_other, 1)
 
-        rmse_cropland = rmse((m_cropland * x_range + b_cropland), x_range)
-        rmse_pasture = rmse((m_pasture * x_range + b_pasture), x_range)
-        rmse_other = rmse((m_other * x_range + b_other), x_range)
+        rmse_cropland = rmse(pred_cropland, gt_cropland)
+        rmse_pasture = rmse(pred_pasture, gt_pasture)
+        rmse_other = rmse(pred_other, gt_other)
 
         plot_data_table[itr] = {
             'gt_cropland': gt_cropland,
@@ -1008,7 +1008,7 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
                        width="5%",
                        height="50%",
                        loc='lower left',
-                       bbox_to_anchor=(-0.08, 0.20, 0.26, 0.99),
+                       bbox_to_anchor=(-0.08, 0.20, 0.5, 0.92),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
@@ -1038,45 +1038,21 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
 
     rmse_error = np.sqrt(np.nanmean(diff**2))
 
-    # all correct to FAO
-    # australia
-    # iter-0,1,2,3: (-80, -80, -80), (18200, 15600, 13000)
-    # brazil
-    # iter-0,1: (-80, -80, -80), (35000, 30000, 25000)
-    # iter-2,3: (-90, -90, -90), (26000, 22000, 18000)
-    # europe
-    # iter-0: (-90, -90, -90), (23000, 19000, 15000)
-    # iter-1,2,3: (-90, -90, -90), (30000, 25000, 20000)
-    # usa
-    # iter-0: (-95, -95, -95), (29000, 24500, 20000)
-    # iter-1: (-95, -95, -95), (38000, 32000, 26000)
-    # iter-2,3: (-90, -90, -90), (32000, 26000, 20000)
-
-    # all correct to subnation
-    # australia
-    # iter-0: (-80, -80, -80), (22000, 18500, 15000)
-    # iter-1: (-80, -80, -80), (21200, 18100, 15000)
-    # iter-2,3: (-80, -80, -80), (18800, 15900, 13000)
-    # brazil
-    # iter-0,1,2,3: (-85, -85, -85), (33000, 27500, 22000)
-    # europe
-    # iter-0: (-85, -85, -85), (33000, 27500, 22000)
-    # iter-1,2,3: (-85, -85, -85), (43000, 36500, 30000)
-    # usa
-    # iter-0: (-95, -95, -95), (30000, 25000, 20000)
-    # iter-1,2,3: (-95, -95, -95), (31000, 25500, 20000)
-
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-95, 32000, r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff),
-                                                          4)))
-    plt.text(-95, 26000,
-             r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
-    plt.text(-95, 20000, r'RMSE={:0.4f}'.format(np.round(rmse_error, 4)))
 
     plt.xlim(-100, 100)
     plt.hist(diff.flatten())
     plt.xlabel('Prediction - Reference (%)')
     plt.ylabel('Frequency (#)')
+
+    # Find the gap between text labels (making it consistent for paper)
+    _, ymax = ax.get_ylim()
+    plt.text(-90, ymax - 0.1 * ymax,
+             r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff), 4)))
+    plt.text(-90, ymax - 0.2 * ymax,
+             r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
+    plt.text(-90, ymax - 0.3 * ymax,
+             r'RMSE={:0.4f}'.format(np.round(rmse_error, 4)))
 
     if output_dir is not None:
         plt.savefig(output_dir,

@@ -41,12 +41,12 @@ def main():
         "--output_dir",
         type=str,
         default=
-        '../_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/',
+        '../_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/',
         help="path dir to save outputs")
     parser.add_argument(
         "--results_dir",
         type=str,
-        default='../../../outputs/all_correct_to_FAO_scale_itr3_fr_0/',
+        default='../../../outputs/all_correct_to_subnation_scale_itr3_fr_0/',
         help="path dir to generated results for evaluation")
     parser.add_argument("--water_body_dir",
                         type=str,
