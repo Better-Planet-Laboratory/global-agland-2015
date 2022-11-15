@@ -41,12 +41,12 @@ def main():
         "--output_dir",
         type=str,
         default=
-        '../_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/',
+        '../_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/',
         help="path dir to save outputs")
     parser.add_argument(
         "--results_dir",
         type=str,
-        default='../../../outputs/all_correct_to_subnation_scale_itr3_fr_0/',
+        default='../../../outputs/all_correct_to_FAO_scale_itr3_fr_0/',
         help="path dir to generated results for evaluation")
     parser.add_argument("--water_body_dir",
                         type=str,
@@ -120,52 +120,52 @@ def main():
                                          args.gdd_filter_map_dir,
                                          args.antarctica_mask_dir
                                      ])
-    for itr, agland_map in agland_maps_table.items():
-        output_map_dir = os.path.join(args.output_dir,
-                                      'output_{}_'.format(str(itr)))
-        agland_maps_table[itr] = agland_map.apply_mask(mask)
+    # for itr, agland_map in agland_maps_table.items():
+    #     output_map_dir = os.path.join(args.output_dir,
+    #                                   'output_{}_'.format(str(itr)))
+    #     agland_maps_table[itr] = agland_map.apply_mask(mask)
 
-        save_array_as_tif(output_map_dir + 'cropland.tif',
-                          agland_map.get_cropland(),
-                          x_min=-180,
-                          y_max=90,
-                          pixel_size=abs(-180) * 2 / agland_map.width,
-                          epsg=4326,
-                          no_data_value=255,
-                          dtype=gdal.GDT_Float64)
+    #     save_array_as_tif(output_map_dir + 'cropland.tif',
+    #                       agland_map.get_cropland(),
+    #                       x_min=-180,
+    #                       y_max=90,
+    #                       pixel_size=abs(-180) * 2 / agland_map.width,
+    #                       epsg=4326,
+    #                       no_data_value=255,
+    #                       dtype=gdal.GDT_Float64)
 
-        save_array_as_tif(output_map_dir + 'pasture.tif',
-                          agland_map.get_pasture(),
-                          x_min=-180,
-                          y_max=90,
-                          pixel_size=abs(-180) * 2 / agland_map.width,
-                          epsg=4326,
-                          no_data_value=255,
-                          dtype=gdal.GDT_Float64)
+    #     save_array_as_tif(output_map_dir + 'pasture.tif',
+    #                       agland_map.get_pasture(),
+    #                       x_min=-180,
+    #                       y_max=90,
+    #                       pixel_size=abs(-180) * 2 / agland_map.width,
+    #                       epsg=4326,
+    #                       no_data_value=255,
+    #                       dtype=gdal.GDT_Float64)
 
-        save_array_as_tif(output_map_dir + 'other.tif',
-                          agland_map.get_other(),
-                          x_min=-180,
-                          y_max=90,
-                          pixel_size=abs(-180) * 2 / agland_map.width,
-                          epsg=4326,
-                          no_data_value=255,
-                          dtype=gdal.GDT_Float64)
+    #     save_array_as_tif(output_map_dir + 'other.tif',
+    #                       agland_map.get_other(),
+    #                       x_min=-180,
+    #                       y_max=90,
+    #                       pixel_size=abs(-180) * 2 / agland_map.width,
+    #                       epsg=4326,
+    #                       no_data_value=255,
+    #                       dtype=gdal.GDT_Float64)
 
-        plot_agland_map_tif(output_map_dir + 'cropland.tif',
-                            type='cropland',
-                            global_boundary_shp=args.global_boundary_shp,
-                            output_dir=output_map_dir + 'cropland.png')
+    #     plot_agland_map_tif(output_map_dir + 'cropland.tif',
+    #                         type='cropland',
+    #                         global_boundary_shp=args.global_boundary_shp,
+    #                         output_dir=output_map_dir + 'cropland.png')
 
-        plot_agland_map_tif(output_map_dir + 'pasture.tif',
-                            type='pasture',
-                            global_boundary_shp=args.global_boundary_shp,
-                            output_dir=output_map_dir + 'pasture.png')
+    #     plot_agland_map_tif(output_map_dir + 'pasture.tif',
+    #                         type='pasture',
+    #                         global_boundary_shp=args.global_boundary_shp,
+    #                         output_dir=output_map_dir + 'pasture.png')
 
-        plot_agland_map_tif(output_map_dir + 'other.tif',
-                            type='other',
-                            global_boundary_shp=args.global_boundary_shp,
-                            output_dir=output_map_dir + 'other.png')
+    #     plot_agland_map_tif(output_map_dir + 'other.tif',
+    #                         type='other',
+    #                         global_boundary_shp=args.global_boundary_shp,
+    #                         output_dir=output_map_dir + 'other.png')
 
     # Make agland pred vs. ground truth plots
     plot_agland_pred_vs_ground_truth(

@@ -600,28 +600,61 @@ def plot_agland_pred_vs_ground_truth(
 
         return ax
 
-    def sub_plot_helper(mark_index, iter_list, rmse_list, ax, markersize,
-                        linewidth):
+    def sub_plot_helper(mark_index, iter_list, rmse_list, r2_list, ax,
+                        markersize, linewidth):
         """ Helper plotter """
+        # RMSE plot
         ax.plot(np.asarray(iter_list),
                 np.asarray(rmse_list),
                 linewidth=linewidth,
-                c='k',
+                c='b',
                 zorder=1)
         ax.scatter(np.asarray(iter_list),
                    np.asarray(rmse_list),
                    marker='X',
-                   c='b',
+                   c='#A9A9A9',
                    s=markersize,
                    zorder=10)
         ax.scatter(np.asarray(iter_list[mark_index]),
                    np.asarray(rmse_list[mark_index]),
                    marker='X',
-                   c='r',
+                   c='k',
                    s=markersize,
                    zorder=10)
         ax.set_xticks(iter_list, ['iter_{}'.format(str(i)) for i in iter_list])
-        ax.set_ylabel('RMSE')
+        ax.set_ylabel('RMSE', backgroundcolor='w', color='b', labelpad=10)
+        ax.yaxis.set_tick_params(color='b')
+        ax.tick_params(axis='y', colors='b')
+        bbox = dict(ec='w', fc='w', alpha=0.5)
+        plt.setp(ax.get_yticklabels(), bbox=bbox)
+
+        # R2 plot
+        ax2 = ax.twinx()
+        ax2.plot(np.asarray(iter_list),
+                 np.asarray(r2_list),
+                 linewidth=linewidth,
+                 c='r',
+                 zorder=1)
+        ax2.scatter(np.asarray(iter_list),
+                    np.asarray(r2_list),
+                    marker='X',
+                    c='#A9A9A9',
+                    s=markersize,
+                    zorder=10)
+        ax2.scatter(np.asarray(iter_list[mark_index]),
+                    np.asarray(r2_list[mark_index]),
+                    marker='X',
+                    c='k',
+                    s=markersize,
+                    zorder=10)
+        ax2.set_ylabel('$R^2$',
+                       backgroundcolor='white',
+                       color='r',
+                       labelpad=10)
+        ax2.yaxis.set_tick_params(labelsize=ax.get_yticklabels()[0].get_size(),
+                                  color='r')
+        ax2.tick_params(axis='y', colors='r')
+        plt.setp(ax2.get_yticklabels(), bbox=bbox)
 
     def add_subplot_axes(ax, rect, axisbg='w'):
         """
@@ -647,6 +680,7 @@ def plot_agland_pred_vs_ground_truth(
         y_labelsize *= rect[3]**0.5
         subax.xaxis.set_tick_params(labelsize=x_labelsize)
         subax.yaxis.set_tick_params(labelsize=y_labelsize)
+        subax.patch.set_alpha(0.7)
 
         return subax
 
@@ -654,9 +688,9 @@ def plot_agland_pred_vs_ground_truth(
             0), "output_pred_vs_ground_truth_data_collection cannot be empty"
 
     # subplot settings
-    markersize = 400
+    markersize = 300
     linewidth = 5
-    subplot_rect = [0.5, 0.1, 0.4, 0.3]
+    subplot_rect = [0.5, 0.06, 0.4, 0.3]
 
     # Unpack data info and find RMSE results
     plot_data_table = {}
@@ -687,6 +721,10 @@ def plot_agland_pred_vs_ground_truth(
         rmse_pasture = rmse(pred_pasture, gt_pasture)
         rmse_other = rmse(pred_other, gt_other)
 
+        r2_cropland = r2(pred_cropland, gt_cropland)
+        r2_pasture = r2(pred_pasture, gt_pasture)
+        r2_other = r2(pred_other, gt_other)
+
         plot_data_table[itr] = {
             'gt_cropland': gt_cropland,
             'gt_pasture': gt_pasture,
@@ -702,7 +740,10 @@ def plot_agland_pred_vs_ground_truth(
             'b_other': b_other,
             'rmse_cropland': rmse_cropland,
             'rmse_pasture': rmse_pasture,
-            'rmse_other': rmse_other
+            'rmse_other': rmse_other,
+            'r2_cropland': r2_cropland,
+            'r2_pasture': r2_pasture,
+            'r2_other': r2_other
         }
 
     # Use the last iteration as base plot
@@ -714,22 +755,28 @@ def plot_agland_pred_vs_ground_truth(
         plot_data_table[base_iter]['gt_cropland'],
         plot_data_table[base_iter]['pred_cropland'], ax[0], x_range,
         plot_data_table[base_iter]['m_cropland'],
-        plot_data_table[base_iter]['b_cropland'], 'Cropland | RMSE:{}'.format(
-            round(plot_data_table[base_iter]['rmse_cropland'], 4)))
+        plot_data_table[base_iter]['b_cropland'],
+        'Cropland | RMSE:{} | $R^2$:{}'.format(
+            round(plot_data_table[base_iter]['rmse_cropland'], 4),
+            round(plot_data_table[base_iter]['r2_cropland'], 4)))
 
     ax2 = base_plot_helper(
         plot_data_table[base_iter]['gt_pasture'],
         plot_data_table[base_iter]['pred_pasture'], ax[1], x_range,
         plot_data_table[base_iter]['m_pasture'],
-        plot_data_table[base_iter]['b_pasture'], 'Pasture | RMSE:{}'.format(
-            round(plot_data_table[base_iter]['rmse_pasture'], 4)))
+        plot_data_table[base_iter]['b_pasture'],
+        'Pasture | RMSE:{} | $R^2$:{}'.format(
+            round(plot_data_table[base_iter]['rmse_pasture'], 4),
+            round(plot_data_table[base_iter]['r2_pasture'], 4)))
 
     ax3 = base_plot_helper(
         plot_data_table[base_iter]['gt_other'],
         plot_data_table[base_iter]['pred_other'], ax[2], x_range,
         plot_data_table[base_iter]['m_other'],
-        plot_data_table[base_iter]['b_other'], 'Other | RMSE:{}'.format(
-            round(plot_data_table[base_iter]['rmse_other'], 4)))
+        plot_data_table[base_iter]['b_other'],
+        'Other | RMSE:{} | $R^2$:{}'.format(
+            round(plot_data_table[base_iter]['rmse_other'], 4),
+            round(plot_data_table[base_iter]['r2_other'], 4)))
 
     ax1_sub = add_subplot_axes(ax1, subplot_rect, axisbg='w')
     ax2_sub = add_subplot_axes(ax2, subplot_rect, axisbg='w')
@@ -738,18 +785,21 @@ def plot_agland_pred_vs_ground_truth(
     sub_plot_helper(mark_index,
                     iter_list,
                     [plot_data_table[i]['rmse_cropland'] for i in iter_list],
+                    [plot_data_table[i]['r2_cropland'] for i in iter_list],
                     ax1_sub,
                     markersize=markersize,
                     linewidth=linewidth)
     sub_plot_helper(mark_index,
                     iter_list,
                     [plot_data_table[i]['rmse_pasture'] for i in iter_list],
+                    [plot_data_table[i]['r2_pasture'] for i in iter_list],
                     ax2_sub,
                     markersize=markersize,
                     linewidth=linewidth)
     sub_plot_helper(mark_index,
                     iter_list,
                     [plot_data_table[i]['rmse_other'] for i in iter_list],
+                    [plot_data_table[i]['r2_other'] for i in iter_list],
                     ax3_sub,
                     markersize=markersize,
                     linewidth=linewidth)
