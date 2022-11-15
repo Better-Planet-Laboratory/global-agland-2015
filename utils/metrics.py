@@ -28,3 +28,8 @@ def nmae(A, B):
     factor = np.sum(A)
     assert (factor != 0), "Denominator sum(A) cannot be 0"
     return np.sum(np.abs(A - B)) / np.sum(A)
+
+
+def r2(A, B):
+    """R-sqaured coefficient given A as predicted, B as ground truth"""
+    return 1-np.sum((A-B)**2)/np.sum((np.mean(B)-B)**2)
