@@ -30,8 +30,6 @@ exp2_global <- rast(here("outputs/all_correct_to_subnation_scale_itr3_fr_0",
 
 # Load our masks
 water_body_mask <- rast(here("land_cover/water_body_mask.tif"))
-
-# No need for GDD masks for eu (doesn't go above 50ºN)
 gdd_mask <- rast(here("gdd/gdd_filter_map_360x720.tif"))
 
 # Load reference maps
