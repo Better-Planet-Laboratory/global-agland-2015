@@ -56,12 +56,67 @@ Quite interestingly, in this case, for all experiments, as we increase the numbe
 
 
 ### Pasture 
-For pasture, there are no independent global-scale maps from circa 2015 which we could use as a comparison for our final product. As such, we evaluate our pasture product by using land use products containing pasture information in three key regions: Australia, Brazil and the USA.
+For pasture, there are two independent global-scale maps from circa 2015 which we use as a comparison for our final product: [HYDE](https://essd.copernicus.org/articles/9/927/2017/essd-9-927-2017.pdf) and [HILDA+](https://www.nature.com/articles/s41467-021-22702-2#Sec6). That being said, they are not pasture-specific products. So, in addition to these global comparisons, we evaluate our pasture product with independent data in four key regions: Australia, Brazil, Europe and the USA.
 
 1. As a pre-processing step, we applied a scaling factor to all subnational data to scale the national totals to match FAOSTAT (all_correct_to_FAO_scale)
 2. We used the subnational data for all countries without applying any scaling factors (all_correct_to_subnation_scale)
 
 For each of these experiments, we have 4 different products. We either did 0, 1, 2, or 3 iterations of bias-correction with the model output product, to bias-correct the results back to FAOSTAT totals. 
+
+
+#### HYDE
+
+The reference data from the History Database of the Global Environment ([HYDE version 3.2](https://easy.dans.knaw.nl/ui/datasets/id/easy-dataset:74467)) we chose is the "grazing lands" ASCII file for 2015. Grazing lands encompass pasture, converted rangeland and non-converted natural (less intensively used) rangeland, which is more or less consistent with the definitions in our census data. The HYDE map is a product of 5 arcminute resolution, just the same as our final prediction map, so there is no re-projecting required. We convert percentages to proportions and apply GDD and water body masks.
+
+The reference map looks like:
+
+![hyde_raw](./all_correct_to_FAO_scale_itr3_fr_0/hyde/hyde_reference.png)
+
+
+The comparisons look like:
+
+##### *all_correct_to_FAO_scale_itr3_fr_0*
+
+| iter 0                                                                                                                                                    | iter 1                                                                                                                                                    | iter 2                                                                                                                                                    | iter 3                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![all_correct_to_FAO_scale_itr3_fr_0_hyde_incl_diff_itr0](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_0_hyde_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_hyde_incl_diff_itr1](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_1_hyde_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_hyde_incl_diff_itr2](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_2_hyde_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_hyde_incl_diff_itr3](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_3_hyde_diff_map.png) |
+| ![all_correct_to_FAO_scale_itr3_fr_0_hyde_hist_itr0](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_0_hyde_diff_hist.png)     | ![all_correct_to_FAO_scale_itr3_fr_0_hyde_hist_itr1](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_1_hyde_diff_hist.png)     | ![all_correct_to_FAO_scale_itr3_fr_0_hyde_hist_itr2](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_2_hyde_diff_hist.png)     | ![all_correct_to_FAO_scale_itr3_fr_0_hyde_hist_itr3](./all_correct_to_FAO_scale_itr3_fr_0/hyde/agland_map_output_3_hyde_diff_hist.png)     |
+
+##### *all_correct_to_subnation_scale_itr3_fr_0*
+
+| iter 0                                                                                                                                                                | iter 1                                                                                                                                                                | iter 2                                                                                                                                                                | iter 3                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![all_correct_to_subnation_scale_itr3_fr_0_hyde_incl_diff_itr0](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_0_hyde_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_hyde_incl_diff_itr1](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_1_hyde_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_hyde_incl_diff_itr2](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_2_hyde_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_hyde_incl_diff_itr3](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_3_hyde_diff_map.png) |
+| ![all_correct_to_subnation_scale_itr3_fr_0_hyde_hist_itr0](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_0_hyde_diff_hist.png)     | ![all_correct_to_subnation_scale_itr3_fr_0_hyde_hist_itr1](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_1_hyde_diff_hist.png)     | ![all_correct_to_subnation_scale_itr3_fr_0_hyde_hist_itr2](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_2_hyde_diff_hist.png)     | ![all_correct_to_subnation_scale_itr3_fr_0_hyde_hist_itr3](./all_correct_to_subnation_scale_itr3_fr_0/hyde/agland_map_output_3_hyde_diff_hist.png)     |
+
+
+#### HILDA+
+
+The reference data from the HIstoric Land Dynamics Assessment + ([HILDA+](https://doi.pangaea.de/10.1594/PANGAEA.921846)) we chose is the baseline map showing the state of land cover in 2015. The HILDA map is a product of 0.01º resolution. So, to pre-process the reference map, we aggregated it to 5 arcminute resolution to match our final prediction map. We calculated the proportion of the class of interest (pasture/rangeland) in each 5' grid cell, and applied GDD and water body masks.
+
+The reference map looks like:
+
+![hilda_raw](./all_correct_to_FAO_scale_itr3_fr_0/hilda/hilda_reference.png)
+
+Note: the land cover category of interest was:
+
+* 33 - pasture/rangeland
+
+The comparisons look like:
+
+##### *all_correct_to_FAO_scale_itr3_fr_0*
+
+| iter 0                                                                                                                                                    | iter 1                                                                                                                                                    | iter 2                                                                                                                                                    | iter 3                                                                                                                                                    |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![all_correct_to_FAO_scale_itr3_fr_0_hilda_incl_diff_itr0](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_0_hilda_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_hilda_incl_diff_itr1](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_1_hilda_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_hilda_incl_diff_itr2](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_2_hilda_diff_map.png) | ![all_correct_to_FAO_scale_itr3_fr_0_hilda_incl_diff_itr3](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_3_hilda_diff_map.png) |
+| ![all_correct_to_FAO_scale_itr3_fr_0_hilda_hist_itr0](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_0_hilda_diff_hist.png)     | ![all_correct_to_FAO_scale_itr3_fr_0_hilda_hist_itr1](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_1_hilda_diff_hist.png)     | ![all_correct_to_FAO_scale_itr3_fr_0_hilda_hist_itr2](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_2_hilda_diff_hist.png)     | ![all_correct_to_FAO_scale_itr3_fr_0_hilda_hist_itr3](./all_correct_to_FAO_scale_itr3_fr_0/hilda/agland_map_output_3_hilda_diff_hist.png)     |
+
+##### *all_correct_to_subnation_scale_itr3_fr_0*
+
+| iter 0                                                                                                                                                                | iter 1                                                                                                                                                                | iter 2                                                                                                                                                                | iter 3                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![all_correct_to_subnation_scale_itr3_fr_0_hilda_incl_diff_itr0](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_0_hilda_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_hilda_incl_diff_itr1](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_1_hilda_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_hilda_incl_diff_itr2](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_2_hilda_diff_map.png) | ![all_correct_to_subnation_scale_itr3_fr_0_hilda_incl_diff_itr3](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_3_hilda_diff_map.png) |
+| ![all_correct_to_subnation_scale_itr3_fr_0_hilda_hist_itr0](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_0_hilda_diff_hist.png)     | ![all_correct_to_subnation_scale_itr3_fr_0_hilda_hist_itr1](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_1_hilda_diff_hist.png)     | ![all_correct_to_subnation_scale_itr3_fr_0_hilda_hist_itr2](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_2_hilda_diff_hist.png)     | ![all_correct_to_subnation_scale_itr3_fr_0_hilda_hist_itr3](./all_correct_to_subnation_scale_itr3_fr_0/hilda/agland_map_output_3_hilda_diff_hist.png)     |
 
 
 
