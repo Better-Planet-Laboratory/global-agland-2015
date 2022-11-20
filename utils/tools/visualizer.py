@@ -1050,6 +1050,7 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     plt.axis('off')
 
     # Default: (-0.08, 0.20, 0.5, 1)
+    # hyde: (-0.08, 0.20, 0.35, 0.92)
     # brazil: (-0.08, 0.20, 0.6, 0.92)
     # australia: (-0.08, 0.20, 0.5, 0.92)
     # europe: diff = diff[80:-1, 150:] for demo, (-0.05, 0.20, 0.4, 0.92)
@@ -1058,7 +1059,7 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
                        width="5%",
                        height="50%",
                        loc='lower left',
-                       bbox_to_anchor=(-0.08, 0.20, 0.5, 0.92),
+                       bbox_to_anchor=(0.08, 0.20, 0.32, 1.00),
                        bbox_transform=ax.transAxes,
                        borderpad=0)
     cbar = fig.colorbar(im, cax=axins, orientation='vertical')
@@ -1092,7 +1093,7 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
 
     plt.xlim(-100, 100)
     plt.hist(diff.flatten())
-    plt.xlabel('Prediction - Reference (%)')
+    plt.xlabel('Prediction - HILDA (%)')
     plt.ylabel('Frequency (#)')
 
     # Find the gap between text labels (making it consistent for paper)
