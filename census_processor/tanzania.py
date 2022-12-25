@@ -17,7 +17,8 @@ def subnational_processor_tanzania(subnational_dir):
     # pasture_index -> Pasture
     cropland_index = [1, 3, 5, 7, 9, 15]
     pasture_index = [11, 13]
-    raw_subnation_data = raw_subnation_data.iloc[1:-1, [0] + cropland_index + pasture_index]
+    raw_subnation_data = raw_subnation_data.iloc[1:-4, [0] + cropland_index +
+                                                 pasture_index]
 
     subnation_data = pd.DataFrame(columns=['STATE', 'CROPLAND', 'PASTURE'])
     subnation_data['STATE'] = raw_subnation_data['Region']
@@ -28,7 +29,8 @@ def subnational_processor_tanzania(subnational_dir):
     for i in range(len(cropland_index)):
         # Since we are summing over different types of cropland,
         # treat NaN as 0
-        current_cropland_list = Tanzania.string_to_num(cropland_subset.iloc[:, i].to_list())
+        current_cropland_list = Tanzania.string_to_num(
+            cropland_subset.iloc[:, i].to_list())
         current_cropland_list[np.isnan(current_cropland_list)] = 0
 
         # Sum over columns
@@ -40,7 +42,8 @@ def subnational_processor_tanzania(subnational_dir):
     for i in range(len(pasture_index)):
         # Since we are summing over different types of pasture,
         # treat NaN as 0
-        current_pasture_list = Tanzania.string_to_num(pasture_subset.iloc[:, i].to_list())
+        current_pasture_list = Tanzania.string_to_num(
+            pasture_subset.iloc[:, i].to_list())
         current_pasture_list[np.isnan(current_pasture_list)] = 0
 
         # Sum over columns
@@ -53,20 +56,26 @@ def subnational_processor_tanzania(subnational_dir):
     subnation_data['PASTURE'] = pasture_sum
 
     # Rename state names to match GADM
-    subnation_data = subnation_data.replace({
-        'North Pemba': 'PEMBA NORTH',
-        'South Pemba': 'PEMBA SOUTH',
-        'North Unguja': 'ZANZIBAR NORTH',
-        'South Unguja': 'ZANZIBAR SOUTH AND CENTRAL',
-        'Urban West': 'ZANZIBAR WEST'
-    }, inplace=False)
+    subnation_data = subnation_data.replace(
+        {
+            'North Pemba': 'PEMBA NORTH',
+            'South Pemba': 'PEMBA SOUTH',
+            'North Unguja': 'ZANZIBAR NORTH',
+            'South Unguja': 'ZANZIBAR SOUTH AND CENTRAL',
+            'Urban West': 'ZANZIBAR WEST'
+        },
+        inplace=False)
 
     return subnation_data
 
 
 class Tanzania(Country):
 
-    def __init__(self, shapefile_dir, subnational_dir, FAOSTAT_dir, units='Ha'):
+    def __init__(self,
+                 shapefile_dir,
+                 subnational_dir,
+                 FAOSTAT_dir,
+                 units='Ha'):
         """
         Constructor that takes directory of the countries' shapefile,
         subnational data and FAOSTAT
@@ -82,5 +91,6 @@ class Tanzania(Country):
 
         self.FAOSTAT = self.get_FAOSTAT(FAOSTAT_dir)
         self.spatial_map = self.get_spatial_map(shapefile_dir)
-        self.subnational_data = self.get_subnational_data(subnational_processor_tanzania, *subnational_dir)
+        self.subnational_data = self.get_subnational_data(
+            subnational_processor_tanzania, *subnational_dir)
         self.units = units
