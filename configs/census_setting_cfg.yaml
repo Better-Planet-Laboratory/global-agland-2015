@@ -13,6 +13,13 @@ GDD_filter:
   # will be filtered from dataset
   accept_ratio: 0.95
 
+NaN_filter:
+  # COUNTRY sample that has geographical area of subnational stats with both 
+  # valid cropland and pasture records < accept_ratio of the total geographical area
+  # will use FAO data.  Otherwise, subnational stats will be used for that COUNTRY 
+  # sample, with NaN states removed. No calibration will be applied.
+  accept_ratio: 0.7
+
 calibrate:
   Argentina: False
   Australia: False

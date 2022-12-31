@@ -109,7 +109,7 @@ def load_census_table_pkl(census_path):
     return load_pkl(census_path[:-len('.pkl')])
 
 
-def merge_subnation_to_world(world_census, subnational_census, calibration):
+def merge_subnation_to_world(world_census, subnational_census, census_setting_cfg):
     """
     world_census contains global record from FAOSTAT, and subnational_census contains
     states level data for some countries. This function merge the two census sources
@@ -117,13 +117,13 @@ def merge_subnation_to_world(world_census, subnational_census, calibration):
     Args:
         world_census (World): World object
         subnational_census (dict): country name (str) -> (Country)
-        calibration (dict): country name (str) -> (bool) for calibration
+        census_setting_cfg (dict): census settings
 
     Returns: (pd) processed table
     """
-    assert (set(subnational_census.keys()) == set(calibration.keys())), \
-        'calibration must contain all countries in subnational_census'
-    return world_census.replace_subnation(subnational_census, calibration, inplace=False)
+    assert (set(subnational_census.keys()) == set(census_setting_cfg['calibrate'].keys())), \
+        'census_setting_cfg[\'calibrate\'] must contain all countries in subnational_census'
+    return world_census.replace_subnation(subnational_census, census_setting_cfg, inplace=False, verbose=True)
 
 
 def census_has(census, attribute_name):

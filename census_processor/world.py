@@ -10,10 +10,10 @@ class World:
         """ Convert all elements in df to upper/lower """
         if to_case == 'upper':
             return df.applymap(lambda item: item.upper()
-            if type(item) == str else item)
+                               if type(item) == str else item)
         else:
             return df.applymap(lambda item: item.lower()
-            if type(item) == str else item)
+                               if type(item) == str else item)
 
     @staticmethod
     def assign_GID_0(census_table, state_gid_table):
@@ -25,12 +25,14 @@ class World:
     def assign_REGIONS(census_table, state_regions_table):
         """ Update REGIONS in census_table """
         for state, regions in state_regions_table.items():
-            census_table.loc[census_table['STATE'] == state, 'REGIONS'] = regions
+            census_table.loc[census_table['STATE'] == state,
+                             'REGIONS'] = regions
 
     @staticmethod
     def has_duplicates(census_table):
         """ Check if census_table has duplicated STATE """
-        return not len(census_table['STATE'].to_list()) == len(set(census_table['STATE']))
+        return not len(census_table['STATE'].to_list()) == len(
+            set(census_table['STATE']))
 
     def __init__(self, global_shapefile_dir, FAOSTAT_dir, FAOSTAT_profile_dir):
         """
@@ -47,7 +49,8 @@ class World:
         self.spatial_map = self.get_spatial_map(global_shapefile_dir)
 
         self.census_table = self.merge_all()
-        assert (not World.has_duplicates(self.census_table)), 'Duplicated STATE found'
+        assert (not World.has_duplicates(
+            self.census_table)), 'Duplicated STATE found'
 
     def __len__(self):
         """ Length of World object is the number of unique STATE in census_table """
@@ -66,19 +69,24 @@ class World:
         [STATE, CROPLAND, PASTURE, GID_0, REGIONS, geometry]
         """
         # Process FAOSTAT data for global
-        global_census_table = pd.DataFrame(columns=['STATE', 'CROPLAND', 'PASTURE'])
+        global_census_table = pd.DataFrame(
+            columns=['STATE', 'CROPLAND', 'PASTURE'])
         for c in set(self.FAOSTAT.data['Area']):
             cropland, pasture = self.FAOSTAT.get_by_country(c).mean()
-            global_census_table = global_census_table.append({
-                'STATE': c,
-                'CROPLAND': cropland,
-                'PASTURE': pasture
-            }, ignore_index=True)
+            global_census_table = global_census_table.append(
+                {
+                    'STATE': c,
+                    'CROPLAND': cropland,
+                    'PASTURE': pasture
+                },
+                ignore_index=True)
 
         global_census_table = World.switch_case(global_census_table, 'upper')
 
         # Merge FAOSTAT profile with FAOSTAT data via STATE
-        global_census_table = global_census_table.merge(self.FAOSTAT_profile, on='STATE', how='left')
+        global_census_table = global_census_table.merge(self.FAOSTAT_profile,
+                                                        on='STATE',
+                                                        how='left')
 
         # Rename samples to match GADM, add GID_0 missing
         new_country_name = {
@@ -88,7 +96,8 @@ class World:
             'CZECHIA': 'CZECH REPUBLIC',
             'UNITED STATES OF AMERICA': 'UNITED STATES',
             'LAO PEOPLE\'S DEMOCRATIC REPUBLIC': 'LAOS',
-            'UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN IRELAND': 'UNITED KINGDOM',
+            'UNITED KINGDOM OF GREAT BRITAIN AND NORTHERN IRELAND':
+            'UNITED KINGDOM',
             'FRENCH GUYANA': 'FRENCH GUIANA',
             'UNITED REPUBLIC OF TANZANIA': 'TANZANIA',
             'NORTH MACEDONIA': 'MACEDONIA',
@@ -149,27 +158,33 @@ class World:
             'DOMINICAN REPUBLIC': 'LATIN AMERICA'
         }
 
-        global_census_table = global_census_table.replace(new_country_name, inplace=False)
+        global_census_table = global_census_table.replace(new_country_name,
+                                                          inplace=False)
         World.assign_GID_0(global_census_table, new_gid_0)
         World.assign_REGIONS(global_census_table, new_regions)
 
         # Remove CHANNEL ISLANDS (geometry not found)
         global_census_table = global_census_table.drop(
-            global_census_table.index[
-                global_census_table['STATE'] == 'CHANNEL ISLANDS'])
+            global_census_table.index[global_census_table['STATE'] ==
+                                      'CHANNEL ISLANDS'])
         global_census_table = global_census_table.drop(
-            global_census_table.index[
-                global_census_table['GID_0'] == 'CHI'])
+            global_census_table.index[global_census_table['GID_0'] == 'CHI'])
 
         # Merge intermediate results with spatial_map via GID_0
-        global_census_table = global_census_table.merge(self.spatial_map[['GID_0', 'geometry']], on='GID_0', how='left')
+        global_census_table = global_census_table.merge(
+            self.spatial_map[['GID_0', 'geometry']], on='GID_0', how='left')
 
         # Rename country names to match Country keys (settings)
-        global_census_table.loc[global_census_table.STATE == 'CZECH REPUBLIC', 'STATE'] = 'CZECHIA'
-        global_census_table.loc[global_census_table.STATE == 'SAUDI ARABIA', 'STATE'] = 'SAUDIARABIA'
-        global_census_table.loc[global_census_table.STATE == 'SOUTH AFRICA', 'STATE'] = 'SOUTHAFRICA'
-        global_census_table.loc[global_census_table.STATE == 'UNITED KINGDOM', 'STATE'] = 'UK'
-        global_census_table.loc[global_census_table.STATE == 'UNITED STATES', 'STATE'] = 'USA'
+        global_census_table.loc[global_census_table.STATE == 'CZECH REPUBLIC',
+                                'STATE'] = 'CZECHIA'
+        global_census_table.loc[global_census_table.STATE == 'SAUDI ARABIA',
+                                'STATE'] = 'SAUDIARABIA'
+        global_census_table.loc[global_census_table.STATE == 'SOUTH AFRICA',
+                                'STATE'] = 'SOUTHAFRICA'
+        global_census_table.loc[global_census_table.STATE == 'UNITED KINGDOM',
+                                'STATE'] = 'UK'
+        global_census_table.loc[global_census_table.STATE == 'UNITED STATES',
+                                'STATE'] = 'USA'
 
         return global_census_table
 
@@ -193,11 +208,17 @@ class World:
 
         Returns: (pd) processed FAOSTAT_profile dataframe
         """
-        FAOSTAT_profile = pd.read_csv(FAOSTAT_profile_dir, encoding='utf-8')[['ISO3_CODE', 'FAO_TABLE_NAME', 'REGIONS']]
-        FAOSTAT_profile = FAOSTAT_profile.rename(columns={"ISO3_CODE": "GID_0", "FAO_TABLE_NAME": "STATE"},
+        FAOSTAT_profile = pd.read_csv(FAOSTAT_profile_dir, encoding='utf-8')[[
+            'ISO3_CODE', 'FAO_TABLE_NAME', 'REGIONS'
+        ]]
+        FAOSTAT_profile = FAOSTAT_profile.rename(columns={
+            "ISO3_CODE": "GID_0",
+            "FAO_TABLE_NAME": "STATE"
+        },
                                                  inplace=False)
         FAOSTAT_profile = World.switch_case(FAOSTAT_profile, 'upper')
-        FAOSTAT_profile = FAOSTAT_profile.drop_duplicates(subset=['STATE'])  # avoid multiple instances during merge
+        FAOSTAT_profile = FAOSTAT_profile.drop_duplicates(
+            subset=['STATE'])  # avoid multiple instances during merge
 
         return FAOSTAT_profile
 
@@ -210,8 +231,10 @@ class World:
 
         Returns: (pd) processed spatial_map dataframe
         """
-        spatial_map = World.switch_case(gpd.read_file(global_shapefile_dir), 'upper')
-        spatial_map = spatial_map.rename(columns={'NAME_0': 'STATE'}, inplace=False)
+        spatial_map = World.switch_case(gpd.read_file(global_shapefile_dir),
+                                        'upper')
+        spatial_map = spatial_map.rename(columns={'NAME_0': 'STATE'},
+                                         inplace=False)
 
         return spatial_map
 
@@ -231,11 +254,16 @@ class World:
             census_table (pd): dataframe must contain attributes
                                ['STATE', 'CROPLAND', 'PASTURE', 'GID_0', 'REGIONS', 'geometry']
         """
-        assert (set(census_table.columns.values) ==
-                {'CROPLAND', 'GID_0', 'PASTURE', 'REGIONS', 'STATE', 'geometry'}), 'Attributes mismatch'
+        assert (set(census_table.columns.values) == {
+            'CROPLAND', 'GID_0', 'PASTURE', 'REGIONS', 'STATE', 'geometry'
+        }), 'Attributes mismatch'
         self.census_table = census_table
 
-    def replace_subnation(self, subnational_census, census_settings, inplace=False):
+    def replace_subnation(self,
+                          subnational_census,
+                          census_settings,
+                          inplace=False,
+                          verbose=False):
         """
         Replace country level entry (FAOSTAT) in the World object census_table attribute table
         by the stats level entries from subnational_census. Input census_settings
@@ -243,36 +271,118 @@ class World:
 
         Args:
             subnational_census (dict): country name to be replaced (str) -> census class obj (Country)
-            census_settings (dict): country name (str) -> calibration (bool)
+            census_settings (dict): census settings
             inplace (bool): if replace World census_table directly (Default: False)
+            verbose (bool): verbose
 
         Returns: (pd) processed census_table dataframe
         """
+
+        def get_sub_table(census_table_copy, index, census, calibrate,
+                          nan_accept_ratio):
+            """
+            Helper function to get sub_table of the subnational census record. If the geographical area of 
+            subnational census records that have both valid cropland and pasture data / total geographical 
+            area of that country > nan_accept_ratio, subnational records with nan removal will be used in 
+            sub_table. Otherwise, FAO data will be used for this country record
+
+            Args:
+                census_table_copy (pd): FAO census data 
+                index (int): index of country of interest
+                census (Country): country obj
+                calibrate (bool): calibration
+                nan_accept_ratio (float): nan accept ratio
+
+            Returns: (gpd) geopandas table
+            """
+            current_STATE = census_table_copy.iloc[index]['STATE']
+            current_GID = census_table_copy.iloc[index]['GID_0']
+            current_REGIONS = census_table_copy.iloc[index]['REGIONS']
+            if census.subnational_data.isnull().values.any():
+                # NaN exists, force calibration off
+                sub_table = census.merge_census_to_spatial(calibrate=False,
+                                                           convert_to_kha=True)
+                sub_table['GID_0'] = current_GID
+                sub_table['REGIONS'] = current_REGIONS
+                sub_table = sub_table[[
+                    'STATE', 'CROPLAND', 'PASTURE', 'GID_0', 'REGIONS',
+                    'geometry'
+                ]]
+            else:
+                # NaN not found, use full subnational stats
+                sub_table = census.merge_census_to_spatial(calibrate=calibrate,
+                                                           convert_to_kha=True)
+                sub_table['GID_0'] = current_GID
+                sub_table['REGIONS'] = current_REGIONS
+                sub_table = sub_table[[
+                    'STATE', 'CROPLAND', 'PASTURE', 'GID_0', 'REGIONS',
+                    'geometry'
+                ]]
+
+                if verbose:
+                    print('{}: NaN not found, use full subnational records'.
+                          format(current_STATE))
+                return sub_table
+
+            nan_indices = sub_table.index[
+                (sub_table['CROPLAND'].isna() == True)
+                | sub_table['PASTURE'].isna() == True].tolist()
+            sub_table_cea = gpd.GeoDataFrame(sub_table,
+                                             crs="EPSG:4326",
+                                             geometry='geometry')
+            sub_table_cea = sub_table['geometry'].to_crs({'proj': 'cea'})
+            list_area_km2 = sub_table_cea.area / 10**6
+
+            area_coverage = list_area_km2[nan_indices].sum(
+            ) / list_area_km2.sum()
+
+            if area_coverage > (1 - nan_accept_ratio):
+                # use FAO
+                if verbose:
+                    print('{}: too many NaN records, use FAO'.format(
+                        current_STATE))
+                return None
+            else:
+                # use subnational stats with NaN removed
+                sub_table = sub_table.drop(nan_indices, axis=0, inplace=False)
+                if verbose:
+                    print(
+                        '{}: few NaN records ({}% NaN area), use subnational with NaN removed'
+                        .format(current_STATE, round(area_coverage * 100, 3)))
+            return sub_table
+
         census_table_copy = self.census_table.copy()
         if len(subnational_census) != 0:
             for country, census in subnational_census.items():
-                index_list = census_table_copy.index[census_table_copy['STATE'] == country.upper()].tolist()
+                index_list = census_table_copy.index[
+                    census_table_copy['STATE'] == country.upper()].tolist()
 
                 if len(index_list) == 0:
+                    if verbose:
+                        print('No FAO record found')
                     continue
                 else:
                     index = index_list[0]
 
-                current_GID = census_table_copy.iloc[index]['GID_0']
-                current_REGIONS = census_table_copy.iloc[index]['REGIONS']
-                sub_table = census.merge_census_to_spatial(calibrate=census_settings[country], convert_to_kha=True)
-                sub_table['GID_0'] = current_GID
-                sub_table['REGIONS'] = current_REGIONS
-                sub_table = sub_table[['STATE', 'CROPLAND', 'PASTURE', 'GID_0', 'REGIONS', 'geometry']]
+                sub_table = get_sub_table(
+                    census_table_copy,
+                    index,
+                    census,
+                    census_settings['calibrate'][country],
+                    nan_accept_ratio=census_settings['NaN_filter']
+                    ['accept_ratio'])
+                if sub_table is None:
+                    continue
+                else:
+                    # Remove country level entry
+                    census_table_copy = census_table_copy.drop([index], axis=0)
 
-                # Remove country level entry
-                census_table_copy = census_table_copy.drop([index], axis=0)
+                    # Append
+                    census_table_copy = census_table_copy.append(sub_table)
 
-                # Append
-                census_table_copy = census_table_copy.append(sub_table)
-
-                # Reset index labels
-                census_table_copy = census_table_copy.reset_index(drop=True)
+                    # Reset index labels
+                    census_table_copy = census_table_copy.reset_index(
+                        drop=True)
 
         if inplace:
             self.assign_census_table(census_table_copy)
@@ -286,8 +396,11 @@ class World:
         Args:
             output_dir (str): output dir (Default: None)
         """
-        plot_FAO_census(self.census_table, 'CROPLAND',
-                        cmap=CROPLAND_CMAP10, num_bins=10, label='CROPLAND (kHa)',
+        plot_FAO_census(self.census_table,
+                        'CROPLAND',
+                        cmap=CROPLAND_CMAP10,
+                        num_bins=10,
+                        label='CROPLAND (kHa)',
                         output_dir=output_dir)
 
     def plot_pasture(self, output_dir=None):
@@ -297,6 +410,9 @@ class World:
         Args:
             output_dir (str): output dir (Default: None)
         """
-        plot_FAO_census(self.census_table, 'PASTURE',
-                        cmap=PASTURE_CMAP10, num_bins=10, label='PASTURE (kHa)',
+        plot_FAO_census(self.census_table,
+                        'PASTURE',
+                        cmap=PASTURE_CMAP10,
+                        num_bins=10,
+                        label='PASTURE (kHa)',
                         output_dir=output_dir)

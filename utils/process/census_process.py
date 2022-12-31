@@ -38,7 +38,7 @@ def pipeline(world_census, subnational_census, census_setting_cfg, gdd_cfg,
 
     # Merge WORLD with SUBNATIONAL
     merged_census = merge_subnation_to_world(world_census, subnational_census,
-                                             census_setting_cfg['calibrate'])
+                                             census_setting_cfg)
     print(
         'Merge WORLD census with SUBNATIONAL census. Total samples: {}'.format(
             len(merged_census)))
