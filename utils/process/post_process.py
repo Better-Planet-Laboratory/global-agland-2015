@@ -87,7 +87,8 @@ def load_weights_array(deploy_setting_cfg, iter):
     return (*weight_array_list, )
 
 
-def generate_weights_array(deploy_setting_cfg,
+def generate_weights_array(land_cover_cfg,
+                           deploy_setting_cfg,
                            input_dataset,
                            agland_map,
                            iter=0):
@@ -98,6 +99,7 @@ def generate_weights_array(deploy_setting_cfg,
     for smoothing boundary effects
 
     Args:
+        land_cover_cfg (dict): land cover settings from yaml
         deploy_setting_cfg (dict): deploy settings from yaml
         input_dataset (Dataset): input dataset for training
         agland_map (AglandMap): input agland_map to be corrected
@@ -118,6 +120,11 @@ def generate_weights_array(deploy_setting_cfg,
     bc_factor_pasture = np.zeros((len(input_dataset.census_table)))
     bc_factor_other = np.zeros((len(input_dataset.census_table)))
 
+    global_area_map = cv2.resize(
+        rasterio.open(land_cover_cfg['path_dir']['global_area_map']).read(1),
+        (cropland_map.shape[1], cropland_map.shape[0]),
+        interpolation=cv2.INTER_AREA)
+
     for i in tqdm(range(len(input_dataset.census_table))):
         # Crop intermediate samples with nodata to be -1
         out_cropland = crop_intermediate_state(cropland_map, agland_map.affine,
@@ -126,6 +133,8 @@ def generate_weights_array(deploy_setting_cfg,
                                               input_dataset.census_table, i)
         out_other = crop_intermediate_state(other_map, agland_map.affine,
                                             input_dataset.census_table, i)
+        out_area = crop_intermediate_state(global_area_map, agland_map.affine,
+                                           input_dataset.census_table, i)
 
         ground_truth_cropland = input_dataset.census_table.iloc[i][
             'CROPLAND_PER']
@@ -133,13 +142,11 @@ def generate_weights_array(deploy_setting_cfg,
             'PASTURE_PER']
         ground_truth_other = input_dataset.census_table.iloc[i]['OTHER_PER']
 
-        mask_index_cropland = np.where(out_cropland != -1)
-        mask_index_pasture = np.where(out_pasture != -1)
-        mask_index_other = np.where(out_other != -1)
-
-        mean_pred_cropland = np.mean(out_cropland[mask_index_cropland])
-        mean_pred_pasture = np.mean(out_pasture[mask_index_pasture])
-        mean_pred_other = np.mean(out_other[mask_index_other])
+        # Average % = sum(C*A)/sum(A)
+        out_area[np.where(out_area == -1)] = 0
+        mean_pred_cropland = np.sum(out_cropland * out_area) / np.sum(out_area)
+        mean_pred_pasture = np.sum(out_pasture * out_area) / np.sum(out_area)
+        mean_pred_other = np.sum(out_other * out_area) / np.sum(out_area)
 
         # If average values is found to be 0 that means the state level is not
         # presented in agland map. This is due to the change in resolution from census_table
@@ -301,7 +308,8 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         else:
             print('Generate new bias correction weights')
             bc_crop, bc_past, bc_other = generate_weights_array(
-                deploy_setting_cfg, input_dataset, intermediate_agland_map, i)
+                land_cover_cfg, deploy_setting_cfg, input_dataset,
+                intermediate_agland_map, i)
 
         intermediate_agland_map = apply_bias_correction_to_agland_map(
             intermediate_agland_map, bc_crop, bc_past, bc_other,
