@@ -212,6 +212,7 @@ def apply_bias_correction_to_agland_map(agland_map,
                                         bc_crop,
                                         bc_past,
                                         bc_other,
+                                        force_zero=False,
                                         correction_method='scale',
                                         iter=0):
     """
@@ -225,14 +226,24 @@ def apply_bias_correction_to_agland_map(agland_map,
         bc_crop (np.array): weights for cropland
         bc_past (np.array): weights for pasture
         bc_other (np.array): weights for other
+        force_zero (bool): if True, agland map with < 1% will turn into 0% before correction
         correction_method (str): 'scale' ('softmax' does not provide good results)
         iter (int): iter index
 
     Returns: (AglandMap)
     """
-    return AglandMap(agland_map.get_cropland() * bc_crop,
-                     agland_map.get_pasture() * bc_past,
-                     agland_map.get_other() * bc_other,
+    cropland_map = agland_map.get_cropland()
+    pasture_map = agland_map.get_pasture()
+    other_map = agland_map.get_other()
+
+    if force_zero:
+        cropland_map[np.where(cropland_map < 0.01)] = 0
+        pasture_map[np.where(pasture_map < 0.01)] = 0
+        other_map[np.where(other_map < 0.01)] = 0
+
+    return AglandMap(cropland_map * bc_crop,
+                     pasture_map * bc_past,
+                     other_map * bc_other,
                      force_load=True)
 
 
@@ -313,6 +324,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
 
         intermediate_agland_map = apply_bias_correction_to_agland_map(
             intermediate_agland_map, bc_crop, bc_past, bc_other,
+            deploy_setting_cfg['post_process']['correction']['force_zero'],
             deploy_setting_cfg['post_process']['correction']['method'], i)
 
         # Save current intermediate results
