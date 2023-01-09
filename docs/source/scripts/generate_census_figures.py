@@ -139,7 +139,7 @@ def main():
 
     # Merge FAO with subnational census
     merged_census = merge_subnation_to_world(WORLD_CENSUS, SUBNATIONAL_CENSUS,
-                                             CENSUS_SETTING_CFG['calibrate'])
+                                             CENSUS_SETTING_CFG)
     print('Total Initial Number of samples: {}'.format(len(merged_census)))
 
     # Mark nan filter
