@@ -213,6 +213,7 @@ def apply_bias_correction_to_agland_map(agland_map,
                                         bc_past,
                                         bc_other,
                                         force_zero=False,
+                                        threshold=0.01,
                                         correction_method='scale',
                                         iter=0):
     """
@@ -226,7 +227,8 @@ def apply_bias_correction_to_agland_map(agland_map,
         bc_crop (np.array): weights for cropland
         bc_past (np.array): weights for pasture
         bc_other (np.array): weights for other
-        force_zero (bool): if True, agland map with < 1% will turn into 0% before correction
+        force_zero (bool): if True, agland map with < threshold will turn into 0% before correction
+        threshold (float): threshold in force_zero
         correction_method (str): 'scale' ('softmax' does not provide good results)
         iter (int): iter index
 
@@ -237,9 +239,9 @@ def apply_bias_correction_to_agland_map(agland_map,
     other_map = agland_map.get_other()
 
     if force_zero:
-        cropland_map[np.where(cropland_map < 0.01)] = 0
-        pasture_map[np.where(pasture_map < 0.01)] = 0
-        other_map[np.where(other_map < 0.01)] = 0
+        cropland_map[np.where(cropland_map < threshold)] = 0
+        pasture_map[np.where(pasture_map < threshold)] = 0
+        other_map[np.where(other_map < threshold)] = 0
 
     return AglandMap(cropland_map * bc_crop,
                      pasture_map * bc_past,
@@ -325,6 +327,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         intermediate_agland_map = apply_bias_correction_to_agland_map(
             intermediate_agland_map, bc_crop, bc_past, bc_other,
             deploy_setting_cfg['post_process']['correction']['force_zero'],
+            deploy_setting_cfg['post_process']['correction']['threshold'],
             deploy_setting_cfg['post_process']['correction']['method'], i)
 
         # Save current intermediate results

@@ -19,4 +19,5 @@ post_process:
   correction:
     itr: 3
     method: 'scale'
-    force_zero: True  # force < 1% to be 0
+    force_zero: True  # force < threshold to be 0
+    threshold: 0.01   
