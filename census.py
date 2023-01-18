@@ -225,6 +225,9 @@ WORLD_CENSUS = World(SHAPEFILE_CFG['path_dir']['World'],
                      CENSUS_SETTING_CFG['path_dir']['FAOSTAT'],
                      CENSUS_SETTING_CFG['path_dir']['FAOSTAT_profile'])
 
+save_pkl(WORLD_CENSUS, './WORLD_CENSUS')
+save_pkl(SUBNATIONAL_CENSUS, './SUBNATIONAL_CENSUS')
+
 if __name__ == '__main__':
     pipeline(WORLD_CENSUS, SUBNATIONAL_CENSUS, CENSUS_SETTING_CFG, GDD_CFG,
              LAND_COVER_CFG)
