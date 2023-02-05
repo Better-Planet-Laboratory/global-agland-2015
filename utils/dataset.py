@@ -28,8 +28,11 @@ class Dataset:
         self.census_table = census_table
         self.land_cover_code = land_cover_code
         if all([i in self.census_table.columns for i in ['CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER']]):
-            # Remove outliers only for the train set
-            self._remove_outliers()
+            # Note: these outliers are the ones that have cropland and pasture % 
+            #       sum over 100% due to back correction weights. We decided to 
+            #       scale and include them
+            # self._remove_outliers() 
+            self._scale_outliers() 
             self.type = Dataset.TRAIN_TYPE
         else:
             self.type = Dataset.DEPLOY_TYPE
@@ -41,7 +44,27 @@ class Dataset:
     def __len__(self):
         """ Number of samples in the dataset """
         return len(self.census_table)
+    
+    def _scale_outliers(self):
+        """
+        Linearly scale outliers from census table. 
+        scaling_factor = (Cropland % + Pasture %)
+        Cropland % /= scaling_factor
+        Pasture % /= scaling_factor
+        Other % = 0
 
+        Note:
+            samples with OTHER_PER < 0 are considered as outliers. This is likely caused by
+            invalid cropland and pasture values
+        """
+        outliers_index = self.census_table.index[self.census_table['OTHER_PER'] < 0].to_list()
+        
+        print('Scale outliers: {}'.format(self.census_table.iloc[outliers_index]['STATE'].to_list()))
+        scaling_factor = self.census_table.iloc[outliers_index]['CROPLAND_PER']+self.census_table.iloc[outliers_index]['PASTURE_PER']
+        self.census_table.loc[outliers_index, 'CROPLAND_PER'] /= scaling_factor
+        self.census_table.loc[outliers_index, 'PASTURE_PER'] /= scaling_factor
+        self.census_table.loc[outliers_index, 'OTHER_PER'] = 0
+        
     def _remove_outliers(self):
         """
         Remove outliers from census table
