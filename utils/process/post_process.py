@@ -120,10 +120,8 @@ def generate_weights_array(land_cover_cfg,
     bc_factor_pasture = np.zeros((len(input_dataset.census_table)))
     bc_factor_other = np.zeros((len(input_dataset.census_table)))
 
-    global_area_map = cv2.resize(
-        rasterio.open(land_cover_cfg['path_dir']['global_area_map']).read(1),
-        (cropland_map.shape[1], cropland_map.shape[0]),
-        interpolation=cv2.INTER_AREA)
+    global_area_map = rasterio.open(
+        './land_cover/global_area_2160x4320.tif').read(1)
 
     for i in tqdm(range(len(input_dataset.census_table))):
         # Crop intermediate samples with nodata to be -1

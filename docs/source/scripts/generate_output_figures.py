@@ -93,7 +93,11 @@ def main():
             print("Generate new output_pred_vs_ground_truth_data for itr:{}".
                   format(str(itr)))
             ground_truth_collection, pred_collection = agland_map.extract_state_level_data(
-                input_dataset)
+                input_dataset,
+                rasterio.open(
+                    os.path.join(
+                        '../../../',
+                        'land_cover/global_area_2160x4320.tif')).read(1))
             np.savetxt(output_pred_vs_ground_truth_data_dir,
                        np.hstack((ground_truth_collection, pred_collection)),
                        delimiter=',')
@@ -169,10 +173,10 @@ def main():
 
     # Make agland pred vs. ground truth plots
     plot_agland_pred_vs_ground_truth(
-        0,
+        5,
         output_pred_vs_ground_truth_data_collection,
         output_dir=os.path.join(args.output_dir,
-                                'pred_vs_ground_truth_fig_0.png'))
+                                'pred_vs_ground_truth_fig_5.png'))
 
 
 if __name__ == '__main__':

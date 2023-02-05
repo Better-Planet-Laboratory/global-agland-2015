@@ -179,16 +179,21 @@ class AglandMap:
         self.data[:, :, AglandMap.PASTURE_IDX] *= mask
         self.data[:, :, AglandMap.OTHER_IDX] *= mask
 
-    def extract_state_level_data(self, input_dataset):
+    def extract_state_level_data(self, input_dataset, area_map):
         """
         Extract state level results for cropland, pasture and other into a n-by-3 array. States are
         defined with geometry in input_dataset
 
         Args:
             input_dataset (Dataset): input census dataset
+            area_map (np.array): global area map
 
         Returns (tuple of np.array): (n-by-3 array ground truth, n-by-3 array extracted)
         """
+        # resize area map to match agalnd map
+        assert(area_map.shape == self.get_cropland()), "Area map must be the same shape as agland map, otherwise please regenerate"
+        global_area_map = area_map
+
         num_samples = len(input_dataset.census_table)
         ground_truth_collection = np.zeros((num_samples, 3))
         pred_collection = np.zeros((num_samples, 3))
@@ -197,14 +202,17 @@ class AglandMap:
             out_cropland = crop_intermediate_state(self.get_cropland(), self.affine, input_dataset.census_table, i, crop=True)
             out_pasture = crop_intermediate_state(self.get_pasture(), self.affine, input_dataset.census_table, i, crop=True)
             out_other = crop_intermediate_state(self.get_other(), self.affine, input_dataset.census_table, i, crop=True)
+            out_area = crop_intermediate_state(global_area_map, self.affine, input_dataset.census_table, i, crop=True)
 
             ground_truth_cropland = input_dataset.census_table.iloc[i]['CROPLAND_PER']
             ground_truth_pasture = input_dataset.census_table.iloc[i]['PASTURE_PER']
             ground_truth_other = input_dataset.census_table.iloc[i]['OTHER_PER']
 
-            mean_pred_cropland = np.nanmean(out_cropland[np.where(out_cropland != -1)])
-            mean_pred_pasture = np.nanmean(out_pasture[np.where(out_pasture != -1)])
-            mean_pred_other = np.nanmean(out_other[np.where(out_other != -1)])
+            # Average % = sum(C*A)/sum(A)
+            out_area[np.where(out_area == -1)] = 0
+            mean_pred_cropland = np.sum(out_cropland * out_area) / np.sum(out_area)
+            mean_pred_pasture = np.sum(out_pasture * out_area) / np.sum(out_area)
+            mean_pred_other = np.sum(out_other * out_area) / np.sum(out_area)
 
             ground_truth_collection[i, :] = np.asarray([ground_truth_cropland,
                                                         ground_truth_pasture,
