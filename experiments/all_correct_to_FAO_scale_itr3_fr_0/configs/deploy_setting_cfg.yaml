@@ -1,6 +1,6 @@
 path_dir:
   base: 'outputs/'
-  model: 'models/saved_models/GBM_model_python_1654759557429_1'  # model weights to be loaded (Default: null)
+  model: 'models/saved_models/all_correct_to_FAO_scale_itr3_fr_0/GBM_model_python_1673246799550_1'  # model weights to be loaded (Default: null)
   agland_map_output: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output.tif'
   census_table_input: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/processed_census.pkl'
 
@@ -19,3 +19,5 @@ post_process:
   correction:
     itr: 3
     method: 'scale'
+    force_zero: True  # force < threshold to be 0
+    threshold: 0.015
