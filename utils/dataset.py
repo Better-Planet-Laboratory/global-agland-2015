@@ -7,7 +7,7 @@ class Dataset:
     TRAIN_TYPE = 'train'
     DEPLOY_TYPE = 'deploy'
 
-    def __init__(self, census_table, land_cover_code, remove_land_cover_feature_index):
+    def __init__(self, census_table, land_cover_code, remove_land_cover_feature_index, invalid_data='remove'):
         """
         Constructor that loads pd.DataFrame of census table as dataset ready for training or deploy
 
@@ -21,6 +21,7 @@ class Dataset:
             land_cover_code (dict): class types(int) -> (str)
             remove_land_cover_feature_index (list): index of land cover type code to be
                                                     removed from features
+            invalid_data (str): 'scale' or 'remove'. Default: 'remove'
         """
         # Dataset obj could be train set or deploy set
         # train set is defined as census table with CROPLAND / PASTURE / OTHER attributes
@@ -31,8 +32,10 @@ class Dataset:
             # Note: these outliers are the ones that have cropland and pasture % 
             #       sum over 100% due to back correction weights. We decided to 
             #       scale and include them
-            # self._remove_outliers() 
-            self._scale_outliers() 
+            if invalid_data == 'remove':
+                self._remove_outliers() 
+            elif invalid_data == 'scale':
+                self._scale_outliers() 
             self.type = Dataset.TRAIN_TYPE
         else:
             self.type = Dataset.DEPLOY_TYPE

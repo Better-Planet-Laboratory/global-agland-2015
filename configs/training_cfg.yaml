@@ -17,3 +17,6 @@ model:
 # Land cover feature indices to be removed from training
 # Note: this must match load_model if specified
 feature_remove: []  # []
+
+# Outliers Handle
+invalid_data_handle: 'remove'  # remove

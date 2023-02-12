@@ -23,7 +23,8 @@ def pipeline(training_cfg, land_cover_cfg):
         census_table=load_census_table_pkl(
             training_cfg['path_dir']['inputs']['census_table_input']),
         land_cover_code=land_cover_cfg['code']['MCD12Q1'],
-        remove_land_cover_feature_index=training_cfg['feature_remove'])
+        remove_land_cover_feature_index=training_cfg['feature_remove'],
+        invalid_data=training_cfg['invalid_data_handle'])
 
     # Declare model structure
     prob_est = gbt.GradientBoostingTree(

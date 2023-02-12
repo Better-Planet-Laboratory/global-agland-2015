@@ -7,7 +7,7 @@ from utils.io import *
 from models import gbt
 from utils.tools.census_core import load_census_table_pkl
 from utils.tools.geo import crop_intermediate_state
-from utils.tools.pycno_interp import pycno
+from utils.tools.pycno_interp import rasterio, rasterize, pycno
 
 BIAS_CORRECTION_ATTRIBUTES = ['BC_CROP', 'BC_PAST', 'BC_OTHE']
 
@@ -85,6 +85,42 @@ def load_weights_array(deploy_setting_cfg, iter):
                              attribute + '_' + str(int(iter)) + '.npy')))
 
     return (*weight_array_list, )
+
+
+def convert_weights_table_to_raster_array(gdf, value_field, x_min, y_max,
+                                          pixel_size):
+    """
+    Directly convert a weight table to rasterized array. value_field is the specified 
+    column to fill values in the map
+
+    Args:
+        gdf (geopandas.geodataframe.GeoDataFrame): Input GeoDataFrame.
+        value_field (str): Field name of values to be used to produce pycnophylactic surface
+        x_min (float): x min in geo transform
+        y_max (float): y max in geo transform
+        pixel_size (float):  pixel size in geo transform
+
+    Returns: (np.array) weight matrix
+    """
+    nodata = 1
+    x_max = -x_min
+    y_min = -y_max
+    xres = int((x_max - x_min) / pixel_size)
+    yres = int((y_max - y_min) / pixel_size)
+
+    # Work out transform so that we rasterize the area where the data are!
+    trans = rasterio.Affine.from_gdal(x_min, pixel_size, 0, y_max, 0,
+                                      -pixel_size)
+
+    shapes = ((geom, value)
+              for geom, value in zip(gdf.geometry, gdf[value_field]))
+    # burn the features into a raster array
+    feature_array = rasterize(shapes=shapes,
+                              fill=nodata,
+                              out_shape=(yres, xres),
+                              transform=trans)
+
+    return feature_array
 
 
 def generate_weights_array(land_cover_cfg,
@@ -184,23 +220,35 @@ def generate_weights_array(land_cover_cfg,
     # Apply pycno interpolation over weights arrays
     weight_array_list = []
     for attribute in BIAS_CORRECTION_ATTRIBUTES:
-        weights_array = pycno(
-            gdf=weights_table,
-            value_field=attribute,
-            x_min=x_min,
-            y_max=y_max,
-            pixel_size=grid_size,
-            converge=deploy_setting_cfg['post_process']['interpolation']
-            ['converge'],
-            r=deploy_setting_cfg['post_process']['interpolation']['r'],
-            seperable_filter=deploy_setting_cfg['post_process']
-            ['interpolation']['seperable_filter'],
-            verbose=True)
+
+        if deploy_setting_cfg['post_process']['disable_pycno']:
+            # Directly get rasterized array from table
+            weights_array = convert_weights_table_to_raster_array(
+                gdf=weights_table,
+                value_field=attribute,
+                x_min=x_min,
+                y_max=y_max,
+                pixel_size=grid_size)
+        else:
+            # Use pycno interpolation to smooth weights array
+            weights_array = pycno(
+                gdf=weights_table,
+                value_field=attribute,
+                x_min=x_min,
+                y_max=y_max,
+                pixel_size=grid_size,
+                converge=deploy_setting_cfg['post_process']['interpolation']
+                ['converge'],
+                r=deploy_setting_cfg['post_process']['interpolation']['r'],
+                seperable_filter=deploy_setting_cfg['post_process']
+                ['interpolation']['seperable_filter'],
+                verbose=True)
+            weights_array = weights_array[0]
 
         weights_file_dir = os.path.join(
             base_path, attribute + '_' + str(int(iter)) + '.npy')
-        weight_array_list.append(weights_array[0])
-        np.save(weights_file_dir, weights_array[0])
+        weight_array_list.append(weights_array)
+        np.save(weights_file_dir, weights_array)
         print('{} saved'.format(weights_file_dir))
 
     return (*weight_array_list, )
@@ -299,7 +347,8 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         census_table=load_census_table_pkl(
             deploy_setting_cfg['path_dir']['census_table_input']),
         land_cover_code=land_cover_cfg['code']['MCD12Q1'],
-        remove_land_cover_feature_index=deploy_setting_cfg['feature_remove'])
+        remove_land_cover_feature_index=deploy_setting_cfg['feature_remove'],
+        invalid_data=training_cfg['invalid_data_handle'])
 
     # Bias correction iterator
     for i in range(deploy_setting_cfg['post_process']['correction']['itr']):
