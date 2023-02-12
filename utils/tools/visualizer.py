@@ -4,6 +4,7 @@ import rasterio.plot as rasterio_plot
 import numpy as np
 from osgeo import gdal
 import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.colors as colors
