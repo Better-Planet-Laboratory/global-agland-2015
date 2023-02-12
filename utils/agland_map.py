@@ -191,7 +191,7 @@ class AglandMap:
         Returns (tuple of np.array): (n-by-3 array ground truth, n-by-3 array extracted)
         """
         # resize area map to match agalnd map
-        assert(area_map.shape == self.get_cropland()), "Area map must be the same shape as agland map, otherwise please regenerate"
+        assert(area_map.shape == self.get_cropland().shape), "Area map must be the same shape as agland map, otherwise please regenerate"
         global_area_map = area_map
 
         num_samples = len(input_dataset.census_table)
