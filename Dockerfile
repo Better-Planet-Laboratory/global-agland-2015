@@ -67,6 +67,7 @@ COPY requirements.txt .
 COPY constraints.txt .
 RUN pip install -c constraints.txt markupsafe==2.0.1 numpy==1.21.6
 RUN pip install -r requirements.txt
+RUN pip install --no-build-isolation astropy==4.3.1
 
 COPY requirements.r .
 RUN Rscript requirements.r
