@@ -16,8 +16,8 @@ post_process:
   correction:
     itr: 3
     method: 'scale'
-    force_zero: True  # force < threshold to be 0
-    threshold: 0.015   # 0.015
+    force_zero: [False, False, True]  # force < threshold to be 0
+    threshold: 0.05   # 0.015
 
   # if disable_pycno, the following will not be used
   interpolation:

@@ -11,6 +11,15 @@ from utils.tools.pycno_interp import rasterio, rasterize, pycno
 
 BIAS_CORRECTION_ATTRIBUTES = ['BC_CROP', 'BC_PAST', 'BC_OTHE']
 
+def is_bool(a):
+    """ Check if input is bool """
+    return isinstance(a, bool)
+
+
+def is_list(a):
+    """ Check if input is a list """
+    return isinstance(a, list)
+
 
 def make_nonagricultural_mask(shape, mask_dir_list=[]):
     """
@@ -307,6 +316,12 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         land_cover_cfg (dict): land cover settings from yaml
         training_cfg (dict): training settings from yaml
     """
+    assert((len(deploy_setting_cfg['post_process']['correction']['force_zero']) \
+        == deploy_setting_cfg['post_process']['correction']['itr']) \
+        if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']) \
+            else is_bool(deploy_setting_cfg['post_process']['correction']['force_zero'])), \
+                'Config force_zero must match itr'
+                
     # Load land cover counts histogram map
     land_cover_counts = load_pkl(
         land_cover_cfg['path_dir']['pred_input_map'][:-len('.pkl')])
@@ -371,9 +386,14 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
                 land_cover_cfg, deploy_setting_cfg, input_dataset,
                 intermediate_agland_map, i)
 
+        if is_list(deploy_setting_cfg['post_process']['correction']['method']):
+            force_zero = deploy_setting_cfg['post_process']['correction']['method'][i]
+        else:
+            force_zero = deploy_setting_cfg['post_process']['correction']['method']
+
         intermediate_agland_map = apply_bias_correction_to_agland_map(
             intermediate_agland_map, bc_crop, bc_past, bc_other,
-            deploy_setting_cfg['post_process']['correction']['force_zero'],
+            force_zero,
             deploy_setting_cfg['post_process']['correction']['threshold'],
             deploy_setting_cfg['post_process']['correction']['method'], i)
 
