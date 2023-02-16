@@ -31,5 +31,5 @@ def nmae(A, B):
 
 
 def r2(A, B):
-    """R-sqaured coefficient given A as predicted, B as ground truth"""
+    """ R-sqaured coefficient given A as predicted, B as ground truth """
     return 1-np.sum((A-B)**2)/np.sum((np.mean(B)-B)**2)
