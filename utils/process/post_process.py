@@ -321,7 +321,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']) \
             else is_bool(deploy_setting_cfg['post_process']['correction']['force_zero'])), \
                 'Config force_zero must match itr'
-                
+
     # Load land cover counts histogram map
     land_cover_counts = load_pkl(
         land_cover_cfg['path_dir']['pred_input_map'][:-len('.pkl')])
@@ -386,10 +386,10 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
                 land_cover_cfg, deploy_setting_cfg, input_dataset,
                 intermediate_agland_map, i)
 
-        if is_list(deploy_setting_cfg['post_process']['correction']['method']):
-            force_zero = deploy_setting_cfg['post_process']['correction']['method'][i]
+        if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']):
+            force_zero = deploy_setting_cfg['post_process']['correction']['force_zero'][i]
         else:
-            force_zero = deploy_setting_cfg['post_process']['correction']['method']
+            force_zero = deploy_setting_cfg['post_process']['correction']['force_zero']
 
         intermediate_agland_map = apply_bias_correction_to_agland_map(
             intermediate_agland_map, bc_crop, bc_past, bc_other,
