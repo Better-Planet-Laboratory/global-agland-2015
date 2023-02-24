@@ -329,7 +329,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
                                   int(max(land_cover_counts.census_table['COL_IDX']) + 1),
 
     # Load model
-    prob_est = gbt.GradientBoostingTree(
+    prob_est = gbt.MultinomialGradientBoostingTree(
         ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
         max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
         nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'],

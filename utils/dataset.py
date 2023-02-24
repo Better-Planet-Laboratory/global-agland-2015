@@ -126,9 +126,10 @@ class Dataset:
             # Remove features from census table
             self.census_table = self.census_table.drop(list(rm_feature_index_set), axis=1)
 
-    def to_numpy(self):
+    def to_multinomial_set(self, shuffle=False):
         """
-        Convert census table from pd.DataFrame to np.array format
+        Convert census table from pd.DataFrame to np.array format, where the labels are 
+        prepared for multinomial classification in one step
 
         Note:
             (train set) Each sample is converted to a 3xN array stacked on top of one another
@@ -139,13 +140,16 @@ class Dataset:
             (deploy set) Each sample only has one record as follows
                          Row index | column index |   Input features  | Grid size
                              X     |       X      | <land cover type> |     X
+        
+        Args:
+            shuffle (bool, optional): shuffle dataset. Defaults to False.
 
         Returns: (np.array) dataset
         """
         num_samples = len(self.census_table)
         num_features = len(self.land_cover_code.keys())
         num_labels = 1  # single class output
-        num_class = 3  # cropland, pasture, other
+        num_class = 3   # cropland, pasture, other
         num_weights = 1  # area * percentage
 
         if self.type == Dataset.TRAIN_TYPE:
@@ -160,6 +164,8 @@ class Dataset:
                     [self.census_table.iloc[n]['AREA'] * self.census_table.iloc[n][p] for p in
                      ['CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER']])  # weight columns
 
+            if shuffle:
+                np.random.shuffle(np_census_data)
             return np_census_data
 
         elif self.type == Dataset.DEPLOY_TYPE:
@@ -169,30 +175,115 @@ class Dataset:
         else:
             raise ValueError('Unknown Dataset types')
 
-    def to_H2OFrame(self):
+    def to_bernoulli_set(self, shuffle=False):
         """
-        Convert census table from pd.DataFrame to H2OFrame format
+        Convert census table from pd.DataFrame to a collection of np.array format, 
+        where the labels are prepared for bernoulli classification in one-vs-rest 
+        for each class
 
         Note:
-            (train set) H2OFrame will contain the following attributes, where CATEGORY is
-                        categorical label column
-                            <land cover type> | CATEGORY | WEIGHTS
-            (deploy set) H2OFrame will share the same structure as input census table
+            (train set) Each class and each sample is converted to a 2xN array stacked 
+                        on top of one another
+                                    'CROPLAND_PER'
+                          Input features | Label | Weights
+                        <land cover type> | 0 | AREA * CROPLAND_PER
+                        <land cover type> | 1 | AREA * (1-CROPLAND_PER)
+                                    'PASTURE_PER'
+                        <land cover type> | 0 | AREA * PASTURE_PER
+                        <land cover type> | 1 | AREA * (1-PASTURE_PER)
+                                    'OTHER_PER'
+                        <land cover type> | 0 | AREA * OTHER_PER
+                        <land cover type> | 1 | AREA * (1-OTHER_PER)
+            (deploy set) Each sample only has one record as follows
+                         Row index | column index |   Input features  | Grid size
+                             X     |       X      | <land cover type> |     X
+        
+        Args:
+            shuffle (bool, optional): shuffle dataset. Defaults to False.
 
-        Returns: (h2o.H2OFrame) dataset
+        Returns: (dict) dict of np.array
         """
-        if self.type == Dataset.TRAIN_TYPE:
-            np_census_data = self.to_numpy()
-            pd_census_data = pd.DataFrame(np_census_data,
-                                          columns=list(self.land_cover_code.values()) + ['CATEGORY', 'WEIGHTS'])
-            h2o_census_data = h2o.H2OFrame(pd_census_data)
-            h2o_census_data['CATEGORY'] = h2o_census_data['CATEGORY'].asfactor()
+        num_samples = len(self.census_table)
+        num_features = len(self.land_cover_code.keys())
+        num_labels = 1  # single class output
+        num_class = 2   # one vs the rest
+        num_weights = 1  # area * percentage
 
+        if self.type == Dataset.TRAIN_TYPE:
+            # Input features | Label | Weights
+            dataset = {}
+            for _, p in enumerate(['CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER']):
+                np_census_data = np.zeros((num_samples * num_class, num_features + num_weights + num_labels))
+                for n in range(num_samples):
+                    np_census_data[n * num_class:(n + 1) * num_class, 0:num_features] = self.census_table.iloc[n][
+                        [i for i in list(self.land_cover_code.keys())]].to_numpy()  # feature columns (land cover)
+                    np_census_data[n * num_class:(n + 1) * num_class, num_features] = np.asarray([0, 1]) # percentage values
+                    np_census_data[n * num_class:(n + 1) * num_class, -1] = np.asarray([self.census_table.iloc[n]['AREA'] * self.census_table.iloc[n][p], \
+                        self.census_table.iloc[n]['AREA'] * (1 - self.census_table.iloc[n][p])])  # weight columns
+                
+                if shuffle:
+                    np.random.shuffle(np_census_data)
+                dataset[p] = np_census_data
+            
+            return dataset
+        
         elif self.type == Dataset.DEPLOY_TYPE:
-            pd_census_data = self.census_table.rename(columns=self.land_cover_code, inplace=False)
-            h2o_census_data = h2o.H2OFrame(pd_census_data)
+            #  Row index | column index | Input features | Grid size
+            return self.census_table.to_numpy()
 
         else:
             raise ValueError('Unknown Dataset types')
 
-        return h2o_census_data
+    def to_percentage_set(self, shuffle=False):
+        """
+        Convert census table from pd.DataFrame to a collection of np.array format, 
+        where the labels are prepared for regression of percentage values in each class
+
+        Note:
+            (train set) Each class and each sample is converted to a 2xN array stacked 
+                        on top of one another
+                                    'CROPLAND_PER'
+                          Input features | Label | Weights
+                        <land cover type> | 0.XX | AREA * CROPLAND_PER
+                                    'PASTURE_PER'
+                        <land cover type> | 0.XX | AREA * PASTURE_PER
+                                    'OTHER_PER'
+                        <land cover type> | 0.XX | AREA * OTHER_PER
+            (deploy set) Each sample only has one record as follows
+                         Row index | column index |   Input features  | Grid size
+                             X     |       X      | <land cover type> |     X
+
+        Args:
+            shuffle (bool, optional): shuffle dataset. Defaults to False.
+        
+        Returns: (dict) dict of np.array
+        """
+        num_samples = len(self.census_table)
+        num_features = len(self.land_cover_code.keys())
+        num_labels = 1  # single class output
+        num_class = 1   # numeric percentage 
+        num_weights = 1  # area * percentage
+
+        if self.type == Dataset.TRAIN_TYPE:
+            # Input features | Label | Weights
+            dataset = {}
+            for _, p in enumerate(['CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER']):
+                np_census_data = np.zeros((num_samples * num_class, num_features + num_weights + num_labels))
+                for n in range(num_samples):
+                    np_census_data[n * num_class:(n + 1) * num_class, 0:num_features] = self.census_table.iloc[n][
+                        [i for i in list(self.land_cover_code.keys())]].to_numpy()  # feature columns (land cover)
+                    np_census_data[n * num_class:(n + 1) * num_class, num_features] = self.census_table.iloc[n][p] # percentage values
+                    np_census_data[n * num_class:(n + 1) * num_class, -1] = self.census_table.iloc[n]['AREA'] * self.census_table.iloc[n][p]  # weight columns
+                
+                if shuffle:
+                    np.random.shuffle(np_census_data)
+                dataset[p] = np_census_data
+            
+            return dataset
+
+        elif self.type == Dataset.DEPLOY_TYPE:
+            #  Row index | column index | Input features | Grid size
+            return self.census_table.to_numpy()
+
+        else:
+            raise ValueError('Unknown Dataset types')
