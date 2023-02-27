@@ -30,9 +30,7 @@ def pipeline(training_cfg, land_cover_cfg):
     prob_est = gbt.MultinomialGradientBoostingTree(
         ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
         max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
-        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'],
-        distribution=training_cfg['model']['gradient_boosting_tree']
-        ['distribution'])
+        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'])
 
     # Load model weights if specified, otherwise train on input_dataset
     if training_cfg['path_dir']['inputs']['load_model'] is not None:

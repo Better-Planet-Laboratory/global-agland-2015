@@ -332,9 +332,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
     prob_est = gbt.MultinomialGradientBoostingTree(
         ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
         max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
-        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'],
-        distribution=training_cfg['model']['gradient_boosting_tree']
-        ['distribution'])
+        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'])
     try:
         prob_est.load(deploy_setting_cfg['path_dir']['model'])
         print('Model loaded from {}'.format(
