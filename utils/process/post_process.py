@@ -132,8 +132,7 @@ def convert_weights_table_to_raster_array(gdf, value_field, x_min, y_max,
     return feature_array
 
 
-def generate_weights_array(land_cover_cfg,
-                           deploy_setting_cfg,
+def generate_weights_array(deploy_setting_cfg,
                            input_dataset,
                            agland_map,
                            iter=0):
@@ -144,7 +143,6 @@ def generate_weights_array(land_cover_cfg,
     for smoothing boundary effects
 
     Args:
-        land_cover_cfg (dict): land cover settings from yaml
         deploy_setting_cfg (dict): deploy settings from yaml
         input_dataset (Dataset): input dataset for training
         agland_map (AglandMap): input agland_map to be corrected
@@ -329,7 +327,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
                                   int(max(land_cover_counts.census_table['COL_IDX']) + 1),
 
     # Load model
-    prob_est = gbt.MultinomialGradientBoostingTree(
+    prob_est = gbt.OvRBernoulliGradientBoostingTree(
         ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
         max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
         nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'])
@@ -381,7 +379,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         else:
             print('Generate new bias correction weights')
             bc_crop, bc_past, bc_other = generate_weights_array(
-                land_cover_cfg, deploy_setting_cfg, input_dataset,
+                deploy_setting_cfg, input_dataset,
                 intermediate_agland_map, i)
 
         if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']):
