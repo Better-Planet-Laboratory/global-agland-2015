@@ -16,7 +16,7 @@ def pipeline(training_cfg, land_cover_cfg):
         training_cfg (dict): training settings from yaml
         land_cover_cfg (dict): land cover settings from yaml
 
-    Returns: (MultinomialGradientBoostingTree)
+    Returns: (GradientBoostingTree)
     """
     # Load census_table input as Dataset obj
     input_dataset = Dataset(
@@ -27,7 +27,7 @@ def pipeline(training_cfg, land_cover_cfg):
         invalid_data=training_cfg['invalid_data_handle'])
 
     # Declare model structure
-    prob_est = gbt.MultinomialGradientBoostingTree(
+    prob_est = gbt.OvRBernoulliGradientBoostingTree(
         ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
         max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
         nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'])
