@@ -135,7 +135,8 @@ def convert_weights_table_to_raster_array(gdf, value_field, x_min, y_max,
 def generate_weights_array(deploy_setting_cfg,
                            input_dataset,
                            agland_map,
-                           iter=0):
+                           iter=0, 
+                           save=False):
     """
     Generate bias correction weights arrays by back correcting input agland_map to 
     match the input_dataset, followed by a probability distribution fix (scale), and 
@@ -147,10 +148,10 @@ def generate_weights_array(deploy_setting_cfg,
         input_dataset (Dataset): input dataset for training
         agland_map (AglandMap): input agland_map to be corrected
         iter (int): iter index. Default: 0
+        save (bool): save weights array or not. Default: False
 
     Returns: (tuple) 2D weights arrays tuple, (crop, past, other)
     """
-    base_path = deploy_setting_cfg['path_dir']['base']
     grid_size = agland_map.affine[0]
     x_min = agland_map.affine[2]
     y_max = agland_map.affine[5]
@@ -252,11 +253,13 @@ def generate_weights_array(deploy_setting_cfg,
                 verbose=True)
             weights_array = weights_array[0]
 
-        weights_file_dir = os.path.join(
-            base_path, attribute + '_' + str(int(iter)) + '.npy')
-        weight_array_list.append(weights_array)
-        np.save(weights_file_dir, weights_array)
-        print('{} saved'.format(weights_file_dir))
+        if save:
+            weights_file_dir = os.path.join(
+                deploy_setting_cfg['path_dir']['base'],
+                attribute + '_' + str(int(iter)) + '.npy')
+            weight_array_list.append(weights_array)
+            np.save(weights_file_dir, weights_array)
+            print('{} saved'.format(weights_file_dir))
 
     return (*weight_array_list, )
 
@@ -380,7 +383,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
             print('Generate new bias correction weights')
             bc_crop, bc_past, bc_other = generate_weights_array(
                 deploy_setting_cfg, input_dataset,
-                intermediate_agland_map, i)
+                intermediate_agland_map, iter=i, save=True)
 
         if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']):
             force_zero = deploy_setting_cfg['post_process']['correction']['force_zero'][i]
