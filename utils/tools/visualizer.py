@@ -576,7 +576,8 @@ def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
 def plot_agland_pred_vs_ground_truth(
         mark_index,
         output_pred_vs_ground_truth_data_collection,
-        output_dir=None):
+        output_dir=None, 
+        sub_plot=False):
     """
     Plot pred (x) vs. ground_truth (y) with a 1:1 line as reference for CROPLAND,
     PASTURE and OTHER. Function assumes output_pred_vs_ground_truth_data_collection is not an 
@@ -586,6 +587,7 @@ def plot_agland_pred_vs_ground_truth(
         mark_index (int): index in pred list to be highlighted red
         output_pred_vs_ground_truth_data_collection (dict): pred and gt info with iteration int as keys
         output_dir (str): output dir (Default: None)
+        sub_plot (bool): Add subplot to show the trend of RMSE and R2 over iteration (Default: False)
     """
 
     def base_plot_helper(gt, pred, ax, x, m, b, title):
@@ -779,31 +781,32 @@ def plot_agland_pred_vs_ground_truth(
             round(plot_data_table[base_iter]['rmse_other'], 4),
             round(plot_data_table[base_iter]['r2_other'], 4)))
 
-    ax1_sub = add_subplot_axes(ax1, subplot_rect, axisbg='w')
-    ax2_sub = add_subplot_axes(ax2, subplot_rect, axisbg='w')
-    ax3_sub = add_subplot_axes(ax3, subplot_rect, axisbg='w')
+    if sub_plot:
+        ax1_sub = add_subplot_axes(ax1, subplot_rect, axisbg='w')
+        ax2_sub = add_subplot_axes(ax2, subplot_rect, axisbg='w')
+        ax3_sub = add_subplot_axes(ax3, subplot_rect, axisbg='w')
 
-    sub_plot_helper(mark_index,
-                    iter_list,
-                    [plot_data_table[i]['rmse_cropland'] for i in iter_list],
-                    [plot_data_table[i]['r2_cropland'] for i in iter_list],
-                    ax1_sub,
-                    markersize=markersize,
-                    linewidth=linewidth)
-    sub_plot_helper(mark_index,
-                    iter_list,
-                    [plot_data_table[i]['rmse_pasture'] for i in iter_list],
-                    [plot_data_table[i]['r2_pasture'] for i in iter_list],
-                    ax2_sub,
-                    markersize=markersize,
-                    linewidth=linewidth)
-    sub_plot_helper(mark_index,
-                    iter_list,
-                    [plot_data_table[i]['rmse_other'] for i in iter_list],
-                    [plot_data_table[i]['r2_other'] for i in iter_list],
-                    ax3_sub,
-                    markersize=markersize,
-                    linewidth=linewidth)
+        sub_plot_helper(mark_index,
+                        iter_list,
+                        [plot_data_table[i]['rmse_cropland'] for i in iter_list],
+                        [plot_data_table[i]['r2_cropland'] for i in iter_list],
+                        ax1_sub,
+                        markersize=markersize,
+                        linewidth=linewidth)
+        sub_plot_helper(mark_index,
+                        iter_list,
+                        [plot_data_table[i]['rmse_pasture'] for i in iter_list],
+                        [plot_data_table[i]['r2_pasture'] for i in iter_list],
+                        ax2_sub,
+                        markersize=markersize,
+                        linewidth=linewidth)
+        sub_plot_helper(mark_index,
+                        iter_list,
+                        [plot_data_table[i]['rmse_other'] for i in iter_list],
+                        [plot_data_table[i]['r2_other'] for i in iter_list],
+                        ax3_sub,
+                        markersize=markersize,
+                        linewidth=linewidth)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
