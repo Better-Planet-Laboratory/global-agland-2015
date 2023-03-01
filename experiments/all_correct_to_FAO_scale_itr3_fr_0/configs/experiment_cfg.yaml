@@ -1,0 +1,83 @@
+#=========== Model parameters and path ===========
+model:
+  path_dir: 'models/saved_models/all_correct_to_FAO_scale_itr3_fr_0/'
+  gradient_boosting_tree:
+    ntrees: 200
+    max_depth: 10
+    nfolds: 10
+feature_remove: []  # []
+invalid_data_handle: 'scale'  # remove
+
+
+#=========== Input data for deployment ===========
+census_table_input: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/processed_census.pkl'
+pred_input_map: 'land_cover/pred_input_map.pkl'
+global_area_2160x4320_map: 'land_cover/global_area_2160x4320.tif'
+global_boundary_shp: 'shapefile/ne_10m_land/ne_10m_land.shp'
+code:
+  # Class dict definition
+  # https://lpdaac.usgs.gov/documents/101/MCD12_User_Guide_V6.pdf
+  MCD12C1:
+    0: 'WATER BODIES'
+    1: 'EVERGREEN NEEDLELEAF FORESTS'
+    2: 'EVERGREEN BROADLEAF FORESTS'
+    3: 'DECIDUOUS NEEDLELEAF FORESTS'
+    4: 'DECIDUOUS BROADLEAF FORESTS'
+    5: 'MIXED FORESTS'
+    6: 'CLOSED SHRUBLANDS'
+    7: 'OPEN SHRUBLANDS'
+    8: 'WOODY SAVANNAS'
+    9: 'SAVANNAS'
+    10: 'GRASSLANDS'
+    11: 'PERMANENT WETLANDS'
+    12: 'CROPLANDS'
+    13: 'URBAN AND BUILT-UP'
+    14: 'CROPLAND-NATURAL VEGETATION MOSAICS'
+    15: 'SNOW AND ICE'
+    16: 'BARREN OR SPARSELY VEGETATED'
+  MCD12Q1:
+    1: 'EVERGREEN NEEDLELEAF FORESTS'
+    2: 'EVERGREEN BROADLEAF FORESTS'
+    3: 'DECIDUOUS NEEDLELEAF FORESTS'
+    4: 'DECIDUOUS BROADLEAF FORESTS'
+    5: 'MIXED FORESTS'
+    6: 'CLOSED SHRUBLANDS'
+    7: 'OPEN SHRUBLANDS'
+    8: 'WOODY SAVANNAS'
+    9: 'SAVANNAS'
+    10: 'GRASSLANDS'
+    11: 'PERMANENT WETLANDS'
+    12: 'CROPLANDS'
+    13: 'URBAN AND BUILT-UP'
+    14: 'CROPLAND-NATURAL VEGETATION MOSAICS'
+    15: 'PERMANENT SNOW AND ICE'
+    16: 'BARREN'
+    17: 'WATER BODIES'
+
+
+#=========== Output files path ===========
+agland_map_output: 'experiments/all_correct_to_FAO_scale_itr3_fr_0/agland_map/'
+img_path: 'experiments/all_correct_to_FAO_scale_itr3_fr_0/img/'
+
+
+#=========== Post-process settings ===========
+mask:
+  water_body_mask: 'land_cover/water_body_mask.tif'
+  gdd_filter_mask: 'gdd/gdd_filter_map_360x720.tif'
+post_process:
+  disable_pycno: True
+  correction:
+    itr: 3
+    method: 'scale'
+    force_zero: [False, False, True]
+    threshold: null  # <- hyperparam to be tuned
+  interpolation:
+    seperable_filter: [0.5, 0, 0.5]
+    converge: 3
+    r: 0.2
+
+
+#=========== Cross reference comparision ===========
+maryland_cropland_dir: 'evaluation/Global_cropland_3km_2015.tif'
+geowiki_cropland_dir: 'evaluation/loc_all_2.txt'
+

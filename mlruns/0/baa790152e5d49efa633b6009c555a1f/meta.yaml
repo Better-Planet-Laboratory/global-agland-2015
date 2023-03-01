@@ -1,0 +1,15 @@
+artifact_uri: file:///workspaces/global-agland-2015/mlruns/0/baa790152e5d49efa633b6009c555a1f/artifacts
+end_time: 1677654906312
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: baa790152e5d49efa633b6009c555a1f
+run_name: exp_ovrGBT_th
+run_uuid: baa790152e5d49efa633b6009c555a1f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1677627419882
+status: 4
+tags: []
+user_id: root
