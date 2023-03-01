@@ -253,11 +253,11 @@ def generate_weights_array(deploy_setting_cfg,
                 verbose=True)
             weights_array = weights_array[0]
 
+        weight_array_list.append(weights_array)
         if save:
             weights_file_dir = os.path.join(
                 deploy_setting_cfg['path_dir']['base'],
                 attribute + '_' + str(int(iter)) + '.npy')
-            weight_array_list.append(weights_array)
             np.save(weights_file_dir, weights_array)
             print('{} saved'.format(weights_file_dir))
 
