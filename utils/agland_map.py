@@ -43,9 +43,12 @@ class AglandMap:
         an agland map
 
         Note:
-            Sometimes input cropland, pasture and other do not sum to 1 due to numerical
+            1. Sometimes input cropland, pasture and other do not sum to 1 due to numerical 
             error. Current suggestion is to turn force_load on when loading, but make
             sure the error is small enough to be neglected
+            2. By default, data attribute in AglandMap obj is mutable array for convenience, 
+            when passing obj to function, needs to be careful not to overwrite land matrix 
+            by accident 
 
         Args:
             cropland_array (np.array): 2D matrix for cropland probability

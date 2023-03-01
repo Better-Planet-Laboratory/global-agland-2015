@@ -2,6 +2,7 @@ import yaml
 import pickle
 from osgeo import gdal, osr, ogr
 import numpy as np
+import copy
 
 
 def load_yaml_config(file_path):
@@ -83,7 +84,9 @@ def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4
         no_data_value (int or float): replacement for nan (Default: 255)
         dtype (gdal dtype): data type
     """
-    x_pixels, y_pixels = data_array.shape
+    # deep copy to avoid overwriting mutable array
+    data_array_copy = copy.deepcopy(data_array)
+    x_pixels, y_pixels = data_array_copy.shape
 
     driver = gdal.GetDriverByName('GTiff')
     srs = osr.SpatialReference()
@@ -98,10 +101,10 @@ def save_array_as_tif(dst_filename, data_array, x_min, y_max, pixel_size, epsg=4
         y_max, 0, -pixel_size))
 
     # Check if data contains NaN, we need to set a NoDataValue
-    data_array[np.isnan(data_array)] = no_data_value
+    data_array_copy[np.isnan(data_array_copy)] = no_data_value
     dataset.GetRasterBand(1).SetNoDataValue(no_data_value)
 
-    dataset.GetRasterBand(1).WriteArray(data_array)
+    dataset.GetRasterBand(1).WriteArray(data_array_copy)
     dataset.SetProjection(srs.ExportToWkt())
     dataset.FlushCache()  # Write to disk
     print('{} saved'.format(dst_filename))
