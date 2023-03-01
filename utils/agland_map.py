@@ -163,21 +163,43 @@ class AglandMap:
 
     def apply_mask(self, mask):
         """
-        Apply a boolean mask on top of agland map for all 3 channels, removed values are represented
-        as np.nan
+        If input bool mask is a single np.ndarray, the mask is applied across all 3 channels of the 
+        agland map, remove values are represented as np.nan. If input mask is a list of masks of size 
+        2, then first mask is applied to cropland, second mask is applied to pasture, with other land 
+        use map be recomputed as (1-cropland-pasture)
+
+        Note:
+            Cannot specify more than 2 masks, as otherwise the probability distribution will be violated
 
         Args:
-            mask (np.array): boolean mask
+            mask (np.array or list of np.array): boolean mask
         """
-        assert (mask.ndim == 2), "Input mask must be 2D"
-        assert ((mask.shape[0] == self.height) and (mask.shape[1] == self.width)), \
-            "Mask must have same size as data"
+        if isinstance(mask, np.ndarray):
+            assert (mask.ndim == 2), "Input mask must be 2D"
+            assert ((mask.shape[0] == self.height) and (mask.shape[1] == self.width)), \
+                "Mask must have same size as data"
 
-        mask = mask.astype(np.float32)
-        mask[np.where(mask == 0)] = np.nan
-        self.data[:, :, AglandMap.CROPLAND_IDX] *= mask
-        self.data[:, :, AglandMap.PASTURE_IDX] *= mask
-        self.data[:, :, AglandMap.OTHER_IDX] *= mask
+            mask = mask.astype(np.float32)
+            mask[np.where(mask == 0)] = np.nan
+            self.data[:, :, AglandMap.CROPLAND_IDX] *= mask
+            self.data[:, :, AglandMap.PASTURE_IDX] *= mask
+            self.data[:, :, AglandMap.OTHER_IDX] *= mask
+
+        elif isinstance(mask, list):
+            assert (len(mask) == 2), "Input mask must be list of 2"
+            assert (m.ndim == 2 for m in mask), "Each mask must be 2D"
+            assert ((m.shape[0] == self.height) and (m.shape[1] == self.width) for m in mask), \
+                "Each mask must have same size as data"
+            for i, m in enumerate(mask):
+                m = m.astype(np.float32)
+                m[np.where(m == 0)] = np.nan
+                mask[i] = m
+            self.data[:, :, AglandMap.CROPLAND_IDX] *= mask[0]
+            self.data[:, :, AglandMap.PASTURE_IDX] *= mask[1]
+            self.data[:, :, AglandMap.OTHER_IDX] = 1 - self.data[:, :, AglandMap.CROPLAND_IDX] - self.data[:, :, AglandMap.PASTURE_IDX]
+
+        else:
+            raise ValueError("Input mask must be a single np.ndarray or a list of 2 np.ndarray")
 
     def extract_state_level_data(self, input_dataset, area_map):
         """
