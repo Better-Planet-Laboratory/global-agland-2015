@@ -21,7 +21,7 @@ INPUT_DATASET = Dataset(
     remove_land_cover_feature_index=EXPERIMENT_CFG['feature_remove'],
     invalid_data=EXPERIMENT_CFG['invalid_data_handle'])
 
-THRESHOLD_SPACE = [i / 100 for i in range(0, 10)]
+THRESHOLD_SPACE = [i / 100 for i in range(0, 10)]   # <- Change this for search space 
 
 
 def initialize_iter0_output():
@@ -72,19 +72,19 @@ def do_bias_correction(threshold):
     except FileNotFoundError:
         print ('Could not find initial agland map in {}. Run initialization step.'.format(EXPERIMENT_CFG['agland_map_output']))
 
+    deploy_settings = {
+        'post_process': {
+            'disable_pycno': EXPERIMENT_CFG['post_process']['disable_pycno'], 
+            'interpolation': {
+                'seperable_filter': EXPERIMENT_CFG['post_process']['interpolation']['seperable_filter'], 
+                'converge': EXPERIMENT_CFG['post_process']['interpolation']['converge'], 
+                'r': EXPERIMENT_CFG['post_process']['interpolation']['r']
+            }
+        }
+    }
+
     for i in range(EXPERIMENT_CFG['post_process']['correction']['itr']):
-        bc_crop, bc_past, bc_other = generate_weights_array(
-            {
-                'post_process': {
-                    'disable_pycno': EXPERIMENT_CFG['post_process']['disable_pycno'], 
-                    'interpolation': {
-                        'seperable_filter': EXPERIMENT_CFG['post_process']['interpolation']['seperable_filter'], 
-                        'converge': EXPERIMENT_CFG['post_process']['interpolation']['converge'], 
-                        'r': EXPERIMENT_CFG['post_process']['interpolation']['r']
-                    }
-                }
-            }, INPUT_DATASET, 
-            intermediate_agland_map, iter=i, save=False)
+        bc_crop, bc_past, bc_other = generate_weights_array(deploy_settings, INPUT_DATASET, intermediate_agland_map, iter=i, save=False)
 
         if is_list(EXPERIMENT_CFG['post_process']['correction']['force_zero']):
             force_zero = EXPERIMENT_CFG['post_process']['correction']['force_zero'][i]
@@ -100,11 +100,34 @@ def do_bias_correction(threshold):
     return intermediate_agland_map
 
 
-def compute_metrics(agland_map_output, mlflow_id=None):
-    # Metrics:
-    #   1. RMSE and R2 for cropland and pasture at iteration 3
-    #   2. mu, sigma, RMSE for maryland and geowiki 
-    #   3. cropland and pasture % difference FAO continent table with cropland masked and pasture unmasked (but need to include water body masks)
+def compute_metrics(agland_map_output, mlflow_id='000'):
+    """
+    Compute metrics for input agland_map_output. Metrics include:
+    1. Comparison against input census dataset
+        'rmse_cropland', 
+        'rmse_pasture', 
+        'rmse_other', 
+        'r2_cropland', 
+        'r2_pasture', 
+        'r2_other'
+    2. Comparison against Maryland (in %)
+        'maryland_mu', 
+        'maryland_sigma', 
+        'maryland_rmse'
+    3. Comparison against GeoWiki (in %)
+        'geowiki_mu', 
+        'geowiki_sigma', 
+        'geowiki_rmse'
+    4. Comparison against FAO sum grouped over CONTINENT (in %)
+        '%CONTINENT%_cropland_diff', 
+        '%CONTINENT%_pasture_diff', 
+
+    Args:
+        agland_map_output (AglandMap): input AglandMap obj to be tested
+        mlflow_id (str, optional): mlflow experiment id. Defaults to '000'.
+
+    Returns: (dict): metrics results
+    """
     def aggregated_gt_comparsion(output_path):
         ground_truth_collection, pred_collection = agland_map_output.extract_state_level_data(
             INPUT_DATASET, 
@@ -181,9 +204,9 @@ def compute_metrics(agland_map_output, mlflow_id=None):
             os.path.join(output_path, 'geowiki_diff_hist.png'))
 
         return {
-            'maryland_mu': np.mean(diff), 
-            'maryland_sigma': np.std(diff), 
-            'maryland_rmse': rmse_error
+            'geowiki_mu': np.mean(diff), 
+            'geowiki_sigma': np.std(diff), 
+            'geowiki_rmse': rmse_error
         }
     
     def fao_comparsion(agland_map):
@@ -239,8 +262,8 @@ def compute_metrics(agland_map_output, mlflow_id=None):
             current_cropland_fao = comparison_table.iloc[i]['FAO_Crop (kHa)']
             current_pasture_fao = comparison_table.iloc[i]['FAO_Past (kHa)']
 
-            results['{}_cropland_per_diff'.format(current_continent)] = 100*(current_cropland_pred - current_cropland_fao)/current_cropland_fao
-            results['{}_pasture_per_diff'.format(current_continent)] = 100*(current_pasture_pred - current_pasture_fao)/current_pasture_fao
+            results['{}_cropland_diff'.format(current_continent)] = 100*(current_cropland_pred - current_cropland_fao)/current_cropland_fao
+            results['{}_pasture_diff'.format(current_continent)] = 100*(current_pasture_pred - current_pasture_fao)/current_pasture_fao
         
         return results
 
@@ -302,10 +325,10 @@ def compute_metrics(agland_map_output, mlflow_id=None):
     # Get masked results
     cropland_mask = make_nonagricultural_mask(
         shape=(agland_map_output.height, agland_map_output.width),
-        mask_dir_list=[EXPERIMENT_CFG['mask']['water_body_mask'], EXPERIMENT_CFG['mask']['gdd_filter_mask']])
+        mask_dir_list=[EXPERIMENT_CFG['mask']['water_body_mask'], EXPERIMENT_CFG['mask']['gdd_filter_mask'], EXPERIMENT_CFG['mask']['antarctica_mask']])
     pasture_mask = make_nonagricultural_mask(
         shape=(agland_map_output.height, agland_map_output.width),
-        mask_dir_list=[EXPERIMENT_CFG['mask']['water_body_mask']])
+        mask_dir_list=[EXPERIMENT_CFG['mask']['water_body_mask'], EXPERIMENT_CFG['mask']['antarctica_mask']])
     masked_agland_map_output = copy.deepcopy(agland_map_output)
     masked_agland_map_output.apply_mask([cropland_mask, pasture_mask])
 
@@ -324,7 +347,13 @@ def compute_metrics(agland_map_output, mlflow_id=None):
 
 
 def new_experiment(threshold):
+    """
+    Process of a single experiment on an input threshold value. To view results, 
+    call ``` mlflow ui ``` in terminal for dashboard
 
+    Args:
+        threshold (float): threshold used for bias correction step
+    """
     # Bias correction
     agland_map_to_test = do_bias_correction(threshold)
 
@@ -361,9 +390,9 @@ def new_experiment(threshold):
 
 
 def run():
-    # initialize_iter0_output()
+    initialize_iter0_output()
     with mlflow.start_run(run_name='exp_ovrGBT_th'):
-        pool = multiprocessing.Pool(processes=4)
+        pool = multiprocessing.Pool(processes=3)
         pool.map(new_experiment, THRESHOLD_SPACE)
 
 
