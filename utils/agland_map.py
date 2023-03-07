@@ -164,10 +164,10 @@ class AglandMap:
         # Correct the updated values to probability distribution
         self._prob_correct(correction_method)
 
-    def apply_mask(self, mask):
+    def apply_mask(self, mask, value=np.nan):
         """
         If input bool mask is a single np.ndarray, the mask is applied across all 3 channels of the 
-        agland map, remove values are represented as np.nan. If input mask is a list of masks of size 
+        agland map, remove values are represented by value. If input mask is a list of masks of size 
         2, then first mask is applied to cropland, second mask is applied to pasture, with other land 
         use map be recomputed as (1-cropland-pasture)
 
@@ -176,7 +176,10 @@ class AglandMap:
 
         Args:
             mask (np.ndarray or list of np.ndarray): boolean mask
+            value (numeric): value to be placed for removed pixels (0 or np.nan). Default: np.nan
         """
+        assert(value in [0, np.nan]), "value needs to be either 0 or np.nan"
+
         if isinstance(mask, np.ndarray):
             assert (mask.ndim == 2), "Input mask must be 2D"
             assert ((mask.shape[0] == self.height) and (mask.shape[1] == self.width)), \
@@ -187,6 +190,8 @@ class AglandMap:
             self.data[:, :, AglandMap.CROPLAND_IDX] *= mask
             self.data[:, :, AglandMap.PASTURE_IDX] *= mask
             self.data[:, :, AglandMap.OTHER_IDX] *= mask
+
+            self.data[:, :, AglandMap.CROPLAND_IDX]
 
         elif isinstance(mask, list):
             assert (len(mask) == 2), "Input mask must be list of 2"
@@ -203,6 +208,17 @@ class AglandMap:
 
         else:
             raise ValueError("Input mask must be a single np.ndarray or a list of 2 np.ndarray")
+
+        # Replace value
+        if not np.isnan(value):
+            cropland = self.data[:, :, AglandMap.CROPLAND_IDX]
+            pasture = self.data[:, :, AglandMap.PASTURE_IDX]
+            cropland[np.where(cropland == np.nan)] = value
+            pasture[np.where(pasture == np.nan)] = value
+
+            self.data[:, :, AglandMap.CROPLAND_IDX] = cropland
+            self.data[:, :, AglandMap.PASTURE_IDX] = pasture
+            self.data[:, :, AglandMap.OTHER_IDX] = 1 - self.data[:, :, AglandMap.CROPLAND_IDX] - self.data[:, :, AglandMap.PASTURE_IDX]            
 
     def extract_state_level_data(self, input_dataset, area_map):
         """
