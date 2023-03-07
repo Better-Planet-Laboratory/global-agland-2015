@@ -16,6 +16,10 @@ def initialize_iter0_output(experiment_cfg, land_cover_counts):
     """
     Initialize raw prediction output from the model as iteration 0. Save an AglandMap tif file to 
     the directory specified in experiment configs    
+
+    Args:
+        experiment_cfg (dict): experiment_cfg
+        land_cover_counts (Dataset): landcover counts dataset
     """
     # Initialize model and save the first iteration map
     output_height, output_width = int(max(land_cover_counts.census_table['ROW_IDX']) + 1), \
@@ -45,7 +49,10 @@ def initialize_iter0_output(experiment_cfg, land_cover_counts):
     initial_agland_map.save_as_tif(os.path.join(experiment_cfg['agland_map_output'], 'agland_map_output_0.tif'))
 
 
-def compute_metrics(experiment_cfg, input_dataset, agland_map_output, mlflow_id='000'):
+def compute_metrics(experiment_cfg, input_dataset, agland_map_output, 
+                    cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask'], 
+                    pasture_mask_list = ['water_body_mask', 'antarctica_mask'], 
+                    mlflow_id='000'):
     """
     Compute metrics for input agland_map_output. Metrics include:
     1. Comparison against input census dataset
@@ -68,7 +75,11 @@ def compute_metrics(experiment_cfg, input_dataset, agland_map_output, mlflow_id=
         '%CONTINENT%_pasture_diff', 
 
     Args:
+        experiment_cfg (dict): experiment_cfg
+        input_dataset (Dataset): input_dataset
         agland_map_output (AglandMap): input AglandMap obj to be tested
+        cropland_mask_list (list): list of pre-defined cropland masks to be applied. Defaults to ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask'].
+        pasture_mask_list (list): list of pre-defined pasture masks to be applied. Defaults to ['water_body_mask', 'antarctica_mask'].
         mlflow_id (str, optional): mlflow experiment id. Defaults to '000'.
 
     Returns: (dict): metrics results
@@ -270,10 +281,10 @@ def compute_metrics(experiment_cfg, input_dataset, agland_map_output, mlflow_id=
     # Get masked results
     cropland_mask = make_nonagricultural_mask(
         shape=(agland_map_output.height, agland_map_output.width),
-        mask_dir_list=[experiment_cfg['mask']['water_body_mask'], experiment_cfg['mask']['gdd_filter_mask'], experiment_cfg['mask']['antarctica_mask']])
+        mask_dir_list=[experiment_cfg['mask'][m] for m in cropland_mask_list])
     pasture_mask = make_nonagricultural_mask(
         shape=(agland_map_output.height, agland_map_output.width),
-        mask_dir_list=[experiment_cfg['mask']['water_body_mask'], experiment_cfg['mask']['antarctica_mask']])
+        mask_dir_list=[experiment_cfg['mask'][m] for m in pasture_mask_list])
     masked_agland_map_output = copy.deepcopy(agland_map_output)
     masked_agland_map_output.apply_mask([cropland_mask, pasture_mask])
 
