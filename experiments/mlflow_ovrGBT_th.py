@@ -3,7 +3,7 @@ import multiprocessing
 from experiments.helpers import *
 
 
-EXPERIMENT_CFG = io.load_yaml_config('experiments/all_correct_to_FAO_scale_itr3_fr_0/configs/experiment_cfg.yaml')
+EXPERIMENT_CFG = io.load_yaml_config('experiments/all_correct_to_FAO_scale_itr3_fr_0/configs/experiment_cfg_th.yaml')
 LAND_COVER_COUNTS = load_pkl(EXPERIMENT_CFG['pred_input_map'][:-len('.pkl')])
 INPUT_DATASET = Dataset(
     census_table=load_census_table_pkl(EXPERIMENT_CFG['census_table_input']), 
