@@ -109,7 +109,7 @@ def plot_gdd_map(gdd_array, output_dir=None, nodata=-32768, cmap='viridis'):
     Plot GDD map and save as png if output_dir is specified
 
     Args:
-        gdd_array (np.array): 2D np array
+        gdd_array (np.ndarray): 2D np array
         output_dir (str): output dir (Default: None)
         nodata (int): no data indicator (Default: -32768)
         cmap (str or dict): matplotlib cmap
@@ -153,7 +153,7 @@ def plot_global_area_map(area_array, output_dir=None, scale=10):
     Plot global area map 
 
     Args:
-        area_array (np.array): 2D np array
+        area_array (np.ndarray): 2D np array
         output_dir (str): output dir (Default: None)
         scale (int): scale factor to be applied on image size (1/scale)
     """
@@ -199,7 +199,7 @@ def plot_land_cover_map(land_cover_array,
     Plot land cover map and save as png if output_dir is specified
 
     Args:
-        land_cover_array (np.array): 2D np array
+        land_cover_array (np.ndarray): 2D np array
         class_lookup (dict): class index (int) -> class name (str)
         output_dir (str): output dir (Default: None)
         nodata (int): no data indicator (Default: -9999)
@@ -332,7 +332,7 @@ def plot_agland_map_slice(array, type, output_dir=None):
     Helper function that plots slices of agland map ('cropland', 'pasture', 'other')
 
     Args:
-        array (np.array): input array
+        array (np.ndarray): input array
         type (str): 'cropland', 'pasture', or 'other'
         output_dir (str, optional): output directory path. Defaults to None.
     """
@@ -822,7 +822,7 @@ def plot_geowiki_cropland(geowiki_cropland_by_index, output_dir=None):
     is a 2D array with 3 columns, respectively index_x, index_y, cropland (100%)
 
     Args:
-        geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
+        geowiki_cropland_by_index (np.ndarray): 2D array of geowiki data in index form
         output_dir (str): output dir (Default: None)
     """
     fig, ax = plt.subplots(figsize=(18, 8))
@@ -868,8 +868,8 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     geowiki_cropland_by_index indices
 
     Args:
-        geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
-        pred_results (np.array): 1D array of prediction results correspond to
+        geowiki_cropland_by_index (np.ndarray): 2D array of geowiki data in index form
+        pred_results (np.ndarray): 1D array of prediction results correspond to
                                  geowiki_cropland_by_index indices
         output_dir (str): output dir (Default: None)
     """
@@ -929,8 +929,8 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     Histogram plot of (pred_results - geowiki), with nan removed in pred_results
 
     Args:
-        geowiki_cropland_by_index (np.array): 2D array of geowiki data in index form
-        pred_results (np.array): 1D array of prediction results correspond to
+        geowiki_cropland_by_index (np.ndarray): 2D array of geowiki data in index form
+        pred_results (np.ndarray): 1D array of prediction results correspond to
                                  geowiki_cropland_by_index indices
         output_dir (str): output dir (Default: None)
     """
@@ -964,8 +964,8 @@ def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
     Plot of difference between prediction cropland and maryland cropland
 
     Args:
-        maryland_map (np.array): 2D array map of maryland cropland (reprojected to match agland)
-        pred_map (np.array): 2D array map of predicted cropland
+        maryland_map (np.ndarray): 2D array map of maryland cropland (reprojected to match agland)
+        pred_map (np.ndarray): 2D array map of predicted cropland
         output_dir (str): output dir (Default: None)
     """
     assert (maryland_map.shape == pred_map.shape
@@ -1008,8 +1008,8 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
     Histogram plot of (pred_map - maryland_map)
 
     Args:
-        maryland_map (np.array): 2D array map of maryland cropland (reprojected to match agland)
-        pred_map (np.array): 2D array map of predicted cropland
+        maryland_map (np.ndarray): 2D array map of maryland cropland (reprojected to match agland)
+        pred_map (np.ndarray): 2D array map of predicted cropland
         output_dir (str): output dir (Default: None)
     """
     assert (maryland_map.shape == pred_map.shape
@@ -1042,7 +1042,7 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     Scatter plot of pasture evaluation map.
 
     Args:
-        diff_map (np.array): 2D array of pasture difference map
+        diff_map (np.ndarray): 2D array of pasture difference map
         output_dir (str): output dir (Default: None)
     """
     # Use percentage
@@ -1085,7 +1085,7 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
     Histogram plot of prediction map - reference for pasture
 
     Args:
-        diff_map (np.array): 2D array of pasture difference map
+        diff_map (np.ndarray): 2D array of pasture difference map
         output_dir (str): output dir (Default: None)
     """
     # Use percentage
@@ -1124,7 +1124,7 @@ def plot_weights_array(weights_array):
     Visualize 2D bias correction matrix
 
     Args:
-        weights_array (np.array): 2D bias correction weights matrix
+        weights_array (np.ndarray): 2D bias correction weights matrix
     """
     fig, ax = plt.subplots(figsize=(30, 30))
     im = plt.imshow(weights_array, cmap='magma')

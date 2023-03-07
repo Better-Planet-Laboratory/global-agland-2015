@@ -8,13 +8,13 @@ from utils.process.post_process import make_nonagricultural_mask
 
 def parse_geowiki_cropland(file_dir):
     """
-    Load Geowiki cropland data as np.array with columns centroid_x, centroid_y, sumcrop
+    Load Geowiki cropland data as np.ndarray with columns centroid_x, centroid_y, sumcrop
     Geowiki cropland data: https://doi.pangaea.de/10.1594/PANGAEA.873912
 
     Args:
         file_dir (str): path directory to "loc_all_2.txt"
 
-    Returns: (np.array)
+    Returns: (np.ndarray)
     """
     try:
         cropland_ref = pd.read_csv(file_dir, sep='\t')
@@ -34,10 +34,10 @@ def reproject_geowiki_to_index_coord(geowiki_data, affine):
     indices by nearest neighbors
 
     Args:
-        geowiki_data (np.array): 2D array with columns centroid_x, centroid_y, data
+        geowiki_data (np.ndarray): 2D array with columns centroid_x, centroid_y, data
         affine (affine.Affine): transform
 
-    Returns: (np.array)
+    Returns: (np.ndarray)
     """
     assert (geowiki_data.shape[1] == 3), \
         "Input geowiki must have columns columns centroid_x, centroid_y, data"
@@ -80,7 +80,7 @@ def main():
         "--agland_map_dir",
         type=str,
         default=
-        '../outputs/all_correct_to_subnation_scale_itr3_fr_0/agland_map_output_3.tif',
+        '../outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output_3.tif',
         help="path dir to agland map dir to be evaluated")
     parser.add_argument("--water_body_dir",
                         type=str,

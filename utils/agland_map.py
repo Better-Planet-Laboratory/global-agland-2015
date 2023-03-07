@@ -51,9 +51,9 @@ class AglandMap:
             by accident 
 
         Args:
-            cropland_array (np.array): 2D matrix for cropland probability
-            pasture_array (np.array): 2D matrix for pasture probability
-            other_array (np.array): 2D matrix for other probability
+            cropland_array (np.ndarray): 2D matrix for cropland probability
+            pasture_array (np.ndarray): 2D matrix for pasture probability
+            other_array (np.ndarray): 2D matrix for other probability
             nodata (int): indicator for missing data
             force_load (bool): force the agland map to follow probability distribution
                                by calling CORRECTION_SCALE method (Default: False)
@@ -105,7 +105,7 @@ class AglandMap:
         """
         Return cropland probability map slice
 
-        Returns: (np.array) cropland map
+        Returns: (np.ndarray) cropland map
         """
         return self.data[:, :, AglandMap.CROPLAND_IDX]
 
@@ -113,7 +113,7 @@ class AglandMap:
         """
         Return pasture probability map slice
 
-        Returns: (np.array) pasture map
+        Returns: (np.ndarray) pasture map
         """
         return self.data[:, :, AglandMap.PASTURE_IDX]
 
@@ -121,7 +121,7 @@ class AglandMap:
         """
         Return other probability map slice
 
-        Returns: (np.array) other map
+        Returns: (np.ndarray) other map
         """
         return self.data[:, :, AglandMap.OTHER_IDX]
 
@@ -134,11 +134,11 @@ class AglandMap:
         distribution range (sum up to 1)
 
         Args:
-            mask_index_cropland (tuple of np.array): indices pairs indicating which pixels to
+            mask_index_cropland (tuple of np.ndarray): indices pairs indicating which pixels to
                                                      be factored in cropland slice
-            mask_index_pasture (tuple of np.array): indices pairs indicating which pixels to
+            mask_index_pasture (tuple of np.ndarray): indices pairs indicating which pixels to
                                                     be factored in pasture slice
-            mask_index_other (tuple of np.array): indices pairs indicating which pixels to
+            mask_index_other (tuple of np.ndarray): indices pairs indicating which pixels to
                                                   be factored in other slice
             factor_cropland (float): factor to be applied on cropland
             factor_pasture (float): factor to be applied on pasture
@@ -175,7 +175,7 @@ class AglandMap:
             Cannot specify more than 2 masks, as otherwise the probability distribution will be violated
 
         Args:
-            mask (np.array or list of np.array): boolean mask
+            mask (np.ndarray or list of np.ndarray): boolean mask
         """
         if isinstance(mask, np.ndarray):
             assert (mask.ndim == 2), "Input mask must be 2D"
@@ -211,9 +211,9 @@ class AglandMap:
 
         Args:
             input_dataset (Dataset): input census dataset
-            area_map (np.array): global area map
+            area_map (np.ndarray): global area map
 
-        Returns (tuple of np.array): (n-by-3 array ground truth, n-by-3 array extracted)
+        Returns (tuple of np.ndarray): (n-by-3 array ground truth, n-by-3 array extracted)
         """
         # resize area map to match agalnd map
         assert(area_map.shape == self.get_cropland().shape), "Area map must be the same shape as agland map, otherwise please regenerate"

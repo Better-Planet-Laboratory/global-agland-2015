@@ -98,7 +98,7 @@ class GDD:
             criteria (func): criteria function
             *args: arguments for criteria function
 
-        Returns: (MaskIndex, np.array)
+        Returns: (MaskIndex, np.ndarray)
         """
         mask_index = MaskIndex(criteria(self.gdd_map, self.lat, self.lon, *args))
         gdd_map_mask = np.ones((self.lat.size, self.lon.size), dtype=bool)
@@ -112,7 +112,7 @@ class GDD:
         input grid_size
 
         Args:
-            gdd_map (np.array): 2D np array
+            gdd_map (np.ndarray): 2D np array
             grid_size (float): grid size
         """
         assert (gdd_map.ndim == 2), "Input gdd array must be 2D"
@@ -126,7 +126,7 @@ class GDD:
         Plot GDD map and save as png if output_dir is specified
 
         Args:
-            gdd_array (np.array): 2D np array
+            gdd_array (np.ndarray): 2D np array
             output_dir (str): output dir (Default: None)
             nodata (int): no data indicator (Default: -32768)
             cmap (str or dict): matplotlib cmap
@@ -185,7 +185,7 @@ class MaskIndex:
             width (int): width of mask map
             height (int): height of mask map
 
-        Returns: (np.array) boolean mask matrix
+        Returns: (np.ndarray) boolean mask matrix
         """
         assert (np.max(self.index_tuple[0]) < height), "height too small"
         assert (np.max(self.index_tuple[1]) < width), "width too small"

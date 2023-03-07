@@ -128,7 +128,7 @@ class Dataset:
 
     def to_multinomial_set(self, shuffle=False):
         """
-        Convert census table from pd.DataFrame to np.array format, where the labels are 
+        Convert census table from pd.DataFrame to np.ndarray format, where the labels are 
         prepared for multinomial classification in one step
 
         Note:
@@ -144,7 +144,7 @@ class Dataset:
         Args:
             shuffle (bool, optional): shuffle dataset. Defaults to False.
 
-        Returns: (np.array) dataset
+        Returns: (np.ndarray) dataset
         """
         num_samples = len(self.census_table)
         num_features = len(self.land_cover_code.keys())
@@ -177,7 +177,7 @@ class Dataset:
 
     def to_bernoulli_set(self, shuffle=False):
         """
-        Convert census table from pd.DataFrame to a collection of np.array format, 
+        Convert census table from pd.DataFrame to a collection of np.ndarray format, 
         where the labels are prepared for bernoulli classification in one-vs-rest 
         for each class
 
@@ -201,7 +201,7 @@ class Dataset:
         Args:
             shuffle (bool, optional): shuffle dataset. Defaults to False.
 
-        Returns: (dict) dict of np.array
+        Returns: (dict) dict of np.ndarray
         """
         num_samples = len(self.census_table)
         num_features = len(self.land_cover_code.keys())
@@ -236,7 +236,7 @@ class Dataset:
 
     def to_percentage_set(self, shuffle=False):
         """
-        Convert census table from pd.DataFrame to a collection of np.array format, 
+        Convert census table from pd.DataFrame to a collection of np.ndarray format, 
         where the labels are prepared for regression of percentage values in each class
 
         Note:
@@ -256,7 +256,7 @@ class Dataset:
         Args:
             shuffle (bool, optional): shuffle dataset. Defaults to False.
         
-        Returns: (dict) dict of np.array
+        Returns: (dict) dict of np.ndarray
         """
         num_samples = len(self.census_table)
         num_features = len(self.land_cover_code.keys())

@@ -48,7 +48,7 @@ class OvRBernoulliGradientBoostingTree:
         values follow a probability distribution (scale/softmax)
 
         Args:
-            pred_df (dict of np.array): prediction
+            pred_df (dict of np.ndarray): prediction
             normalization_method (str): 'scale' or 'softmax'. Defaults to 'scale'
         """
         for i, id in enumerate(pred_results):
@@ -250,10 +250,10 @@ class RegressionGradientBoostingTree:
         values follow a probability distribution (Clamp + scale/softmax)
 
         Args:
-            pred_df (dict of np.array): prediction array
+            pred_df (dict of np.ndarray): prediction array
             normalization_method (str): 'scale' or 'softmax'. Defaults to 'scale'
         
-        Returns: (dict of np.array)
+        Returns: (dict of np.ndarray)
         """
         for i, id in enumerate(pred_results):
             current_pred_results = pred_results[id]

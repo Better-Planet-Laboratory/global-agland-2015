@@ -30,7 +30,7 @@ def make_nonagricultural_mask(shape, mask_dir_list=[]):
         shape (tuple): (height, width) of the output mask shape
         mask_dir_list (list of str): list of path directories to nonagricultural mask tif files (Default: [])
 
-    Returns: (np.array) 2D boolean mask matrix
+    Returns: (np.ndarray) 2D boolean mask matrix
     """
     # Load maps
     nonagricultural_mask = np.ones(shape)
@@ -109,7 +109,7 @@ def convert_weights_table_to_raster_array(gdf, value_field, x_min, y_max,
         y_max (float): y max in geo transform
         pixel_size (float):  pixel size in geo transform
 
-    Returns: (np.array) weight matrix
+    Returns: (np.ndarray) weight matrix
     """
     nodata = 1
     x_max = -x_min
@@ -280,9 +280,9 @@ def apply_bias_correction_to_agland_map(agland_map,
 
     Args:
         agland_map (AglandMap): input agland_map to be corrected
-        bc_crop (np.array): weights for cropland
-        bc_past (np.array): weights for pasture
-        bc_other (np.array): weights for other
+        bc_crop (np.ndarray): weights for cropland
+        bc_past (np.ndarray): weights for pasture
+        bc_other (np.ndarray): weights for other
         force_zero (bool): if True, agland map with < threshold will turn into 0% before correction
         threshold (float): threshold in force_zero
         correction_method (str): 'scale' ('softmax' does not provide good results)

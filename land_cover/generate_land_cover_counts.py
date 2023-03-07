@@ -17,11 +17,11 @@ def split_block_matrix(matrix, block_x, block_y):
     Split 2D input matrix into (block_x, block_y) block matrices
 
     Args:
-        matrix (np.array): 2D matrix
+        matrix (np.ndarray): 2D matrix
         block_x (int): block size (row-wise)
         block_y (int): block size (col-wise)
 
-    Returns: (dict) block index(tuple) -> block matrix(np.array)
+    Returns: (dict) block index(tuple) -> block matrix(np.ndarray)
     """
     h, w = matrix.shape
     assert ((h % block_x) == 0), "Height of the matrix must be divisable by block_x"
@@ -42,9 +42,9 @@ def merge_block_matrix(blocks):
     Merge block matrices into single matrix
 
     Args:
-        blocks (dict): block index(tuple) -> block matrix(np.array)
+        blocks (dict): block index(tuple) -> block matrix(np.ndarray)
 
-    Returns: (np.array) single matrix (2D or 3D)
+    Returns: (np.ndarray) single matrix (2D or 3D)
     """
     dtype = list(blocks.values())[0].dtype
     block_x, block_y = list(blocks.keys())[-1]
@@ -72,11 +72,11 @@ def get_blocks_land_cover_percentage_gpu(blocks, kernel_size, code_index):
     block
 
     Args:
-        blocks (dict): block index(tuple) -> block matrix(np.array)
+        blocks (dict): block index(tuple) -> block matrix(np.ndarray)
         kernel_size (int): kernel size
         code_index (list): list of keys for land cover types
 
-    Returns: (dict) block index(tuple) -> block matrix histogram percentage(np.array)
+    Returns: (dict) block index(tuple) -> block matrix histogram percentage(np.ndarray)
 
     """
     categories = np.asarray(code_index)
@@ -109,7 +109,7 @@ def convert_land_cover_percentage_hist_to_Dataset(merged_land_cover_percentage, 
     Convert land cover percentage map into Dataset obj for deployment
 
     Args:
-        merged_land_cover_percentage (np.array): (x, y, c) shape array with c axis representing
+        merged_land_cover_percentage (np.ndarray): (x, y, c) shape array with c axis representing
                                                  histogram percentage for land cover
         land_cover_code (dict): class types(int) -> (str)
         remove_land_cover_feature_index (list): index of land cover type code to be
@@ -145,10 +145,10 @@ def get_land_cover_percentage(x, out, kernel_size, categories):
     is set to be 0
 
     Args:
-        x (np.array): input 2D matrix with shape (m, n)
-        out (np.array): output 3D matrix with shape (m//kernel_size, n//kernel_size, num_categories)
+        x (np.ndarray): input 2D matrix with shape (m, n)
+        out (np.ndarray): output 3D matrix with shape (m//kernel_size, n//kernel_size, num_categories)
         kernel_size (int): kernel size
-        categories (np.array): array of categories indices
+        categories (np.ndarray): array of categories indices
     """
     i1, j1 = cuda.grid(2)
     num_categories = categories.shape[0]

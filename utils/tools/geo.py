@@ -45,13 +45,13 @@ def crop_intermediate_state(array, affine, census_table, index, crop=False):
     cropped matrix with nodata to be -1
 
     Args:
-        array (np.array): 2D map
+        array (np.ndarray): 2D map
         affine (affine.Affine): transform
         census_table (pd.DataFrame): input census table to be matched to
         index (int): index in census table
         crop (bool): crop (Default: False)
 
-    Returns: (np.array)
+    Returns: (np.ndarray)
     """
     # Load numpy array as rasterio.Dataset from memory directly
     with rasterio.io.MemoryFile() as memfile:
