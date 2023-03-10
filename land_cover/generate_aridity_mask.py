@@ -80,15 +80,17 @@ def make_aridity_mask(threshold_AEI, threshold_AI, aridity_map, aei_map, size=(2
 
 if __name__ == '__main__':
 
-    aridity_mask = make_aridity_mask(threshold_AEI=0.1, 
-                                     threshold_AI=0.01, 
-                                     aridity_map=load_aridity_map(tif_path='./Global-AI_ET0_v3_annual/ai_v3_yr.tif', 
-                                                                  tfw_path='./Global-AI_ET0_v3_annual/ai_v3_yr.tfw'),
-                                     aei_map=load_AEI_map('./G_AEI_2015.asc'), 
-                                     size=(2160, 4320))
+    for threshold_AEI in [100, 500, 1000, 5000, 10000]:
+        for threshold_AI in [0.01, 0.02, 0.03, 0.04, 0.05]:
+            aridity_mask = make_aridity_mask(threshold_AEI=threshold_AEI, 
+                                            threshold_AI=threshold_AI, 
+                                            aridity_map=load_aridity_map(tif_path='./Global-AI_ET0_v3_annual/ai_v3_yr.tif', 
+                                                                        tfw_path='./Global-AI_ET0_v3_annual/ai_v3_yr.tfw'),
+                                            aei_map=load_AEI_map('./G_AEI_2015.asc'), 
+                                            size=(2160, 4320))
 
-    save_array_as_tif('./aridity_mask_thAI_001.tif', aridity_mask,
-                    x_min=-180, y_max=90,
-                    pixel_size=0.05, epsg=4326,
-                    no_data_value=-1,
-                    dtype=gdal.GDT_UInt16)
+            save_array_as_tif(f"./aridity_masks/aridity_mask_thAEI_{str(threshold_AEI)}_thAI_{str(threshold_AI).replace('.', '')}.tif", aridity_mask, 
+                              x_min=-180, y_max=90,
+                              pixel_size=0.05, epsg=4326,
+                              no_data_value=-1,
+                              dtype=gdal.GDT_UInt16)
