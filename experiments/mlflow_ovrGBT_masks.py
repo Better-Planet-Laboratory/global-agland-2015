@@ -14,14 +14,17 @@ INPUT_DATASET = Dataset(
 
 MASK_APPLY_ORDER = ['before', 'after']
 THRESHOLD_AI = [0.01, 0.02, 0.03, 0.04, 0.05]
+THRESHOLD_AEI = [100, 500, 1000, 5000, 10000]
 
 
-def do_bias_correction(mask_apply_order, threshold_AI):
+def do_bias_correction(mask_apply_order, threshold_AI, threshold_AEI):
     """
     Apply bias correction to raw prediction agland map
 
     Args:
-        threshold (float): threshold values
+        mask_apply_order (str): order to apply mask
+        threshold_AI (float): threshold values
+        threshold_AEI (float): threshold values
 
     Returns: (AglandMap) AglandMap obj after bias correction 
     """
@@ -45,7 +48,7 @@ def do_bias_correction(mask_apply_order, threshold_AI):
     }
     
     # Prepare masks
-    cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}'.format(str(threshold_AI).replace('.', ''))]
+    cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}_{}'.format(str(threshold_AEI), str(threshold_AI).replace('.', ''))]
     pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask']
     cropland_mask = make_nonagricultural_mask(
         shape=(intermediate_agland_map.height, intermediate_agland_map.width),
@@ -80,30 +83,32 @@ def new_experiment(args):
     Process of a single experiment on post-processing masks without any thresholding to the 
     agaland map values. Search space includes:
     1. Apply masks before bias correction vs. after bias correction
-    2. threshold_AI = [0.01, 0.02, 0.03, 0.04, 0.05]    
+    2. threshold_AI = [0.01, 0.02, 0.03, 0.04, 0.05]  
+    3. threshold_AEI = [100, 500, 1000, 5000, 10000]
     
     To view results, 
     call ``` mlflow ui ``` in terminal for dashboard
 
     Args:
-        args (tuple): mask_apply_order, threshold_AI
+        args (tuple): mask_apply_order, threshold_AI, threshold_AEI
     """
-    mask_apply_order, threshold_AI = args
+    mask_apply_order, threshold_AI, threshold_AEI = args
 
     # Bias correction
-    agland_map_to_test = do_bias_correction(mask_apply_order, threshold_AI)
+    agland_map_to_test = do_bias_correction(mask_apply_order, threshold_AI, threshold_AEI)
 
     # Log metrics
-    with mlflow.start_run(nested=True, run_name=f'mask_apply_{mask_apply_order}_threshold_AI_{threshold_AI}'):
+    with mlflow.start_run(nested=True, run_name=f'mask_apply_{mask_apply_order}_threshold_AI_{threshold_AI}_threshold_AEI_{threshold_AEI}'):
         
         mlflow.log_params({
             'mask_apply_order': mask_apply_order, 
-            'threshold_AI': threshold_AI
+            'threshold_AI': threshold_AI, 
+            'threshold_AEI': threshold_AEI
         })
 
         mlflow_id = mlflow.active_run().info.run_id
 
-        cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}'.format(str(threshold_AI).replace('.', ''))]
+        cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}_{}'.format(str(threshold_AEI), str(threshold_AI).replace('.', ''))]
         pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask']
         metrics_results = compute_metrics(EXPERIMENT_CFG, INPUT_DATASET, agland_map_to_test, 
                                           cropland_mask_list, pasture_mask_list, mlflow_id)
@@ -131,10 +136,10 @@ def new_experiment(args):
 
 
 def run():
-    initialize_iter0_output(EXPERIMENT_CFG, LAND_COVER_COUNTS)
+    # initialize_iter0_output(EXPERIMENT_CFG, LAND_COVER_COUNTS)
     with mlflow.start_run(run_name='exp_ovrGBT_masks'):
         pool = multiprocessing.Pool(processes=3)
-        pool.map(new_experiment, itertools.product(MASK_APPLY_ORDER, THRESHOLD_AI))
+        pool.map(new_experiment, itertools.product(MASK_APPLY_ORDER, THRESHOLD_AI, THRESHOLD_AEI))
 
 
 if __name__ == '__main__':
