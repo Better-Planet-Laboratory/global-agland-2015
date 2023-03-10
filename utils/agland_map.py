@@ -213,8 +213,8 @@ class AglandMap:
         if not np.isnan(value):
             cropland = self.data[:, :, AglandMap.CROPLAND_IDX]
             pasture = self.data[:, :, AglandMap.PASTURE_IDX]
-            cropland[np.where(cropland == np.nan)] = value
-            pasture[np.where(pasture == np.nan)] = value
+            cropland[np.where(np.isnan(cropland))] = value
+            pasture[np.where(np.isnan(pasture))] = value
 
             self.data[:, :, AglandMap.CROPLAND_IDX] = cropland
             self.data[:, :, AglandMap.PASTURE_IDX] = pasture
