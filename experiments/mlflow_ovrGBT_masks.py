@@ -12,9 +12,9 @@ INPUT_DATASET = Dataset(
     remove_land_cover_feature_index=EXPERIMENT_CFG['feature_remove'],
     invalid_data=EXPERIMENT_CFG['invalid_data_handle'])
 
-MASK_APPLY_ORDER = ['before', 'after']
+MASK_APPLY_ORDER = ['before']
 THRESHOLD_AI = [0.01, 0.02, 0.03, 0.04, 0.05]
-THRESHOLD_AEI = [100, 500, 1000, 5000, 10000]
+THRESHOLD_AEI = [0.01, 100, 1000, 5000, 10000]
 
 
 def do_bias_correction(mask_apply_order, threshold_AI, threshold_AEI):
@@ -49,7 +49,7 @@ def do_bias_correction(mask_apply_order, threshold_AI, threshold_AEI):
     
     # Prepare masks
     cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}_{}'.format(str(threshold_AEI), str(threshold_AI).replace('.', ''))]
-    pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask']
+    pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}_{}'.format(str(threshold_AEI), str(threshold_AI).replace('.', ''))]
     cropland_mask = make_nonagricultural_mask(
         shape=(intermediate_agland_map.height, intermediate_agland_map.width),
         mask_dir_list=[EXPERIMENT_CFG['mask'][m] for m in cropland_mask_list])
@@ -109,7 +109,7 @@ def new_experiment(args):
         mlflow_id = mlflow.active_run().info.run_id
 
         cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}_{}'.format(str(threshold_AEI), str(threshold_AI).replace('.', ''))]
-        pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask']
+        pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask_{}_{}'.format(str(threshold_AEI), str(threshold_AI).replace('.', ''))]
         metrics_results = compute_metrics(EXPERIMENT_CFG, INPUT_DATASET, agland_map_to_test, 
                                           cropland_mask_list, pasture_mask_list, mlflow_id)
 
