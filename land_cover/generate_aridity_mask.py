@@ -63,24 +63,28 @@ def make_aridity_mask(threshold_AEI, threshold_AI, aridity_map, aei_map, size=(2
     Returns:
         (np.ndarray): aridity_mask
     """
-    aei_mask = cv2.resize(aei_map, dsize=(size[1], size[0]), interpolation=cv2.INTER_NEAREST)
-    aei_mask[np.where(aei_mask >= threshold_AEI)] = 1
-    aei_mask[np.where(aei_mask != 1)] = 0
+    # Process AEI mask
+    aei_map = cv2.resize(aei_map, dsize=(size[1], size[0]), interpolation=cv2.INTER_NEAREST)
+    aei_mask = np.zeros_like(aei_map)
+
+    aei_mask[np.where(aei_map >= threshold_AEI)] = 1
     aei_mask = 1 - aei_mask
     aei_mask[np.where(aei_mask == 0)] = np.nan
 
-    aridity_mask = cv2.resize(aridity_map, dsize=(size[1], size[0]), interpolation=cv2.INTER_NEAREST)
-    aridity_mask *= aei_mask
-    aridity_mask[np.where(aridity_mask >= threshold_AI)] = 1
-    aridity_mask[np.where(np.isnan(aridity_mask))] = 1
-    aridity_mask[np.where(aridity_mask != 1)] = 0
+    # Process AI mask
+    aridity_map = cv2.resize(aridity_map, dsize=(size[1], size[0]), interpolation=cv2.INTER_NEAREST)
+    aridity_mask = np.zeros_like(aridity_map)
+    aridity_map *= aei_mask
+
+    aridity_mask[np.where(aridity_map >= threshold_AI)] = 1
+    aridity_mask[np.where(np.isnan(aridity_map))] = 1
     aridity_mask.astype(np.uint16)
 
     return aridity_mask
 
 if __name__ == '__main__':
 
-    for threshold_AEI in [100, 500, 1000, 5000, 10000]:
+    for threshold_AEI in [0.01, 100, 1000, 5000, 10000]:
         for threshold_AI in [0.01, 0.02, 0.03, 0.04, 0.05]:
             aridity_mask = make_aridity_mask(threshold_AEI=threshold_AEI, 
                                             threshold_AI=threshold_AI, 
