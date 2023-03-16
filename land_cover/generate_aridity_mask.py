@@ -54,14 +54,14 @@ def make_aridity_mask(threshold_AEI, threshold_AI, aridity_map, aei_map, size=(2
     < threshold_AI is marked as excluded (0) in the final mask, otherwise included (1)
 
     Args:
-        threshold_AEI (_type_): _description_
-        threshold_AI (_type_): _description_
-        aridity_map (_type_): _description_
-        aei_map (_type_): _description_
-        size (tuple, optional): _description_. Defaults to (2160, 4320).
+        threshold_AEI (float): threshold_AEI
+        threshold_AI (float): threshold_AI
+        aridity_map (np.ndarray): aridity_map
+        aei_map (np.ndarray): aei_map
+        size (tuple, optional): size. Defaults to (2160, 4320).
 
     Returns:
-        _type_: _description_
+        (np.ndarray): aridity_mask
     """
     aei_mask = cv2.resize(aei_map, dsize=(size[1], size[0]), interpolation=cv2.INTER_NEAREST)
     aei_mask[np.where(aei_mask >= threshold_AEI)] = 1
@@ -72,8 +72,8 @@ def make_aridity_mask(threshold_AEI, threshold_AI, aridity_map, aei_map, size=(2
     aridity_mask = cv2.resize(aridity_map, dsize=(size[1], size[0]), interpolation=cv2.INTER_NEAREST)
     aridity_mask *= aei_mask
     aridity_mask[np.where(aridity_mask >= threshold_AI)] = 1
+    aridity_mask[np.where(np.isnan(aridity_mask))] = 1
     aridity_mask[np.where(aridity_mask != 1)] = 0
-    aridity_mask[np.where(aridity_mask == np.nan)] = 1
     aridity_mask.astype(np.uint16)
 
     return aridity_mask
