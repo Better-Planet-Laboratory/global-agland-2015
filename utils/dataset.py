@@ -26,6 +26,7 @@ class Dataset:
         # Dataset obj could be train set or deploy set
         # train set is defined as census table with CROPLAND / PASTURE / OTHER attributes
         # deploy set only contains <land cover type>
+        assert (invalid_data in ['scale', 'remove']), "Unknown invalid_data handler"
         self.census_table = census_table
         self.land_cover_code = land_cover_code
         if all([i in self.census_table.columns for i in ['CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER']]):
