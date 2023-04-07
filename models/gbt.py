@@ -157,24 +157,47 @@ class OvRBernoulliGradientBoostingTree:
 
         return pd.DataFrame.from_dict(pred_results)
 
-    def evaluate(self, census_data):
+    def evaluate(self, census_data, normalization_method='scale'):
         """
         Evaluate model on census_data (with ground truth). Output predicition results 
         and ground truth tuple
 
         Args:
             census_data (Dataset): census dataset
+            normalization_method (str): 'scale' or 'softmax'. Defaults to 'scale'
+        
+        Returns: (tuple of np.ndarray) pred, ground_truth
         """
         assert (isinstance(census_data,
                            Dataset)), "Input census_data must be a Dataset obj"
         assert (census_data.type == Dataset.TRAIN_TYPE
                 ), "Input census_data must have ground truth"
 
-        pred_outputs = self.predict(census_data).to_numpy()
+        # pred_outputs = self.predict(census_data).to_numpy()
+        pred_outputs = {}
+        h2o_frame_input = self._convert_input_to_H2OFrame(census_data, False)
+        for i, id in enumerate(self.model_id):
+            pred_outputs[id] = self.model[id].predict(
+                h2o_frame_input[i]).as_data_frame().to_numpy()
+
+        # Take column 1 in each predictor
+        for i in pred_outputs:
+            pred_outputs[i] = pred_outputs[i][:, 1]
+        
+        # Normalize output results
+        pred_outputs = self._normalize_prediction(pred_outputs, normalization_method)
+
+        # Note that the ground truth might not be "correct", since
+        # there could be invalid data samples where coverage is over 100%
         ground_truth = census_data.census_table[[
             'CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER'
         ]].to_numpy()
-        return pred_outputs, ground_truth
+        
+        pred_results = np.zeros_like(ground_truth)
+        for i, id in enumerate(self.model_id):
+            pred_results[:, i] = pred_outputs[id][::2]
+
+        return pred_results, ground_truth
 
     def save(self, output_dir):
         """
