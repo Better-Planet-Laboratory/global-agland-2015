@@ -12,9 +12,12 @@ INPUT_DATASET = Dataset(
     remove_land_cover_feature_index=EXPERIMENT_CFG['feature_remove'],
     invalid_data=EXPERIMENT_CFG['invalid_data_handle'])
 
-MASK_APPLY_ORDER = ['before']
-THRESHOLD_AI = [0.01, 0.02, 0.03, 0.04, 0.05]
-THRESHOLD_AEI = [0.01, 100, 1000, 5000, 10000]
+MASK_APPLY_ORDER = ['after']
+# THRESHOLD_AI = [0.01, 0.02, 0.03, 0.04, 0.05]
+# THRESHOLD_AEI = [0.01, 100, 1000, 5000, 10000]
+
+THRESHOLD_AI = [0.03]
+THRESHOLD_AEI = [0.01]
 
 
 def do_bias_correction(mask_apply_order, threshold_AI, threshold_AEI):
@@ -136,10 +139,10 @@ def new_experiment(args):
 
 
 def run():
-    # initialize_iter0_output(EXPERIMENT_CFG, LAND_COVER_COUNTS)
-    with mlflow.start_run(run_name='exp_ovrGBT_masks'):
-        pool = multiprocessing.Pool(processes=3)
-        pool.map(new_experiment, itertools.product(MASK_APPLY_ORDER, THRESHOLD_AI, THRESHOLD_AEI))
+    initialize_iter0_output(EXPERIMENT_CFG, LAND_COVER_COUNTS)
+    # with mlflow.start_run(run_name='exp_ovrGBT_masks'):
+    #     pool = multiprocessing.Pool(processes=3)
+    #     pool.map(new_experiment, itertools.product(MASK_APPLY_ORDER, THRESHOLD_AI, THRESHOLD_AEI))
 
 
 if __name__ == '__main__':
