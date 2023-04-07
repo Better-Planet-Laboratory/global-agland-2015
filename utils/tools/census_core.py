@@ -121,7 +121,9 @@ def merge_subnation_to_world(world_census, subnational_census, census_setting_cf
 
     Returns: (pd) processed table
     """
-    assert (set(subnational_census.keys()) == set(census_setting_cfg['calibrate'].keys())), \
+    # When subnational_census keys and census_setting_cfg keys are different, it is ok as long as 
+    # subnational_census.keys() are covered in the census_setting_cfg
+    assert (set(subnational_census.keys()).issubset(set(census_setting_cfg['calibrate'].keys()))), \
         'census_setting_cfg[\'calibrate\'] must contain all countries in subnational_census'
     return world_census.replace_subnation(subnational_census, census_setting_cfg, inplace=False, verbose=True)
 
