@@ -317,12 +317,6 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         land_cover_cfg (dict): land cover settings from yaml
         training_cfg (dict): training settings from yaml
     """
-    assert((len(deploy_setting_cfg['post_process']['correction']['force_zero']) \
-        == deploy_setting_cfg['post_process']['correction']['itr']) \
-        if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']) \
-            else is_bool(deploy_setting_cfg['post_process']['correction']['force_zero'])), \
-                'Config force_zero must match itr'
-
     # Load land cover counts histogram map
     land_cover_counts = load_pkl(
         land_cover_cfg['path_dir']['pred_input_map'][:-len('.pkl')])
@@ -364,6 +358,16 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         remove_land_cover_feature_index=deploy_setting_cfg['feature_remove'],
         invalid_data=training_cfg['invalid_data_handle'])
 
+    # Prepare masks
+    cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask']
+    pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask']
+    cropland_mask = make_nonagricultural_mask(
+        shape=(initial_agland_map.height, initial_agland_map.width),
+        mask_dir_list=[deploy_setting_cfg['post_process']['correction']['mask'][m] for m in cropland_mask_list])
+    pasture_mask = make_nonagricultural_mask(
+        shape=(initial_agland_map.height, initial_agland_map.width),
+        mask_dir_list=[deploy_setting_cfg['post_process']['correction']['mask'][m] for m in pasture_mask_list])
+
     # Bias correction iterator
     for i in range(deploy_setting_cfg['post_process']['correction']['itr']):
         # Load previous agland map
@@ -373,6 +377,16 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
             (deploy_setting_cfg['path_dir']['agland_map_output'][:-len('.tif')]
              + '_{}' + '.tif').format(str(i)),
             force_load=True)
+
+        # Apply masks
+        if is_list(deploy_setting_cfg['post_process']['correction']['mask']['switch']):
+            apply_mask = deploy_setting_cfg['post_process']['correction']['mask']['switch'][i]
+        elif deploy_setting_cfg['post_process']['correction']['mask']['switch'] is None:
+            apply_mask = False
+        else:
+            apply_mask = deploy_setting_cfg['post_process']['correction']['mask']['switch']
+        if apply_mask:
+            intermediate_agland_map.apply_mask([cropland_mask, pasture_mask], value=0)
 
         # Do bias correction
         if check_weights_exists(deploy_setting_cfg, i):
@@ -385,15 +399,17 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
                 deploy_setting_cfg, input_dataset,
                 intermediate_agland_map, iter=i, save=True)
 
-        if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']):
-            force_zero = deploy_setting_cfg['post_process']['correction']['force_zero'][i]
+        if is_list(deploy_setting_cfg['post_process']['correction']['force_zero']['switch']):
+            force_zero = deploy_setting_cfg['post_process']['correction']['force_zero']['switch'][i]
+        elif deploy_setting_cfg['post_process']['correction']['force_zero']['switch'] is None:
+            force_zero = False
         else:
-            force_zero = deploy_setting_cfg['post_process']['correction']['force_zero']
+            force_zero = deploy_setting_cfg['post_process']['correction']['force_zero']['switch']
 
         intermediate_agland_map = apply_bias_correction_to_agland_map(
             intermediate_agland_map, bc_crop, bc_past, bc_other,
             force_zero,
-            deploy_setting_cfg['post_process']['correction']['threshold'],
+            deploy_setting_cfg['post_process']['correction']['force_zero']['threshold'],
             deploy_setting_cfg['post_process']['correction']['method'], i)
 
         # Save current intermediate results
