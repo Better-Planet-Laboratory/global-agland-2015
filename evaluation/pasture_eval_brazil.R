@@ -25,8 +25,8 @@ iter <- "3"
 # Load our global predictions for pasture
 exp1_global <- rast(here("outputs/all_correct_to_FAO_scale_itr3_fr_0",
                          paste0("agland_map_output_", iter,".tif")))[[2]] # layer 2 is pasture
-exp2_global <- rast(here("outputs/all_correct_to_subnation_scale_itr3_fr_0",
-                         paste0("agland_map_output_", iter,".tif")))[[2]] # layer 2 is pasture
+# exp2_global <- rast(here("outputs/all_correct_to_subnation_scale_itr3_fr_0",
+#                          paste0("agland_map_output_", iter,".tif")))[[2]] # layer 2 is pasture
 
 # Load our masks
 water_body_mask <- rast(here("land_cover/water_body_mask.tif"))
@@ -109,7 +109,7 @@ proj_bra <- project(prop_bra, exp1_global)
 
 # Crop our rasters (bounding box approx around bra)
 exp1_bra <- crop(exp1_global, ext(-75, -32, -35, 6))
-exp2_bra <- crop(exp2_global, ext(-75, -32, -35, 6))
+# exp2_bra <- crop(exp2_global, ext(-75, -32, -35, 6))
 proj_bra <- crop(proj_bra, ext(-75, -32, -35, 6))
 
 # No need to mask out GDD for Brazil, does not go above 50ºN latitude
@@ -118,13 +118,13 @@ proj_bra <- crop(proj_bra, ext(-75, -32, -35, 6))
 water_body_mask_bra <- crop(water_body_mask, exp1_bra)
 water_body_mask_bra <- project(water_body_mask_bra, exp1_bra)
 exp1_bra <- mask(exp1_bra, water_body_mask_bra, maskvalues=0)
-exp2_bra <- mask(exp2_bra, water_body_mask_bra, maskvalues=0)
+# exp2_bra <- mask(exp2_bra, water_body_mask_bra, maskvalues=0)
 proj_bra <- mask(proj_bra, water_body_mask_bra, maskvalues=0)
 
 # Mask out just bra (not neighbouring countries)
 shp_bra <- vect(here("shapefile/Brazil/gadm36_BRA_1.shp"))
 exp1_bra <- mask(exp1_bra, shp_bra)
-exp2_bra <- mask(exp2_bra, shp_bra)
+# exp2_bra <- mask(exp2_bra, shp_bra)
 proj_bra <- mask(proj_bra, shp_bra)
 
 
@@ -134,7 +134,7 @@ proj_bra <- mask(proj_bra, shp_bra)
 
 # Calculate differences
 absdif_exp1 <- proj_bra-exp1_bra
-absdif_exp2 <- proj_bra-exp2_bra
+# absdif_exp2 <- proj_bra-exp2_bra
 
 
 ##################
@@ -155,15 +155,15 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", p
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(r_bra_agg, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
-writeRaster(proj_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
-writeRaster(exp2_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_pred_map.tif")), overwrite=T)
-writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_map.tif")), overwrite=T)
-hist <- hist(absdif_exp2)
-histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
-mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
-sigma <- round(sd(values(absdif_exp1), na.rm=T), 4)
-musigma <- data.frame(mu=mu, sigma=sigma)
-write.csv(histdf, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_hist.csv")))
-write.csv(musigma, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_musigma.csv")))
+# writeRaster(r_bra_agg, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_landuse.tif"), overwrite=T)
+# writeRaster(proj_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil/brazil_reference.tif"), overwrite=T)
+# writeRaster(exp2_bra, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil",paste0("agland_map_output_",iter,"_brazil_pred_map.tif")), overwrite=T)
+# writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_map.tif")), overwrite=T)
+# hist <- hist(absdif_exp2)
+# histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
+# mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
+# sigma <- round(sd(values(absdif_exp1), na.rm=T), 4)
+# musigma <- data.frame(mu=mu, sigma=sigma)
+# write.csv(histdf, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_hist.csv")))
+# write.csv(musigma, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/brazil", paste0("agland_map_output_",iter,"_brazil_diff_musigma.csv")))
 

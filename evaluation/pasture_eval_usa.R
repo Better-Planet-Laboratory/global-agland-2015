@@ -25,8 +25,8 @@ iter <- "3"
 # Load our global predictions for pasture
 exp1_global <- rast(here("outputs/all_correct_to_FAO_scale_itr3_fr_0",
                          paste0("agland_map_output_", iter,".tif")))[[2]] # layer 2 is pasture
-exp2_global <- rast(here("outputs/all_correct_to_subnation_scale_itr3_fr_0",
-                         paste0("agland_map_output_", iter,".tif")))[[2]] # layer 2 is pasture
+# exp2_global <- rast(here("outputs/all_correct_to_subnation_scale_itr3_fr_0",
+#                          paste0("agland_map_output_", iter,".tif")))[[2]] # layer 2 is pasture
 
 # Load our masks
 water_body_mask <- rast(here("land_cover/water_body_mask.tif"))
@@ -184,7 +184,7 @@ proj_usa <- project(prop_usa, exp1_global)
 
 # Crop our rasters (bounding box approx around USA)
 exp1_usa <- crop(exp1_global, ext(-126, -65, 24, 49))
-exp2_usa <- crop(exp2_global, ext(-126, -65, 24, 49))
+# exp2_usa <- crop(exp2_global, ext(-126, -65, 24, 49))
 proj_usa <- crop(proj_usa, ext(-126, -65, 24, 49))
 
 # No need to mask out GDD for conterminous USA, does not go above 50ºN latitude
@@ -193,13 +193,13 @@ proj_usa <- crop(proj_usa, ext(-126, -65, 24, 49))
 water_body_mask_usa <- crop(water_body_mask, exp1_usa)
 water_body_mask_usa <- project(water_body_mask_usa, exp1_usa)
 exp1_usa <- mask(exp1_usa, water_body_mask_usa, maskvalues=0)
-exp2_usa <- mask(exp2_usa, water_body_mask_usa, maskvalues=0)
+# exp2_usa <- mask(exp2_usa, water_body_mask_usa, maskvalues=0)
 proj_usa <- mask(proj_usa, water_body_mask_usa, maskvalues=0)
 
 # Mask out just USA (not neighbouring countries)
 shp_usa <- vect(here("shapefile/USA/gadm36_USA_1.shp"))
 exp1_usa <- mask(exp1_usa, shp_usa)
-exp2_usa <- mask(exp2_usa, shp_usa)
+# exp2_usa <- mask(exp2_usa, shp_usa)
 proj_usa <- mask(proj_usa, shp_usa)
 
 
@@ -209,7 +209,7 @@ proj_usa <- mask(proj_usa, shp_usa)
 
 # Calculate differences
 absdif_exp1 <- proj_usa-exp1_usa
-absdif_exp2 <- proj_usa-exp2_usa
+# absdif_exp2 <- proj_usa-exp2_usa
 
 
 ##################
@@ -231,16 +231,16 @@ write.csv(histdf, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", past
 write.csv(musigma, here("evaluation/all_correct_to_FAO_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_musigma.csv")))
 
 # Save all_correct_to_subnation_scale
-writeRaster(mask(project(r_usa_nlcd_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
-writeRaster(mask(project(r_usa_range_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
-writeRaster(proj_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
-writeRaster(exp2_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")), overwrite=T)
-writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")), overwrite=T)
-hist <- hist(absdif_exp2)
-histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
-mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
-sigma <- round(sd(values(absdif_exp1), na.rm=T), 4)
-musigma <- data.frame(mu=mu, sigma=sigma)
-write.csv(histdf, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_hist.csv")))
-write.csv(musigma, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_musigma.csv")))
+# writeRaster(mask(project(r_usa_nlcd_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_nlcd.tif"), overwrite=T)
+# writeRaster(mask(project(r_usa_range_agg, exp1_usa),shp_usa), here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_range.tif"), overwrite=T)
+# writeRaster(proj_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa/usa_reference.tif"), overwrite=T)
+# writeRaster(exp2_usa, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_pred_map.tif")), overwrite=T)
+# writeRaster(absdif_exp2, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_map.tif")), overwrite=T)
+# hist <- hist(absdif_exp2)
+# histdf <- data.frame(breaks=hist$breaks[-length(hist$breaks)], counts=hist$counts, density=hist$density, mids=hist$mids)
+# mu <- round(mean(values(absdif_exp1), na.rm=T), 4)
+# sigma <- round(sd(values(absdif_exp1), na.rm=T), 4)
+# musigma <- data.frame(mu=mu, sigma=sigma)
+# write.csv(histdf, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_hist.csv")))
+# write.csv(musigma, here("evaluation/all_correct_to_subnation_scale_itr3_fr_0/usa", paste0("agland_map_output_",iter,"_usa_diff_musigma.csv")))
 
