@@ -171,10 +171,10 @@ SUBNATIONAL_CENSUS = {
     Russia(SHAPEFILE_CFG['path_dir']['Russia'],
            SUBNATIONAL_STATS_CFG['path_dir']['Russia'],
            CENSUS_SETTING_CFG['path_dir']['FAOSTAT']),
-    'SaudiArabia':
-    SaudiArabia(SHAPEFILE_CFG['path_dir']['SaudiArabia'],
-                SUBNATIONAL_STATS_CFG['path_dir']['SaudiArabia'],
-                CENSUS_SETTING_CFG['path_dir']['FAOSTAT']),
+#     'SaudiArabia':
+#     SaudiArabia(SHAPEFILE_CFG['path_dir']['SaudiArabia'],
+#                 SUBNATIONAL_STATS_CFG['path_dir']['SaudiArabia'],
+#                 CENSUS_SETTING_CFG['path_dir']['FAOSTAT']),
     'Slovakia':
     Slovakia(SHAPEFILE_CFG['path_dir']['Slovakia'],
              SUBNATIONAL_STATS_CFG['path_dir']['Slovakia'],
@@ -225,8 +225,14 @@ WORLD_CENSUS = World(SHAPEFILE_CFG['path_dir']['World'],
                      CENSUS_SETTING_CFG['path_dir']['FAOSTAT'],
                      CENSUS_SETTING_CFG['path_dir']['FAOSTAT_profile'])
 
-save_pkl(WORLD_CENSUS, './WORLD_CENSUS')
-save_pkl(SUBNATIONAL_CENSUS, './SUBNATIONAL_CENSUS')
+# PATCH - remove SaudiArabia due to abnormal pasture % in FAO
+def remove_saudi():
+    WORLD_CENSUS.census_table = WORLD_CENSUS.census_table.drop(
+        WORLD_CENSUS.census_table[WORLD_CENSUS.census_table['STATE'] == 'SAUDIARABIA'].index)
+remove_saudi()
+
+save_pkl(WORLD_CENSUS, './outputs/all_correct_to_FAO_scale_itr3_fr_0/WORLD_CENSUS')
+save_pkl(SUBNATIONAL_CENSUS, './outputs/all_correct_to_FAO_scale_itr3_fr_0/SUBNATIONAL_CENSUS')
 
 if __name__ == '__main__':
     pipeline(WORLD_CENSUS, SUBNATIONAL_CENSUS, CENSUS_SETTING_CFG, GDD_CFG,
