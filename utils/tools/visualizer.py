@@ -944,9 +944,9 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     rmse_error = np.sqrt(np.mean(diff**2))
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-90, 15000, r'$\mu={}$'.format(np.round(np.mean(diff), 4)))
-    plt.text(-90, 13000, r'$\sigma={}$'.format(np.round(np.std(diff), 4)))
-    plt.text(-90, 11000, r'RMSE=${}$'.format(np.round(rmse_error, 4)))
+    plt.text(-90, 15000, r'$\mu={}$'.format(np.round(np.mean(diff), 2)))
+    plt.text(-90, 13000, r'$\sigma={}$'.format(np.round(np.std(diff), 2)))
+    plt.text(-90, 11000, r'RMSE=${}$'.format(np.round(rmse_error, 2)))
     plt.xlim(-100, 100)
     plt.hist(diff)
     plt.xlabel('Prediction - Geowiki (%)')
@@ -1021,9 +1021,9 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
     rmse_error = np.sqrt(np.nanmean(diff**2))
 
     fig, ax = plt.subplots(figsize=(10, 6), dpi=600)
-    plt.text(-90, 1800000, r'$\mu={}$'.format(np.round(np.nanmean(diff), 4)))
-    plt.text(-90, 1550000, r'$\sigma={}$'.format(np.round(np.nanstd(diff), 4)))
-    plt.text(-90, 1300000, r'RMSE={}'.format(np.round(rmse_error, 4)))
+    plt.text(-90, 1800000, r'$\mu={}$'.format(np.round(np.nanmean(diff), 2)))
+    plt.text(-90, 1550000, r'$\sigma={}$'.format(np.round(np.nanstd(diff), 2)))
+    plt.text(-90, 1300000, r'RMSE={}'.format(np.round(rmse_error, 2)))
 
     plt.xlim(-100, 100)
     plt.hist(diff.flatten())
@@ -1080,12 +1080,13 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     plt.close()
 
 
-def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
+def plot_histogram_diff_pred_pasture(diff_map, reference_name, output_dir=None):
     """
     Histogram plot of prediction map - reference for pasture
 
     Args:
         diff_map (np.ndarray): 2D array of pasture difference map
+        reference_name (str): reference name of the pasture map ground truth
         output_dir (str): output dir (Default: None)
     """
     # Use percentage
@@ -1097,17 +1098,17 @@ def plot_histogram_diff_pred_pasture(diff_map, output_dir=None):
 
     plt.xlim(-100, 100)
     plt.hist(diff.flatten())
-    plt.xlabel('Prediction - HILDA (%)')
+    plt.xlabel(f"Prediction - {reference_name} (%)")
     plt.ylabel('Frequency (#)')
 
     # Find the gap between text labels (making it consistent for paper)
     _, ymax = ax.get_ylim()
     plt.text(-90, ymax - 0.1 * ymax,
-             r'$\mu={:0.4f}$'.format(np.round(np.nanmean(diff), 4)))
+             r'$\mu={:0.2f}$'.format(np.round(np.nanmean(diff), 2)))
     plt.text(-90, ymax - 0.2 * ymax,
-             r'$\sigma={:0.4f}$'.format(np.round(np.nanstd(diff), 4)))
+             r'$\sigma={:0.2f}$'.format(np.round(np.nanstd(diff), 2)))
     plt.text(-90, ymax - 0.3 * ymax,
-             r'RMSE={:0.4f}'.format(np.round(rmse_error, 4)))
+             r'RMSE={:0.2f}'.format(np.round(rmse_error, 2)))
 
     if output_dir is not None:
         plt.savefig(output_dir,
