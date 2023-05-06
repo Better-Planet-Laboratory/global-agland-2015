@@ -37,7 +37,7 @@ path_dir:
   Portugal: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
   Romania: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
   Russia: ['subnational_stats/Russia/Russia_translated.csv']
-  SaudiArabia: ['subnational_stats/Saudi_Arabia/extracted.xlsx']
+  SaudiArabia: ['subnational_stats/Saudi_Arabia/extracted.xlsx'] # Comment out to only use national FAO data for SaudiArabia
   Slovakia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
   Slovenia: ['subnational_stats/EU/ef_lus_main__custom_2595437_page_spreadsheet.xlsx']
   SouthAfrica: ['subnational_stats/South_Africa/tabula-Report-11-02-012017.csv']

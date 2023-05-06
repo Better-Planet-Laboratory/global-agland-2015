@@ -1,6 +1,6 @@
 path_dir:
   base: 'outputs/'
-  model: 'models/saved_models/all_correct_to_FAO_scale_itr3_fr_0/invalid_scaled/GBM_model_python_1675836440840_1'  # model weights to be loaded (Default: null)
+  model: 'models/saved_models/all_correct_to_FAO_scale_itr3_fr_0/'  # model weights to be loaded (Default: null)
   agland_map_output: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output.tif'
   census_table_input: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/processed_census.pkl'
 
@@ -11,13 +11,23 @@ feature_remove: []  # []
 # Bias correction
 post_process:
 
-  disable_pycno: True
-
+  disable_pycno: False
   correction:
     itr: 3
     method: 'scale'
-    force_zero: [False, False, True]  # force < threshold to be 0
-    threshold: 0.05   # 0.015
+
+    # force < threshold to be 0
+    force_zero:
+      switch: False     # turn on/off at the end of each iteration
+      threshold: null   # 0.015
+
+    mask: 
+      switch: [True, True, True]
+
+      water_body_mask: 'land_cover/water_body_mask.tif'
+      gdd_filter_mask: 'gdd/gdd_filter_map_360x720.tif'
+      antarctica_mask: 'land_cover/antarctica_mask.tif'
+      aridity_mask: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_003.tif'
 
   # if disable_pycno, the following will not be used
   interpolation:

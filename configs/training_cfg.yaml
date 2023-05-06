@@ -1,6 +1,6 @@
 path_dir:
   inputs:
-    census_table_input: 'outputs/processed_census.pkl'
+    census_table_input: 'outputs/all_correct_to_FAO_scale_itr3_fr_0/processed_census.pkl'
     load_model: null  # model weights to be loaded (Default: null)
 
   outputs:
