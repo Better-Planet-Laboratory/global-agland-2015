@@ -15,8 +15,8 @@ SUBNATIONAL_STATS_CFG = io.load_yaml_config(
     ROOT + 'configs/subnational_stats_cfg.yaml')
 SHAPEFILE_CFG = io.load_yaml_config(ROOT + 'configs/shapefile_cfg.yaml')
 
-SUBNATIONAL_CENSUS = load_pkl(ROOT + 'outputs/SUBNATIONAL_CENSUS')
-WORLD_CENSUS = load_pkl(ROOT + 'outputs/WORLD_CENSUS')
+SUBNATIONAL_CENSUS = load_pkl(ROOT + 'outputs/all_correct_to_FAO_scale_itr3_fr_0/SUBNATIONAL_CENSUS')
+WORLD_CENSUS = load_pkl(ROOT + 'outputs/all_correct_to_FAO_scale_itr3_fr_0/WORLD_CENSUS')
 
 
 def mark_nan_filter(census, marker):
