@@ -6,6 +6,7 @@ This project is a continuation and update in methodology of the work from [Raman
 - [Subnational Census](subnational_stats/README.md)
 - [GDD](gdd/README.md)
 - [Land Cover](land_cover/README.md)
+- [Aridity Map]()
 
 ### Results and Analysis
 - [Evaluation](evaluation/README.md)
@@ -21,21 +22,18 @@ This project is a continuation and update in methodology of the work from [Raman
 - [FAOSTAT_data](./FAOSTAT_data/) ([FAOSTAT](https://www.fao.org/faostat/en/) dataset)
 - [subnational_stats](./subnational_stats/) (subnational census dataset)
 - [shapefile](./shapefile/) (shapefile data from [GADM](https://gadm.org/))
-- [evaluation](./evaluation/) (code and comparison results between map predictions and independent sources)
-- [experiments](./experiments/) (a collection of experiment settings)
+- [evaluation](./evaluation/) (code and evaluation results between map predictions and independent sources)
+- [experiments](./experiments/) (a collection of mlflow experiment scripts)
 - [outputs](./outputs/) (a collection of experiment results)
 - [docs/source](./docs/source/) (results figures and visualization scripts)
 
 ### Requirements
 - Option 1 - PIP
-  - Windows users might want to consider using pre-built wheel binary from [Christoph Gohlke](https://www.lfd.uci.edu/~gohlke/pythonlibs/)
-    - pip install package_downloaded.whl
   - Ubuntu users can run the following requirements directly
-    - pip install [requirements.txt](requirements.txt)
+    - ``` pip install -r requirements.txt ```
 - Option 2 - Docker
   - [Dockerfile](Dockerfile)
     - if you encounter issues while importing "gdal_array", I have included a [fix](./docs/source/readmes/gdal_array_fix.md)
-    - for MacOS users, make sure Docker has at least 32GB RAM (Default: 2GB), also uncomment ``` libhdf4-dev ``` in ``` apt-get install ``` in Dockerfile if you are using Apple scilicon chip
 
 ### Merged Census Input
 We use subnational data wherever it is available and fill in with national level data from FAOSTAT elsewhere. Thus we merge census and FAOSTAT data to generate the input dataset for our machine learning model. During the merging process, 2 filters are applied, namely NaN filter and GDD filter.
