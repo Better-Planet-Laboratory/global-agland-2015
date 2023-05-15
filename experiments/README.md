@@ -24,19 +24,14 @@ There are four main components in the pipeline that could be varied to deliver d
   * Options
     * [...] land cover class indices
 
-In the following sections, we present a few experiments we did with variation in settings shown above. All configs for each experiment could be found under ```experiments/```. To reproduce the experiments, just replace the configs files in  the parent directory, then run ```census.py``` -> ```train.py``` -> ```deploy.py```. Since the model name is generated "on the fly", make sure to specify the correct path to the model parameters to be loaded under ```configs/deploy_setting_cfg.yaml``` [path_dir] [model].
-
-To generate plots, go to ```docs/source/scripts/``` and run:
-```
-python -u generate_output_figures.py --itr /index you want/
-```
+It is highly recommanded to use mlflow to setup experiments for this project. Some example code are provided: [threshold space](./mlflow_ovrGBT_th.py), [mask order space](./mlflow_ovrGBT_masks.py). 
 
 ## Training Quality
-Direct performance of model could be illustrated by prediction vs. ground truth plots for cropland, pasture and other. Note that these results are all on state level prior to deployment. We use a 10-fold cross validation to reduce overfitting on train set across all experiements. We can see that the direct model performance is quite good.  
+There can be two ways to evaluate the model performance. One is based on metrics over the cross validation on direct input-output data, the other one is based on metrics over the deployed map. Due to the nature of gradient boosting tree models, it is relatively easier to get good results from former approach. Here we present the results on the latter one for iteration 0 and 3. 
 
-|                                           all_correct_to_FAO_scale_itr3_fr_0                                           |                                           all_correct_to_subnation_scale_itr3_fr_0                                           |
-| :--------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------: |
-| ![raw_perf1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) | ![raw_perf2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/pred_vs_ground_truth_fig.png) |
+|                                          all_correct_to_FAO_scale_itr0_fr_0                                          |                                          all_correct_to_FAO_scale_itr3_fr_0                                          |
+| :------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------: |
+| ![perf0](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/pred_vs_ground_truth_fig_0.png) | ![perf3](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/pred_vs_ground_truth_fig_3.png) |
 
 
 ## Deployment and Bias Correction 
@@ -49,19 +44,3 @@ Since we are doing grid level prediction during deployment (20-by-20 kernel) and
 | ![cropland_map_itr0_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_0_cropland.png) | ![cropland_map_itr1_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_1_cropland.png) | ![cropland_map_itr2_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_2_cropland.png) | ![cropland_map_itr3_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_3_cropland.png) |
 | ![pasture_map_itr0_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_0_pasture.png)   | ![pasture_map_itr1_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_1_pasture.png)   | ![pasture_map_itr2_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_2_pasture.png)   | ![pasture_map_itr3_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_3_pasture.png)   |
 | ![other_map_itr0_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_0_other.png)       | ![other_map_itr1_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_1_other.png)       | ![other_map_itr2_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_2_other.png)       | ![other_map_itr3_1](../docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_3_other.png)       |
-
-
-
-### *all_correct_to_subnation_scale_itr3_fr_0*
-#### Order (top-down): Cropland, Pasture, Other
-| iter 0                                                                                                                          | iter 1                                                                                                                          | iter 2                                                                                                                          | iter 3                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| ![cropland_map_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_0_cropland.png) | ![cropland_map_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_1_cropland.png) | ![cropland_map_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_2_cropland.png) | ![cropland_map_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_3_cropland.png) |
-| ![pasture_map_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_0_pasture.png)   | ![pasture_map_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_1_pasture.png)   | ![pasture_map_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_2_pasture.png)   | ![pasture_map_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_3_pasture.png)   |
-| ![other_map_itr0_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_0_other.png)       | ![other_map_itr1_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_1_other.png)       | ![other_map_itr2_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_2_other.png)       | ![other_map_itr3_2](../docs/source/_static/img/model_outputs/all_correct_to_subnation_scale_itr3_fr_0/output_3_other.png)       |
-
-
-
-
-
-
