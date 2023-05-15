@@ -12,7 +12,7 @@ INPUT_DATASET = Dataset(
     remove_land_cover_feature_index=EXPERIMENT_CFG['feature_remove'],
     invalid_data=EXPERIMENT_CFG['invalid_data_handle'])
 
-MASK_APPLY_ORDER = ['after']
+MASK_APPLY_ORDER = ['after', 'before']
 # THRESHOLD_AI = [0.01, 0.02, 0.03, 0.04, 0.05]
 # THRESHOLD_AEI = [0.01, 100, 1000, 5000, 10000]
 
