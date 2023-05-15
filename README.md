@@ -6,7 +6,7 @@ This project is a continuation and update in methodology of the work from [Raman
 - [Subnational Census](subnational_stats/README.md)
 - [GDD](gdd/README.md)
 - [Land Cover](land_cover/README.md)
-- [Aridity Map]()
+- [Aridity Map](https://zenodo.org/record/6886564#.ZGEKuOzMKHX)
 
 ### Results and Analysis
 - [Evaluation](evaluation/README.md)
