@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import h2o
+from h2o.estimators import H2OKMeansEstimator
+from scipy.spatial.distance import cdist
 
 
 class Dataset:
@@ -288,3 +290,75 @@ class Dataset:
 
         else:
             raise ValueError('Unknown Dataset types')
+
+    def spatial_sampling(self, method, num_samples, masked_indices=[], center_index=None):
+        """
+        Sample data points in dataset with spatial aspects
+        Method #1: 'uniform'
+            Uniformly sample data points on the whole spatial region
+        Method #2: 'blocked'
+            Sample N (including center_index) data points that are closest to center_index in euclidean distances 
+
+        Args:
+            method (str): 'uniform' or 'blocked'
+            num_samples (int): number of data points to be sampled
+            masked_indices (list, optional): indices of data points to be masked out. Defaults to [].
+            center_index (int, optional): center index in 'blocked' method. Defaults to None.
+
+        Returns:
+            list: list of indices in dataset that are selected
+        """
+        def get_centroid_coordinates(census_table):
+            # Get centorid coordinates np array from census_table with geometry attribute
+            centroid_coordinates = np.array(list(
+                census_table['geometry'].apply(
+                    lambda geom: np.array([geom.centroid.x, geom.centroid.y]))))
+            return centroid_coordinates
+
+        def uniform_spatial_sampling(census_table, num_samples, seed=38471):
+            # Uniform spatial sampling
+            # Cluster centroids in the dataset by N group, where N = num_samples
+            # Randomly select a candidate from each group as part of selection
+            centroid_coordinates = get_centroid_coordinates(census_table)
+
+            h2o.init()
+            h2o_coordinates = h2o.H2OFrame(centroid_coordinates, column_names=['x', 'y'])
+            centroid_cluster = H2OKMeansEstimator(k=num_samples, seed=seed)
+            centroid_cluster.train(training_frame=h2o_coordinates)
+
+            cluster_assignments = centroid_cluster.predict(h2o_coordinates)
+            assignment_class = cluster_assignments.as_data_frame().values
+            selected_indices = [census_table.loc[np.random.choice(np.where(assignment_class == i)[0]), 'index_copy'] for i in range(num_samples)]
+            return selected_indices
+
+        def blocked_spatial_sampling(census_table, num_samples, center_index):
+            # Block spatial sampling
+            # Get top N sample points with shortest euclidean distance to center_index
+            assert (center_index is not None), "Must specify center_index"
+            centroid_coordinates = get_centroid_coordinates(census_table)
+
+            distances = cdist(centroid_coordinates, centroid_coordinates)
+            new_center_index = census_table.loc[census_table['index_copy'] == center_index].index[0]
+            top_smallest_indices = np.argsort(distances[new_center_index, :])[:num_samples]
+            selected_indices = [census_table.loc[i, 'index_copy'] for i in top_smallest_indices.tolist()]
+            return selected_indices
+
+        assert (method in ['uniform', 'blocked']), "method can only be either uniform or blocked"
+        
+        # Get masked census table for processing
+        census_table_masked = self.census_table.copy()
+        census_table_masked['index_copy'] = np.arange(0, census_table_masked.shape[0])
+        census_table_masked = census_table_masked.drop(masked_indices)
+        census_table_masked.reset_index(inplace=True, drop=True)
+        assert (1 <= num_samples <= census_table_masked.shape[0]), "num_samples must be in [1, size of masked dataset]"
+
+        if method == 'uniform':
+            selected_indices = uniform_spatial_sampling(census_table_masked, num_samples)
+            
+        elif method == 'blocked':
+            assert (center_index not in masked_indices), "center_index cannot be included in masked_indices"
+            selected_indices = blocked_spatial_sampling(census_table_masked, num_samples, center_index)
+
+        return selected_indices
+
+
