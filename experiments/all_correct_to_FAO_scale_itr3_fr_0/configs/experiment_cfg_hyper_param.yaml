@@ -1,0 +1,17 @@
+#=========== Hyper Parameters Space ===========
+train_ratio: 0.9
+test_ratio: 0.1
+num_folds: 10
+n_trees: [65, 70, 75, 80, 85, 90, 95, 100]
+max_depth: [5, 6, 7, 8, 9, 10]
+
+min_rows: [5, 10, 15]
+learn_rate: [0.05, 0.1, 0.3]
+sample_rate: [1.0]
+col_sample_rate: [0.5, 0.7, 1.0]
+
+
+#=========== Directories ===========
+training_cfg: 'configs/training_cfg.yaml'
+land_cover_cfg: 'configs/land_cover_cfg.yaml'
+output_file: 'experiments/MultinomialGradientBoostingTree_cv_logs.txt'

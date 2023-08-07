@@ -70,6 +70,7 @@ mask:
   aridity_mask_0.01_003: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_003.tif'
   aridity_mask_0.01_004: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_004.tif'
   aridity_mask_0.01_005: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_005.tif'
+  aridity_mask_0.01_01: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_01.tif'
   aridity_mask_100_001: 'land_cover/aridity_masks/aridity_mask_thAEI_100_thAI_001.tif'
   aridity_mask_100_002: 'land_cover/aridity_masks/aridity_mask_thAEI_100_thAI_002.tif'
   aridity_mask_100_003: 'land_cover/aridity_masks/aridity_mask_thAEI_100_thAI_003.tif'
