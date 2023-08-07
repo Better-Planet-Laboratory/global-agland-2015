@@ -31,6 +31,7 @@ class Dataset:
         assert (invalid_data in ['scale', 'remove']), "Unknown invalid_data handler"
         self.census_table = census_table
         self.land_cover_code = land_cover_code
+        self.invalid_data = invalid_data
         if all([i in self.census_table.columns for i in ['CROPLAND_PER', 'PASTURE_PER', 'OTHER_PER']]):
             # Note: these outliers are the ones that have cropland and pasture % 
             #       sum over 100% due to back correction weights. We decided to 
@@ -65,7 +66,8 @@ class Dataset:
         """
         outliers_index = self.census_table.index[self.census_table['OTHER_PER'] < 0].to_list()
         
-        print('Scale outliers: {}'.format(self.census_table.iloc[outliers_index]['STATE'].to_list()))
+        if len(outliers_index) > 0:
+            print('Scale outliers: {}'.format(self.census_table.iloc[outliers_index]['STATE'].to_list()))
         scaling_factor = self.census_table.iloc[outliers_index]['CROPLAND_PER']+self.census_table.iloc[outliers_index]['PASTURE_PER']
         self.census_table.loc[outliers_index, 'CROPLAND_PER'] /= scaling_factor
         self.census_table.loc[outliers_index, 'PASTURE_PER'] /= scaling_factor
@@ -291,6 +293,40 @@ class Dataset:
         else:
             raise ValueError('Unknown Dataset types')
 
+    def get_subset_by_indices(self, indices):
+        """
+        Create a new Dataset object with only input indices included
+
+        Args:
+            indices (list): list of indices to be included
+
+        Returns:
+            Dataset: Dataset object with input indices rows record included
+        """
+        negate_indices = list(set([i for i in range(len(self))]) - set(indices))
+        return self.remove_by_indices(negate_indices)
+
+    def remove_by_indices(self, indices):
+        """
+        Create a new Dataset object with input indices removed
+
+        Args:
+            indices (list): list of indices to be removed
+
+        Returns:
+            Dataset: Dataset object with input indices rows record removed
+        """
+        indices = list(set(indices)) # remove duplicates
+        census_table_masked = self.census_table.copy()
+        census_table_masked['index_copy'] = np.arange(0, census_table_masked.shape[0])
+        census_table_masked = census_table_masked.drop(indices)
+        census_table_masked.reset_index(inplace=True, drop=True)
+
+        return Dataset(census_table_masked,
+         self.land_cover_code,
+         remove_land_cover_feature_index=[], 
+         invalid_data=self.invalid_data)
+
     def spatial_sampling(self, method, num_samples, masked_indices=[], center_index=None):
         """
         Sample data points in dataset with spatial aspects
@@ -321,7 +357,8 @@ class Dataset:
             # Randomly select a candidate from each group as part of selection
             centroid_coordinates = get_centroid_coordinates(census_table)
 
-            h2o.init()
+            h2o.init(enable_assertions=False)  # to prevent over aggressive warnings
+            h2o.no_progress()
             h2o_coordinates = h2o.H2OFrame(centroid_coordinates, column_names=['x', 'y'])
             centroid_cluster = H2OKMeansEstimator(k=num_samples, seed=seed)
             centroid_cluster.train(training_frame=h2o_coordinates)
