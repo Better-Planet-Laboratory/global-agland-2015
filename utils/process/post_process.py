@@ -324,10 +324,19 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
                                   int(max(land_cover_counts.census_table['COL_IDX']) + 1),
 
     # Load model
-    prob_est = gbt.OvRBernoulliGradientBoostingTree(
-        ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
-        max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
-        nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'])
+    # prob_est = gbt.OvRBernoulliGradientBoostingTree(
+    #     ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
+    #     max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
+    #     nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'])
+    prob_est = gbt.MultinomialGradientBoostingTree(
+            ntrees=training_cfg['model']['gradient_boosting_tree']['ntrees'],
+            max_depth=training_cfg['model']['gradient_boosting_tree']['max_depth'],
+            nfolds=training_cfg['model']['gradient_boosting_tree']['nfolds'], 
+            min_rows=training_cfg['model']['gradient_boosting_tree']['min_rows'], 
+            learn_rate=training_cfg['model']['gradient_boosting_tree']['learn_rate'], 
+            sample_rate=training_cfg['model']['gradient_boosting_tree']['sample_rate'], 
+            col_sample_rate=training_cfg['model']['gradient_boosting_tree']['col_sample_rate']
+            )
     try:
         prob_est.load(deploy_setting_cfg['path_dir']['model'])
         print('Model loaded from {}'.format(
