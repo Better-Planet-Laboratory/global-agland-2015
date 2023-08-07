@@ -9,9 +9,13 @@ path_dir:
 
 model:
   gradient_boosting_tree:
-    ntrees: 200
-    max_depth: 10
-    nfolds: 10
+    ntrees: 75
+    max_depth: 6
+    min_rows: 5
+    learn_rate: 0.05
+    sample_rate: 1.0
+    col_sample_rate: 0.5
+    nfolds: 0  # during evaluation
 
 # Land cover feature indices to be removed from training
 # Note: this must match load_model if specified
