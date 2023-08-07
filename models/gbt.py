@@ -439,7 +439,11 @@ class MultinomialGradientBoostingTree:
     def __init__(self,
                  ntrees=50,
                  max_depth=10,
-                 nfolds=10):
+                 nfolds=10, 
+                 min_rows=5, 
+                 learn_rate=0.05, 
+                 sample_rate=1.0, 
+                 col_sample_rate=0.5):
         """
         Constructor that initializes a multinomial gradient boosting tree model
 
@@ -451,6 +455,10 @@ class MultinomialGradientBoostingTree:
             ntrees (int): number of trees (Default: 50)
             max_depth (int): max. depth of tree (Default: 10)
             nfolds (int): number of folds for cross validation (Default: 10)
+            min_rows (int): min rows (Default: 5)
+            learn_rate (float): learning rate (Default: 0.05)
+            sample_rate (float): sampling rate (Default: 1.0)
+            col_sample_rate (float): column sampling rate (Default: 0.5)
         """
         h2o.init()
         self.model = H2OGradientBoostingEstimator(
@@ -460,7 +468,11 @@ class MultinomialGradientBoostingTree:
             weights_column='WEIGHTS',
             distribution='multinomial',
             ntrees=ntrees,
-            max_depth=max_depth)
+            max_depth=max_depth, 
+            min_rows=min_rows, 
+            learn_rate=learn_rate, 
+            sample_rate=sample_rate, 
+            col_sample_rate=col_sample_rate)
 
     def _convert_input_to_H2OFrame(self, census_data, shuffle=False):
         """
@@ -562,6 +574,86 @@ class MultinomialGradientBoostingTree:
         Args:
             model_path (str): model path to be loaded
         """
-        self.model = h2o.load_model(model_path)
+        self.model = h2o.load_model(os.path.join(model_path, os.listdir(model_path)[0]))
         print(
             'Model parameters successfully loaded from {}'.format(model_path))
+
+
+class OvRBernoulliGradientBoostingTreeWithCustomCV(OvRBernoulliGradientBoostingTree):
+    def __init__(self, 
+                 ntrees=[50]*3, 
+                 max_depth=[10]*3, 
+                 nclasses=3):
+        os.environ["JAVA_ARGS"] = "-ea:"
+        h2o.init(enable_assertions=False)  # to prevent over aggressive warnings
+        h2o.no_progress()
+        self.model = None
+        self.reset_hyper_params(ntrees, max_depth, nclasses)
+    
+    def reset_hyper_params(self, ntrees, max_depth, nclasses):
+        assert(len(ntrees) == nclasses), "length of ntrees must match nclasses"
+        assert(len(max_depth) == nclasses), "length of max_depth must match nclasses"
+        if self.model is not None:
+            h2o.remove(self.model)
+        self.model = {}
+        self.model_id = [f'class_{int(i)}' for i in range(nclasses)]
+        for i, p in enumerate(self.model_id):
+            current_model = H2OGradientBoostingEstimator(
+                nfolds=0,
+                weights_column='WEIGHTS',
+                distribution='bernoulli',
+                ntrees=ntrees[i],
+                max_depth=max_depth[i], 
+                min_rows=50)
+            self.model[p] = current_model
+
+
+class MultinomialGradientBoostingTreeWithCustomCV(MultinomialGradientBoostingTree):
+    def __init__(self, 
+                 ntrees=50, 
+                 max_depth=10,
+                 min_rows=10, 
+                 learn_rate=0.3, 
+                 sample_rate=1.0, 
+                 col_sample_rate=0.5, 
+                 balance_classes=False
+                 ):
+        os.environ["JAVA_ARGS"] = "-ea:"
+        h2o.init(enable_assertions=False)  # to prevent over aggressive warnings
+        h2o.no_progress()
+        self.model = None
+        self.reset_hyper_params(
+            ntrees,
+            max_depth, 
+            min_rows, 
+            learn_rate, 
+            sample_rate, 
+            col_sample_rate, 
+            balance_classes
+            )
+    
+    def reset_hyper_params(self, 
+                           ntrees=50, 
+                           max_depth=10,
+                           min_rows=10, 
+                           learn_rate=0.3, 
+                           sample_rate=1.0, 
+                           col_sample_rate=0.5, 
+                           balance_classes=False
+                           ):
+        if self.model is not None:
+            h2o.remove(self.model)
+        self.model = H2OGradientBoostingEstimator(
+            nfolds=0,
+            seed=1111,
+            keep_cross_validation_predictions=False,
+            weights_column='WEIGHTS',
+            distribution='multinomial',
+            ntrees=ntrees,
+            max_depth=max_depth, 
+            min_rows=min_rows, 
+            learn_rate=learn_rate, 
+            sample_rate=sample_rate, 
+            col_sample_rate=col_sample_rate, 
+            balance_classes=balance_classes)
+
