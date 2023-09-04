@@ -12,14 +12,16 @@ feature_remove: []  # []
 post_process:
 
   disable_pycno: False
+  # disable_pycno: True
   correction:
     itr: 3
     method: 'scale'
+    criteria: 'area' # 'percentage' or 'area'
 
     # force < threshold to be 0
     force_zero:
-      switch: False     # turn on/off at the end of each iteration
-      threshold: null   # 0.015
+      switch: [True, True, True]     # turn on/off at the end of each iteration
+      threshold: 0.05   # 0.015
 
     mask: 
       switch: [True, True, True]

@@ -10,9 +10,9 @@ path_dir:
 model:
   gradient_boosting_tree:
     ntrees: 75
-    max_depth: 6
+    max_depth: 5
     min_rows: 5
-    learn_rate: 0.05
+    learn_rate: 0.1
     sample_rate: 1.0
     col_sample_rate: 0.5
     nfolds: 0  # during evaluation
