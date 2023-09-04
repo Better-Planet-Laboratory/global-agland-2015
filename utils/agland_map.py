@@ -220,6 +220,18 @@ class AglandMap:
             self.data[:, :, AglandMap.PASTURE_IDX] = pasture
             self.data[:, :, AglandMap.OTHER_IDX] = 1 - self.data[:, :, AglandMap.CROPLAND_IDX] - self.data[:, :, AglandMap.PASTURE_IDX]            
 
+    def fill_nan(self, value=0):
+        """
+        Fill nan in cropland and pasture map with value
+
+        Args:
+            value (float, optional): Value to be used to replace nan in cropland and pasture. Defaults to 0.
+        """
+        assert(0 <= value <= 0.5), "value must be in [0, 0.5]"
+        self.data[:, :, AglandMap.CROPLAND_IDX] = np.nan_to_num(self.data[:, :, AglandMap.CROPLAND_IDX], nan=value)
+        self.data[:, :, AglandMap.PASTURE_IDX] = np.nan_to_num(self.data[:, :, AglandMap.PASTURE_IDX], nan=value)
+        self.data[:, :, AglandMap.OTHER_IDX] = 1 - self.data[:, :, AglandMap.CROPLAND_IDX] - self.data[:, :, AglandMap.PASTURE_IDX]
+
     def extract_state_level_data(self, input_dataset, area_map):
         """
         Extract state level results for cropland, pasture and other into a n-by-3 array. States are

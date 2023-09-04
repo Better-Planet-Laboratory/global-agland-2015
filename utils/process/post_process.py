@@ -8,6 +8,7 @@ from models import gbt
 from utils.tools.census_core import load_census_table_pkl
 from utils.tools.geo import crop_intermediate_state
 from utils.tools.pycno_interp import rasterio, rasterize, pycno
+from utils.constants import *
 
 BIAS_CORRECTION_ATTRIBUTES = ['BC_CROP', 'BC_PAST', 'BC_OTHE']
 
@@ -183,12 +184,22 @@ def generate_weights_array(deploy_setting_cfg,
         ground_truth_pasture = input_dataset.census_table.iloc[i][
             'PASTURE_PER']
         ground_truth_other = input_dataset.census_table.iloc[i]['OTHER_PER']
+        ground_truth_area = input_dataset.census_table.iloc[i]['AREA']
 
         # Average % = sum(C*A)/sum(A)
         out_area[np.where(out_area == -1)] = 0
         mean_pred_cropland = np.sum(out_cropland * out_area) / np.sum(out_area)
         mean_pred_pasture = np.sum(out_pasture * out_area) / np.sum(out_area)
         mean_pred_other = np.sum(out_other * out_area) / np.sum(out_area)
+
+        # If criteria is based on total areial agland
+        if deploy_setting_cfg['post_process']['correction']['criteria'] == 'area':
+            ground_truth_cropland *= ground_truth_area*KHA_TO_KM2
+            ground_truth_pasture *= ground_truth_area*KHA_TO_KM2
+            ground_truth_other *= ground_truth_area*KHA_TO_KM2
+            mean_pred_cropland *= np.sum(out_area)
+            mean_pred_pasture *= np.sum(out_area)
+            mean_pred_other *= np.sum(out_area)
 
         # If average values is found to be 0 that means the state level is not
         # presented in agland map. This is due to the change in resolution from census_table
@@ -398,6 +409,7 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
             intermediate_agland_map.apply_mask([cropland_mask, pasture_mask], value=0)
 
         # Do bias correction
+        intermediate_agland_map.fill_nan(value=0)
         if check_weights_exists(deploy_setting_cfg, i):
             print('Bias correction weights loaded')
             bc_crop, bc_past, bc_other = load_weights_array(
