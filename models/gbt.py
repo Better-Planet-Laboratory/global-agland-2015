@@ -574,7 +574,7 @@ class MultinomialGradientBoostingTree:
         Args:
             model_path (str): model path to be loaded
         """
-        self.model = h2o.load_model(os.path.join(model_path, os.listdir(model_path)[0]))
+        self.model = h2o.load_model(os.path.join(model_path, [i for i in os.listdir(model_path) if '.' not in i][0]))
         print(
             'Model parameters successfully loaded from {}'.format(model_path))
 
