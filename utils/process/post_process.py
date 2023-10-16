@@ -39,17 +39,18 @@ def make_nonagricultural_mask(shape, mask_dir_list=[]):
 
         # merge each mask
         for mask_dir in mask_dir_list:
-            current_mask = rasterio.open(mask_dir).read(1)
+            if len(mask_dir) != 0: 
+                current_mask = rasterio.open(mask_dir).read(1)
 
-            # resize map to match the input shape
-            # use nearest neighbors as interpolation method
-            current_mask_scaled = cv2.resize(current_mask,
-                                             dsize=(shape[1], shape[0]),
-                                             interpolation=cv2.INTER_NEAREST)
+                # resize map to match the input shape
+                # use nearest neighbors as interpolation method
+                current_mask_scaled = cv2.resize(current_mask,
+                                                dsize=(shape[1], shape[0]),
+                                                interpolation=cv2.INTER_NEAREST)
 
-            # merge
-            nonagricultural_mask = np.multiply(nonagricultural_mask,
-                                               current_mask_scaled)
+                # merge
+                nonagricultural_mask = np.multiply(nonagricultural_mask, 
+                                                   current_mask_scaled)
 
     return nonagricultural_mask
 
@@ -306,9 +307,9 @@ def apply_bias_correction_to_agland_map(agland_map,
     other_map = agland_map.get_other()
 
     if force_zero:
-        cropland_map[np.where(cropland_map < threshold)] = 0
-        pasture_map[np.where(pasture_map < threshold)] = 0
-        other_map[np.where(other_map < threshold)] = 0
+        cropland_map[np.where(cropland_map < threshold)] = 0.01
+        pasture_map[np.where(pasture_map < threshold)] = 0.01
+        other_map[np.where(other_map < threshold)] = 0.01
 
     return AglandMap(cropland_map * bc_crop,
                      pasture_map * bc_past,
