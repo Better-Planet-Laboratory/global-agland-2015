@@ -1053,25 +1053,20 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
     plt.axis('off')
 
-    # Default: (-0.08, 0.20, 0.5, 1)
-    # hyde: (-0.08, 0.20, 0.35, 0.92)
-    # brazil: (-0.08, 0.20, 0.6, 0.92)
-    # australia: (-0.08, 0.20, 0.5, 0.92)
-    # europe: diff = diff[80:-1, 150:] for demo, (-0.05, 0.20, 0.4, 0.92)
-    # usa: (-0.08, 0.20, 0.26, 0.99)
-    axins = inset_axes(ax,
-                       width="5%",
-                       height="50%",
-                       loc='lower left',
-                       bbox_to_anchor=(0.08, 0.20, 0.32, 1.00),
-                       bbox_transform=ax.transAxes,
-                       borderpad=0)
-    cbar = fig.colorbar(im, cax=axins, orientation='vertical')
-    cbar.ax.tick_params(labelsize=11.5)
-    cbar.set_label('Pasture Area \nDifference (%)',
-                   rotation=90,
-                   labelpad=-120,
-                   y=0.55)
+    # Comment out for MS
+    # axins = inset_axes(ax,
+    #                    width="5%",
+    #                    height="50%",
+    #                    loc='lower left',
+    #                    bbox_to_anchor=(0.08, 0.20, 0.32, 1.00),
+    #                    bbox_transform=ax.transAxes,
+    #                    borderpad=0)
+    # cbar = fig.colorbar(im, cax=axins, orientation='vertical')
+    # cbar.ax.tick_params(labelsize=11.5)
+    # cbar.set_label('Pasture Area \nDifference (%)',
+    #                rotation=90,
+    #                labelpad=-120,
+    #                y=0.55)
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
