@@ -11,8 +11,8 @@ feature_remove: []  # []
 # Bias correction
 post_process:
 
-  disable_pycno: False
-  # disable_pycno: True
+  # disable_pycno: False
+  disable_pycno: True
   correction:
     itr: 3
     method: 'scale'
@@ -20,8 +20,8 @@ post_process:
 
     # force < threshold to be 0
     force_zero:
-      switch: [True, True, True]     # turn on/off at the end of each iteration
-      threshold: 0.05   # 0.015
+      switch: [True, True, False]     # turn on/off at the end of each iteration
+      threshold: 0.00   # 0.015
 
     mask: 
       switch: [True, True, True]
@@ -29,7 +29,10 @@ post_process:
       water_body_mask: 'land_cover/water_body_mask.tif'
       gdd_filter_mask: 'gdd/gdd_filter_map_360x720.tif'
       antarctica_mask: 'land_cover/antarctica_mask.tif'
-      aridity_mask: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_003.tif'
+      # aridity_mask: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_003.tif'
+      aridity_mask: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_005.tif'
+      australia_cropland_mask: 'land_cover/AgProbabilitySurfaces_2015_16/australia_cropland_mask.tif'
+      australia_pasture_mask: 'land_cover/AgProbabilitySurfaces_2015_16/australia_pasture_mask.tif'
 
   # if disable_pycno, the following will not be used
   interpolation:

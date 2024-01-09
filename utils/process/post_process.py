@@ -380,8 +380,9 @@ def pipeline(deploy_setting_cfg, land_cover_cfg, training_cfg):
         invalid_data=training_cfg['invalid_data_handle'])
 
     # Prepare masks
-    cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask']
-    pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask']
+    cropland_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask', 'australia_cropland_mask']
+    pasture_mask_list = ['water_body_mask', 'gdd_filter_mask', 'antarctica_mask', 'aridity_mask', 'australia_pasture_mask']
+
     cropland_mask = make_nonagricultural_mask(
         shape=(initial_agland_map.height, initial_agland_map.width),
         mask_dir_list=[deploy_setting_cfg['post_process']['correction']['mask'][m] for m in cropland_mask_list])
