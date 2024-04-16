@@ -98,9 +98,10 @@ OTHER_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
     N=1001)
 
 LAND_COVER_CMAP17 = colors.ListedColormap([
-    '#193300', '#00994C', '#CCCC00', '#CC6600', '#CCFFE5', '#4C0099',
-    '#0000CC', '#CC0000', '#FF9933', '#99FFFF', '#003333', '#660033',
-    '#000033', '#6666FF', '#FFFFCC', '#E5FFCC', '#E5CCFF'
+    # https://commons.wikimedia.org/wiki/File:Land_cover_IGBP.png
+    '#008000', '#00ff03', '#99cc02', '#99ff99', '#339966', '#993366',
+    '#ffcc99', '#ccffcc', '#ffcc01', '#ff9900', '#006699', '#ffff03',
+    '#ff0000', '#999966', '#ffffff', '#808080', '#010080'
 ])
 
 
@@ -459,7 +460,7 @@ def plot_merged_census(census_table, marker, gdd_config, output_dir=None):
     """
     # Load GDD mask
     gdd_mask_raster = rasterio.open(gdd_config['path_dir']['GDD_filter_map'])
-
+    
     # Flip marker
     marker_flipped = {v: k for k, v in marker.items()}
 
