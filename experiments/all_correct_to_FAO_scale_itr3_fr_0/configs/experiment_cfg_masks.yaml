@@ -63,7 +63,7 @@ img_path: 'experiments/all_correct_to_FAO_scale_itr3_fr_0/img/'
 #=========== Post-process settings ===========
 mask:
   water_body_mask: 'land_cover/water_body_mask.tif'
-  gdd_filter_mask: 'gdd/gdd_filter_map_360x720.tif'
+  gdd_filter_mask: 'gdd/gdd_mask_scaled.tif'
   antarctica_mask: 'land_cover/antarctica_mask.tif'
   aridity_mask_0.01_001: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_001.tif'
   aridity_mask_0.01_002: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_002.tif'

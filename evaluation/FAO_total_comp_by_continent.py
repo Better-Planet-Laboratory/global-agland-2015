@@ -81,7 +81,7 @@ def main():
                         help="path dir to water body mask tif")
     parser.add_argument("--gdd_filter_map_dir",
                         type=str,
-                        default='gdd/gdd_filter_map_360x720.tif',
+                        default='gdd/gdd_filter_map_21600x43200.tif',
                         help="path dir to gdd filter map tif")
     parser.add_argument("--global_area_map_dir",
                         type=str,
@@ -117,6 +117,16 @@ def main():
 
     cropland_map = agland_map.get_cropland().copy()
     pasture_map = agland_map.get_pasture().copy()
+
+    # ======================= TO BE DELETED =======================
+    # cropland_map[cropland_map <= 0.03] = 0
+    # pasture_map[pasture_map <= 0.03] = 0
+    # other_copy = np.ones_like(cropland_map) - cropland_map - pasture_map
+    # agland_map.data = np.zeros((agland_map.height, agland_map.width, 3))
+    # agland_map.data[:, :, 0] = cropland_map
+    # agland_map.data[:, :, 1] = pasture_map
+    # agland_map.data[:, :, 2] = other_copy
+    # =============================================================
 
     # Load global area map
     # Note: Area map is aggregatable, therefore when agland map size is

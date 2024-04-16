@@ -72,19 +72,20 @@ class GDD:
         self.lat = np.arange(-90, 90, grid_size)
         self.lon = np.arange(-180, 180, grid_size)
 
-    def rescale(self, grid_size):
+    def rescale(self, grid_size, interpolation=cv2.INTER_LINEAR):
         """
         Rescale gdd map to match new input grid_size
 
         Args:
             grid_size (float): grid size
+            interpolation (int): cv2 interpolation method
 
         Returns: (GDD)
         """
         self.lat = np.arange(-90, 90, grid_size)
         self.lon = np.arange(-180, 180, grid_size)
         gdd_map_scaled = cv2.resize(self.gdd_map, dsize=(self.lon.size, self.lat.size),
-                                    interpolation=cv2.INTER_NEAREST)
+                                    interpolation=interpolation)
         self.gdd_map = gdd_map_scaled
 
         return self

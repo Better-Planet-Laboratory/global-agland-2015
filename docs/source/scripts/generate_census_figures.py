@@ -4,7 +4,7 @@ from utils.tools.visualizer import *
 from utils import io
 from gdd.gdd_criteria import gdd_crop_criteria
 
-# Only include nan_filter regions as grey (with gdd_filter on top of the raster)
+# Only include nan_filter regions as grey (with gdd_mask on top of the raster)
 MARKER = {'nan_filter': -1, 'gdd_mask': -2}
 
 ROOT = './'  # run from root
@@ -151,8 +151,8 @@ def main():
     # Mark gdd filter
     GDD_CFG['path_dir'][
         'GDD_filter_map'] = ROOT + GDD_CFG['path_dir']['GDD_filter_map']
-    # merged_census = mark_GDD_filter(merged_census, GDD_CFG, CENSUS_SETTING_CFG['GDD_filter']['accept_ratio'],
-    #                                 MARKER['gdd_filter'], gdd_crop_criteria)
+    merged_census = mark_GDD_filter(merged_census, GDD_CFG, CENSUS_SETTING_CFG['GDD_filter']['accept_ratio'],
+                                    MARKER['gdd_mask'], gdd_crop_criteria, GDD_CFG['path_dir']['land_cover_map'])
     # print(
     #     'After gdd filter: {}'.format(len(merged_census) - list(merged_census['CROPLAND']).count(MARKER['gdd_filter'])
     #                                   - list(merged_census['CROPLAND']).count(MARKER['nan_filter'])))

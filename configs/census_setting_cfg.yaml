@@ -11,6 +11,7 @@ path_dir:
 GDD_filter:
   # STATE sample with GDD included region / total region < accept_ratio
   # will be filtered from dataset
+  # accept_ratio: 0.01
   accept_ratio: 0.95
 
 NaN_filter:

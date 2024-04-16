@@ -22,7 +22,7 @@ def main():
                         help="path dir to water body mask tif")
     parser.add_argument("--gdd_filter_map_dir",
                         type=str,
-                        default='../gdd/gdd_filter_map_360x720.tif',
+                        default='../gdd/gdd_filter_map_21600x43200.tif',
                         help="path dir to gdd filter map tif")
     parser.add_argument("--output_dir",
                         type=str,

@@ -30,7 +30,7 @@ exp1_global <- rast(here("outputs/all_correct_to_FAO_scale_itr3_fr_0",
 
 # Load our masks
 water_body_mask <- rast(here("land_cover/water_body_mask.tif"))
-gdd_mask <- rast(here("gdd/gdd_filter_map_360x720.tif"))
+gdd_mask <- rast(here("gdd/gdd_filter_map_21600x43200.tif"))
 
 # Load reference maps
 file_eu <- here("evaluation/pasture_reference_maps/europe/lcv_landcover.231_lucas.corine.eml_p_30m_0..0cm_2015_eumap_epsg3035_v0.2.tif")

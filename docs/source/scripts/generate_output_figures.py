@@ -29,8 +29,7 @@ def pack_agland_maps(input_dir):
         for path in agland_maps_path:
             itr = int(path[len(prefix):-len(suffix)])
             agland_maps_table[itr] = load_tif_as_AglandMap(os.path.join(
-                input_dir, path),
-                                                           force_load=True)
+                input_dir, path), force_load=True)
 
     return agland_maps_table
 
@@ -54,12 +53,17 @@ def main():
                         help="path dir to water body mask tif")
     parser.add_argument("--gdd_filter_map_dir",
                         type=str,
-                        default='../../../gdd/gdd_filter_map_360x720.tif',
+                        default='../../../gdd/gdd_filter_map_21600x43200.tif',
                         help="path dir to gdd filter map tif")
     parser.add_argument("--antarctica_mask_dir",
                         type=str,
                         default='../../../land_cover/antarctica_mask.tif',
                         help="path dir to antarctica mask tif")
+    parser.add_argument("--aridity_mask_dir",
+                    type=str,
+                    default='../../../land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_005.tif',
+                    help="path dir to aridity mask tif")
+                                        
     parser.add_argument(
         "--global_boundary_shp",
         type=str,
@@ -122,12 +126,30 @@ def main():
                                      mask_dir_list=[
                                          args.water_body_dir,
                                          args.gdd_filter_map_dir,
-                                         args.antarctica_mask_dir
+                                         args.antarctica_mask_dir, 
+                                         args.aridity_mask_dir
                                      ])
     for itr, agland_map in agland_maps_table.items():
         output_map_dir = os.path.join(args.output_dir,
                                       'output_{}_'.format(str(itr)))
-        agland_maps_table[itr] = agland_map.apply_mask(mask)
+        # agland_maps_table[itr] = agland_map.apply_mask(mask)   # TODO: not applying any mask for now
+
+        # # ======================= TO BE DELETED =======================
+
+        # if itr == 3:
+        #     cropland_copy = agland_map.get_cropland()
+        #     pasture_copy = agland_map.get_pasture()
+            
+        #     cropland_copy[cropland_copy <= 0.03] = 0
+        #     pasture_copy[pasture_copy <= 0.03] = 0
+        #     other_copy = np.ones_like(cropland_copy) - cropland_copy - pasture_copy
+        #     agland_map.data = np.zeros((agland_map.height, agland_map.width, 3))
+        #     agland_map.data[:, :, 0] = cropland_copy
+        #     agland_map.data[:, :, 1] = pasture_copy
+        #     agland_map.data[:, :, 2] = other_copy
+
+        # # =============================================================
+
 
         save_array_as_tif(output_map_dir + 'cropland.tif',
                           agland_map.get_cropland(),

@@ -1,7 +1,8 @@
 path_dir:
   GDD_xyz: 'gdd/gdd.xyz.txt'
-  GDD_filter_map: 'gdd/gdd_filter_map_360x720.tif'
+  GDD_filter_map: 'gdd/gdd_filter_map_21600x43200.tif'
   GDD_mask_index: 'gdd/gdd_mask_index.csv'
+  land_cover_map: 'land_cover/MCD12Q1_merged.tif'
 
 setting:
   GDD_xyz:

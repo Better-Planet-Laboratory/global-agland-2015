@@ -11,8 +11,8 @@ feature_remove: []  # []
 # Bias correction
 post_process:
 
-  # disable_pycno: False
-  disable_pycno: True
+  # disable_pycno: True
+  disable_pycno: False
   correction:
     itr: 3
     method: 'scale'
@@ -27,7 +27,7 @@ post_process:
       switch: [True, True, True]
 
       water_body_mask: 'land_cover/water_body_mask.tif'
-      gdd_filter_mask: 'gdd/gdd_filter_map_360x720.tif'
+      gdd_filter_mask: 'gdd/gdd_filter_map_21600x43200.tif'
       antarctica_mask: 'land_cover/antarctica_mask.tif'
       # aridity_mask: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_003.tif'
       aridity_mask: 'land_cover/aridity_masks/aridity_mask_thAEI_0.01_thAI_005.tif'
