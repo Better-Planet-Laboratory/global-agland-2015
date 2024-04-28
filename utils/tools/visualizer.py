@@ -281,7 +281,8 @@ def plot_agland_map_tif(agland_map_tif,
                                  column='min_zoom',
                                  edgecolor='black',
                                  legend=False,
-                                 cmap=colors.ListedColormap([TRANSPARENT]))
+                                 cmap=colors.ListedColormap([TRANSPARENT]), 
+                                 zorder=10)
         ax.set_axis_off()
 
     # Plot agland map content

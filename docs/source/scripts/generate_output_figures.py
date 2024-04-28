@@ -132,7 +132,7 @@ def main():
     for itr, agland_map in agland_maps_table.items():
         output_map_dir = os.path.join(args.output_dir,
                                       'output_{}_'.format(str(itr)))
-        # agland_maps_table[itr] = agland_map.apply_mask(mask)   # TODO: not applying any mask for now
+        # agland_maps_table[itr] = agland_map.apply_mask(mask)   
 
         # # ======================= TO BE DELETED =======================
 
