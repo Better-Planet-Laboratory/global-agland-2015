@@ -94,6 +94,10 @@ def main():
                         type=str,
                         default='./',
                         help="path dir to output evaluation figs")
+    parser.add_argument("--global_boundary_shp",
+                        type=str,
+                        default='../shapefile/ne_10m_land/ne_10m_land.shp',
+                        help="path dir to global boundary shp")
 
     args = parser.parse_args()
     print(args)
@@ -123,16 +127,17 @@ def main():
         (geowiki_cropland_by_index[:, 1]).astype(int))]
 
     # Figure 1. Geowiki cropland scatter plot
-    plot_geowiki_cropland(geowiki_cropland_by_index,
+    plot_geowiki_cropland(geowiki_cropland_by_index, 
                           args.output_dir + output_geowiki_filename)
 
     # Figure 2. nan scatter plots (due to masking)
-    plot_geowiki_cropland(geowiki_cropland_by_index[np.isnan(pred), :],
+    plot_geowiki_cropland(geowiki_cropland_by_index[np.isnan(pred), :], 
                           args.output_dir + output_nan_filename)
 
     # Figure 3. Difference between pred cropland and Geowiki cropland
-    plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred,
-                                    args.output_dir + output_diff_map_filename)
+    plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index, pred, 
+                                    global_boundary_shp=args.global_boundary_shp, 
+                                    output_dir=args.output_dir + output_diff_map_filename)
 
     # Figure 4. Histogram of difference map
     plot_histogram_diff_geowiki_pred_cropland(

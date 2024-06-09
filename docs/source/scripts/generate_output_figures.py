@@ -134,23 +134,6 @@ def main():
                                       'output_{}_'.format(str(itr)))
         # agland_maps_table[itr] = agland_map.apply_mask(mask)   
 
-        # # ======================= TO BE DELETED =======================
-
-        # if itr == 3:
-        #     cropland_copy = agland_map.get_cropland()
-        #     pasture_copy = agland_map.get_pasture()
-            
-        #     cropland_copy[cropland_copy <= 0.03] = 0
-        #     pasture_copy[pasture_copy <= 0.03] = 0
-        #     other_copy = np.ones_like(cropland_copy) - cropland_copy - pasture_copy
-        #     agland_map.data = np.zeros((agland_map.height, agland_map.width, 3))
-        #     agland_map.data[:, :, 0] = cropland_copy
-        #     agland_map.data[:, :, 1] = pasture_copy
-        #     agland_map.data[:, :, 2] = other_copy
-
-        # # =============================================================
-
-
         save_array_as_tif(output_map_dir + 'cropland.tif',
                           agland_map.get_cropland(),
                           x_min=-180,

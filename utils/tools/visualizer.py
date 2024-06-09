@@ -862,7 +862,8 @@ def plot_geowiki_cropland(geowiki_cropland_by_index, output_dir=None):
 
 
 def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
-                                    pred_results,
+                                    pred_results, global_boundary_shp=None, 
+                                    resolution=(2160, 4320), 
                                     output_dir=None):
     """
     Scatter plot of (pred_results - geowiki) cropland map, with nan removed.
@@ -873,6 +874,8 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
         geowiki_cropland_by_index (np.ndarray): 2D array of geowiki data in index form
         pred_results (np.ndarray): 1D array of prediction results correspond to
                                  geowiki_cropland_by_index indices
+        global_boundary_shp (str): path to boundary shape file
+        resolution (tuple): resolution of pred maps (Default: (2160, 4320))
         output_dir (str): output dir (Default: None)
     """
     assert (pred_results.ndim == 1), "Prediction results array must be 1D"
@@ -893,14 +896,31 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     diff = pred_results - geowiki_cropland_by_index[:, 2] / 100
 
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
-    im = plt.scatter(geowiki_cropland_by_index[:, 1],
-                     geowiki_cropland_by_index[:, 0],
+
+    # Plot global boundary
+    # We set the plot to be EPSG:4326
+    if global_boundary_shp is not None:
+        global_boundary_gpd = gpd.read_file(global_boundary_shp)
+        global_boundary_gpd = global_boundary_gpd.to_crs(crs="EPSG:4326")
+        global_boundary_gpd.plot(ax=ax,
+                                 column='min_zoom',
+                                 edgecolor='black',
+                                 legend=False,
+                                 cmap=colors.ListedColormap([TRANSPARENT]), 
+                                 zorder=10)
+        ax.set_axis_off()
+
+    im = plt.scatter(geowiki_cropland_by_index[:, 1]*(360/int(resolution[1]))-180,
+                     -geowiki_cropland_by_index[:, 0]*(180/int(resolution[0]))+90,
                      c=diff * 100,
+                     
                      cmap='bwr',
                      vmin=-100,
                      vmax=100,
                      s=1)
     plt.axis('off')
+    plt.xlim(-180, 180)
+    plt.ylim(-90, 90)
 
     axins = inset_axes(ax,
                        width="5%",
@@ -915,7 +935,6 @@ def plot_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
                    rotation=90,
                    labelpad=-120,
                    y=0.55)
-    ax.invert_yaxis()
 
     if output_dir is not None:
         plt.savefig(output_dir, format='png', bbox_inches='tight')
@@ -961,13 +980,16 @@ def plot_histogram_diff_geowiki_pred_cropland(geowiki_cropland_by_index,
     plt.close()
 
 
-def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
+def plot_diff_maryland_pred_cropland(maryland_map, pred_map, 
+                                     global_boundary_shp=None, 
+                                     output_dir=None):
     """
     Plot of difference between prediction cropland and maryland cropland
 
     Args:
         maryland_map (np.ndarray): 2D array map of maryland cropland (reprojected to match agland)
         pred_map (np.ndarray): 2D array map of predicted cropland
+        global_boundary_shp (str): path to boundary shape file
         output_dir (str): output dir (Default: None)
     """
     assert (maryland_map.shape == pred_map.shape
@@ -977,10 +999,21 @@ def plot_diff_maryland_pred_cropland(maryland_map, pred_map, output_dir=None):
     diff = pred_map - maryland_map / 100
     diff *= 100  # use percentage
 
-    # Plot
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
-    im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
-    plt.axis('off')
+    
+    # Plot global boundary
+    # We set the plot to be EPSG:4326
+    if global_boundary_shp is not None:
+        global_boundary_gpd = gpd.read_file(global_boundary_shp)
+        global_boundary_gpd = global_boundary_gpd.to_crs(crs="EPSG:4326")
+        global_boundary_gpd.plot(ax=ax,
+                                    column='min_zoom',
+                                    edgecolor='black',
+                                    legend=False,
+                                    cmap=colors.ListedColormap([TRANSPARENT]), 
+                                    zorder=10)
+    ax.set_axis_off()
+    im = plt.imshow(diff, extent=[-180, 180, -90, 90], cmap='bwr', vmin=-100, vmax=100)
 
     axins = inset_axes(ax,
                        width="5%",
@@ -1039,12 +1072,13 @@ def plot_histogram_diff_maryland_pred_cropland(maryland_map,
     plt.close()
 
 
-def plot_diff_pred_pasture(diff_map, output_dir=None):
+def plot_diff_pred_pasture(diff_map, global_boundary_shp=None, output_dir=None):
     """
     Scatter plot of pasture evaluation map.
 
     Args:
         diff_map (np.ndarray): 2D array of pasture difference map
+        global_boundary_shp (str, optional): path dir to boundary shp. Defaults to None.
         output_dir (str): output dir (Default: None)
     """
     # Use percentage
@@ -1052,7 +1086,23 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
 
     # Plot
     fig, ax = plt.subplots(figsize=(18, 8), dpi=600)
-    im = plt.imshow(diff, cmap='bwr', vmin=-100, vmax=100)
+
+    # Plot global boundary
+    if global_boundary_shp is not None:
+        global_boundary_gpd = gpd.read_file(global_boundary_shp)
+        global_boundary_gpd.plot(ax=ax,
+                                 column='min_zoom',
+                                 edgecolor='black',
+                                 legend=False,
+                                 cmap=colors.ListedColormap([TRANSPARENT]), 
+                                 zorder=10)
+
+        extent = [-180, 180, -90, 90]
+        ax.set_axis_off()
+    else:
+        extent = None
+
+    im = plt.imshow(diff, cmap='bwr', extent=extent, vmin=-100, vmax=100)
     plt.axis('off')
 
     # Comment out for MS
@@ -1060,7 +1110,7 @@ def plot_diff_pred_pasture(diff_map, output_dir=None):
     #                    width="5%",
     #                    height="50%",
     #                    loc='lower left',
-    #                    bbox_to_anchor=(0.08, 0.20, 0.32, 1.00),
+    #                    bbox_to_anchor=(0.08, 0.15, 0.3, 1.00),
     #                    bbox_transform=ax.transAxes,
     #                    borderpad=0)
     # cbar = fig.colorbar(im, cax=axins, orientation='vertical')

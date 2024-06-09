@@ -28,6 +28,10 @@ def main():
                         type=str,
                         default='./',
                         help="path dir to output evaluation figs")
+    parser.add_argument("--global_boundary_shp",
+                        type=str,
+                        default='../shapefile/ne_10m_land/ne_10m_land.shp',
+                        help="path dir to global boundary shp")
 
     args = parser.parse_args()
     print(args)
@@ -65,6 +69,7 @@ def main():
     # Figure 2. Difference between Maryland cropland and pred cropland
     plot_diff_maryland_pred_cropland(
         maryland_cropland_reproj, agland_map.get_cropland(),
+        args.global_boundary_shp, 
         args.output_dir + output_diff_map_filename)
 
     # Figure 3. Histogram of difference map
