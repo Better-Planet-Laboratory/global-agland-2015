@@ -132,7 +132,7 @@ def main():
     for itr, agland_map in agland_maps_table.items():
         output_map_dir = os.path.join(args.output_dir,
                                       'output_{}_'.format(str(itr)))
-        # agland_maps_table[itr] = agland_map.apply_mask(mask)   
+        agland_maps_table[itr] = agland_map.apply_mask(mask)   
 
         save_array_as_tif(output_map_dir + 'cropland.tif',
                           agland_map.get_cropland(),
