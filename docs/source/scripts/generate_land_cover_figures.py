@@ -1,10 +1,10 @@
 import argparse
 import rasterio
+import numpy as np
 from utils.io import load_yaml_config
 from utils.tools.visualizer import plot_land_cover_map
 
 LAND_COVER_CFG = load_yaml_config('../../../configs/land_cover_cfg.yaml')
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,7 +19,7 @@ def main():
     print(args)
     print('Loading MCD12Q1 table by default')
 
-    plot_land_cover_map(rasterio.open(args.land_cover_dir).read()[0, :],
+    plot_land_cover_map(rasterio.open(args.land_cover_dir).read()[0, :].astype(np.uint8),
                         LAND_COVER_CFG['code']['MCD12Q1'],
                         args.output_dir,
                         LAND_COVER_CFG['null_value'],
