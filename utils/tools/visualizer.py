@@ -98,10 +98,10 @@ OTHER_CMAP_FULL = colors.LinearSegmentedColormap.from_list(
     N=1001)
 
 LAND_COVER_CMAP17 = colors.ListedColormap([
-    # https://commons.wikimedia.org/wiki/File:Land_cover_IGBP.png
-    '#008000', '#00ff03', '#99cc02', '#99ff99', '#339966', '#993366',
-    '#ffcc99', '#ccffcc', '#ffcc01', '#ff9900', '#006699', '#ffff03',
-    '#ff0000', '#999966', '#ffffff', '#808080', '#010080'
+    # https://developers.google.com/earth-engine/datasets/catalog/MODIS_061_MCD12Q1
+    '#05450a', '#086a10', '#54a708', '#78d203', '#009900', '#c6b044',
+    '#dcd159', '#dade48', '#fbff13', '#b6ff05', '#27ff87', '#c24f44',
+    '#a5a5a5', '#ff6d4c', '#69fff8', '#f9ffa4', "#FFFFFF"
 ])
 
 
@@ -208,18 +208,31 @@ def plot_land_cover_map(land_cover_array,
     """
     assert (scale > 0), "scale cannot be non negative"
     h, w = land_cover_array.shape
-    class_name_list = list(class_lookup.values())
-    class_index_list = list(class_lookup.keys())
-    assert (len(class_name_list) <=
-            17), "Number of classes exceeds 17, add color in default colormap"
+    # class_name_list = list(class_lookup.values())
+    # class_index_list = list(class_lookup.keys())
+
+    # Remove water class for clarity in MS
+    class_lookup_copy = class_lookup.copy()
+    class_lookup_copy.pop(17)
+    class_name_list = list(class_lookup_copy.values())
+    class_index_list = list(class_lookup_copy.keys())
+
+    
+    # assert (len(class_name_list) <=
+    #         17), "Number of classes exceeds 17, add color in default colormap"
 
     # Reduce image size for visualization
-    land_cover_array = cv2.resize(land_cover_array,
-                                  dsize=(int(w) // scale, int(h) // scale),
-                                  interpolation=cv2.INTER_NEAREST)
+    # land_cover_array = cv2.resize(land_cover_array,
+    #                               dsize=(int(w) // scale, int(h) // scale),
+    #                               interpolation=cv2.INTER_AREA)
 
     # Remove null values
-    land_cover_array[land_cover_array == nodata] = np.nan
+    class_index_list += [18]
+    land_cover_array[land_cover_array == nodata] = 18
+
+    # Turn water mask to no used class
+    land_cover_array[land_cover_array == 17] = 18
+
 
     # Use land cover default colormap
     boundaries = [min(class_index_list) - 0.5
@@ -227,8 +240,9 @@ def plot_land_cover_map(land_cover_array,
     norm = colors.BoundaryNorm(boundaries, LAND_COVER_CMAP17.N, clip=True)
 
     # Plot
-    fig, ax = plt.subplots(figsize=(18, 18))
-    im = ax.imshow(land_cover_array, cmap=LAND_COVER_CMAP17, norm=norm)
+    fig, ax = plt.subplots(figsize=(18, 18), dpi=600)
+    # LAND_COVER_CMAP17.set_bad(color="white")
+    im = ax.imshow(land_cover_array, cmap=LAND_COVER_CMAP17, norm=norm, interpolation='none')  # Must turn antialiasing off to show real outputs
     plt.axis('off')
 
     axins = inset_axes(ax,
@@ -242,7 +256,8 @@ def plot_land_cover_map(land_cover_array,
                         cax=axins,
                         orientation='vertical',
                         ticks=class_index_list)
-    cbar.ax.set_yticklabels(class_name_list)
+    cbar_labels = class_name_list + ["NOT USED"]
+    cbar.ax.set_yticklabels(cbar_labels)
     cbar.ax.tick_params(labelsize=10.5)
 
     if output_dir is not None:
