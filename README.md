@@ -69,7 +69,9 @@ cd docs/source/scripts/
 python SCRIPT_TO_RUN [FLAG] [ARG]
 ```
 
+### Final results
+The final complete dataset can be found in ```/outputs/all_correct_to_FAO_scale_itr3_fr_0/agland_map_output_3.tif``` (where the numerical suffix corresponds to the iteration number). Users may also want the output data already disaggregated into [cropland](./docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_3_cropland.tif) and [pasture](./docs/source/_static/img/model_outputs/all_correct_to_FAO_scale_itr3_fr_0/output_3_pasture.tif)
+
 ### Citation
-```
-```
+```Mehrabi, Z., Tong, K., Fortin, J., Stanimirova, R., Frield, M., and Ramankutty, N.: Geospatial database of global agricultural lands in the year 2015, Zenodo [dataset]. https://doi.org/10.5281/zenodo.11540554, 2024.```
 
